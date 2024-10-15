@@ -3,7 +3,8 @@ from .views import *
 
 urlpatterns = [
     # path('register/', register, name='register'),
-    # path('login/', login, name='login'),
+    path('login/', UserLoginView.as_view(), name='login'),
+    path('logout/', UserLogoutView.as_view(next_page=reverse_lazy('list_user')), name='logout'),
     # path('login_first/', login_first, name='login_first'),
     # path('logout/', logout, name='logout'),
     # path('dashboard/', dashboard, name='dashboard'),

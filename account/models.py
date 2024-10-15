@@ -1,5 +1,10 @@
-from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, Group, Permission
+from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, Group, Permission, BaseUserManager
 from django.db import models
+
+
+class UserManager(BaseUserManager):
+    def get_by_natural_key(self, email):
+        return self.get(email=email)
 
 class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(unique=True)
@@ -13,6 +18,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['phone_number', 'first_name', 'last_name']
 
+    objects = UserManager()
+
     groups = models.ManyToManyField(
         Group,
         related_name="baseuser_set",  
@@ -24,6 +31,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         related_name="baseuser_permissions", 
         blank=True,
     )
+
 
 class RegularUser(User):
     royalty_points = models.IntegerField(default=0)
