@@ -1,0 +1,5 @@
+<form method='post'>{% csrf_token %}
+    {% for category in categories %}
+        <a href="{% url 'product_list' category.id %}">{{ category.name }}</a>
+    {% endfor %}
+</form>
