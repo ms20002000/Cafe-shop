@@ -1,10 +1,12 @@
 from django.db import models
 from account.models import CustomUser
 from product.models import Product
+from cart.models import Cart, CartItem
 
 class Order(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
+    cart = models.OneToOneField(Cart, on_delete=models.SET_NULL, null=True, blank=True)
     status = models.CharField(max_length=20, choices=[('P', 'Pending'), ('C', 'Completed')])
     total_price = models.DecimalField(max_digits=10, decimal_places=2)
 
