@@ -1,0 +1,7 @@
+<h2>Edit User</h2>
+<form method="POST">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit">Save Changes</button>
+</form>
+<a href="{% url 'list_user' %}">Back to User List</a>

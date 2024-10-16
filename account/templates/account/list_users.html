@@ -1,4 +1,10 @@
 Users:
-{% for user in object_list %}
-    <p>{{ user.first_name }}</p>
+{% for user in users %}
+    <p>
+    <a href="{% url 'edit_user' user.id %}">{{ user.first_name }} 
+        {{ user.last_name }}
+        {{ user.phone_number }}
+    </a>
+    </p>
+
 {% endfor %}
