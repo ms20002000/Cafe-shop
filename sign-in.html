@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="css/swiper-bundle.min.css">
+    <link rel="stylesheet" href="css/bootstrap-select.min.css">
+    <link rel="stylesheet" href="css/boostrap.min.css">
+    <link rel="stylesheet"type="text/css" href="css/styles.css"/>
+    <link rel="stylesheet" href="fonts/font-icons.css">
+    <link rel="shortcut icon" href="images/logo/48.png" />
+    <link rel="apple-touch-icon-precomposed" href="images/logo/48.png" />
+    
+    <title>ورود</title>
+</head>
+
+<body>
+     <div class="preload preload-container">
+        <div class="preload-logo">
+          <div class="spinner"></div>
+        </div>
+      </div>
+    <div class="account-area" style="background-image: url('images/background/bg-1.png')">
+        <div class="tf-container">
+            <div class="logo-app pt-20">
+                <img src="images/logo/logo-1.png" alt="تصویر لوگو">
+            </div>
+            <div class="tf-title pt-16">
+                <h1>خوش آمدید</h1>
+                <p>سلام، لطفاً وارد شوید تا ادامه دهید</p>
+            </div>
+            <div class="acount-box">
+                <ul class="nav nav-tabs mb-23" id="account-tab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link active" id="auth-tab" data-bs-toggle="tab" data-bs-target="#signin" role="tab" aria-controls="signin" aria-selected="true">ورود</a>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#signup" role="tab" aria-controls="signup" aria-selected="false">ثبت نام</a>
+                    </li>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane fade show active" id="signin" role="tabpanel">
+                        <form action="" class="tf-form">
+                            <div class="group-input mb-15">
+                                <i class="icon icon-phone"></i>
+                                <input type="number" placeholder="شماره تلفن خود را وارد کنید">
+                            </div>
+                            <div class="group-input mb-15 group-ip-password">
+                                <i class="icon icon-lock"></i>
+                                <input required class="password-field" type="password" placeholder="رمز عبور خود را وارد کنید">
+                                <div class="box-auth-show">
+                                    <span class="show-pass">
+                                        <i class="icon-eye-hide"></i>
+                                        <i class="icon-eye-show"></i>
+                                    </span>
+                                </div>
+                            </div>
+                            <a href="reset-pass.html" class="forgot-link mb-15">رمز عبور را فراموش کرده‌اید؟</a>
+                            <button type="submit">ورود</button>
+                        </form>
+                    </div>
+                    <div class="tab-pane fade" id="signup" role="tabpanel">
+                        <form action="otp.html" class="tf-form">
+                            <div class="group-input phone-wrapper mb-15" dir="rtl">
+                                <input type="number" class="form-control phone-input" placeholder="شماره تلفن خود را وارد کنید">
+                            </div>                                                        
+                            <div class="group-input mb-15 group-ip-password pd1">
+                                <i class="icon icon-lock"></i>
+                                <input class="password-field" type="password" placeholder="رمز عبور خود را وارد کنید">
+                                <div class="box-auth-show">
+                                    <span class="show-pass">
+                                        <i class="icon-eye-hide"></i>
+                                        <i class="icon-eye-show"></i>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="group-input mb-20 group-ip-password pd1">
+                                <i class="icon icon-lock"></i>
+                                <input class="password-field2" type="password" placeholder="تأیید رمز عبور">
+                                <div class="box-auth-show">
+                                    <span class="show-pass2">
+                                        <i class="icon-eye-hide"></i>
+                                        <i class="icon-eye-show"></i>
+                                    </span>
+                                </div>
+                            </div>
+                            <button type="submit">ادامه</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+    <script type="text/javascript" src="js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="js/bootstrap-select.min.js"></script>
+    <script type="text/javascript" src="js/main.js"></script>
+
+</body>
+</html>
