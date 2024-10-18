@@ -1,6 +1,7 @@
-<form method='post' enctype="multipart/form-data">{% csrf_token %}
-    {{ product.name}}
-    {{ product.price}}
-    {{ product.description}}
-    {{ product.stock_quantity}}
-</form>
+<h2>{{ product.name }}</h2>
+<div>
+    <img src="{{ product.product_photo.url }}" alt="{{ product.name }}" style="width: 150px; height: 150px;">
+    <p>{{ product.description }}</p>
+    <p>Price: ${{ product.price }}</p>
+    <p>Stock: {{ product.stock_quantity }}</p>
+</div>
