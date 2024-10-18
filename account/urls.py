@@ -11,4 +11,5 @@ urlpatterns = [
     path('permission-denied/', permission_denied_view, name='permission_denied'),
     path('list_user/', list_user, name='list_user'),
     path('edit_user/<int:id>/', edit_user, name='edit_user'),
+    path('change_password/', PasswordChange.as_view(), name='change_password'),
 ]

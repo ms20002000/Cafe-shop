@@ -1,13 +1,14 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate, logout
-from .forms import CustomUserCreationForm, CustomLoginForm, CustomUserEditForm
+from .forms import CustomUserCreationForm, LoginForm, AdminUserEditForm, UserEditForm
 from django.contrib.auth.decorators import user_passes_test
 from .models import CustomUser
 from django.contrib import messages
+from django.contrib.auth.views import PasswordChangeView
 
 def register(request):
     if request.method == 'POST':
-        form = CustomUserCreationForm(request.POST)
+        form = CustomUserCreationForm(request.POST, request.FILES)
         if form.is_valid():
             user = form.save()
             login(request, user)
@@ -19,7 +20,7 @@ def register(request):
 
 def user_login(request):
     if request.method == 'POST':
-        form = CustomLoginForm(request, data=request.POST)
+        form = LoginForm(request, data=request.POST)
         if form.is_valid():
             phone_number = form.cleaned_data.get('username')
             password = form.cleaned_data.get('password')
@@ -34,7 +35,7 @@ def user_login(request):
                 login(request, user)
                 return redirect('home')  
     else:
-        form = CustomLoginForm()
+        form = LoginForm()
     return render(request, 'account/login.html', {'form': form})
 
 def logout_user(request):
@@ -58,9 +59,16 @@ def admin_dashboard(request):
 def staff_required(user):
     return user.is_authenticated and user.is_staff
 
-@user_passes_test(admin_required, login_url='permission_denied')
+@user_passes_test(staff_required, login_url='permission_denied')
 def staff_dashboard(request):
-    return render(request, 'account/staff_dashboard.html', {})
+    if request.method == 'POST':
+        form = UserEditForm(request.POST, request.FILES, instance=request.user)
+        if form.is_valid():
+            form.save()
+            return redirect('staff_dashboard')
+    else:
+        form = UserEditForm(instance=request.user)
+    return render(request, 'account/staff_dashboard.html', {'form': form})
 
 def home(request):
     return render(request, 'account/home.html', {})
@@ -74,11 +82,24 @@ def list_user(request):
 def edit_user(request, id):
     user = get_object_or_404(CustomUser, id=id)  
     if request.method == 'POST':
-        form = CustomUserEditForm(request.POST, instance=user)
+        form = AdminUserEditForm(request.POST, request.FILES, instance=user)
         if form.is_valid():
             form.save()  
             messages.success(request, 'User details updated successfully!')
             return redirect('list_user')  
     else:
-        form = CustomUserEditForm(instance=user)  
+        form = AdminUserEditForm(instance=user)  
     return render(request, 'account/edit_user.html', {'form': form})
+
+class PasswordChange(PasswordChangeView):
+    template_name = 'account/change_password.html'
+    def form_valid(self, form):
+        user = self.request.user
+        form.save()  
+
+        if user.is_admin:
+            return redirect('admin_dashboard')  
+        elif user.is_staff:
+            return redirect('staff_dashboard')  
+        else:
+            return redirect('home')

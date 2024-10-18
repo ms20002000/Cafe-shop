@@ -1,26 +1,19 @@
 from django import forms
-from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from .models import CustomUser
 
-class CustomUserCreationForm(forms.ModelForm):
-    password = forms.CharField(widget=forms.PasswordInput)
-    password2 = forms.CharField(widget=forms.PasswordInput)
-
+class CustomUserCreationForm(UserCreationForm):
     class Meta:
         model = CustomUser
-        fields = ['phone_number', 'first_name', 'last_name', 'email', 'password']
+        fields = ['first_name', 'last_name', 'phone_number',
+                   'email', 'profile_picture', 'password1', 'password2']
 
-    def clean_password2(self):
-        password1 = self.cleaned_data.get("password")
-        password2 = self.cleaned_data.get("password2")
-        if password1 and password2 and password1 != password2:
-            raise forms.ValidationError("Passwords don't match")
-        return password2
-
-    def clean_phone_number(self):        
+    def clean_phone_number(self):
         phone_number = self.cleaned_data.get('phone_number')
-        if CustomUser.objects.filter(phone_number=phone_number).exists():
-            raise forms.ValidationError("Phone number already exists")
+        if phone_number and not phone_number.isdigit():
+            raise forms.ValidationError('Phone number must contain only digits.')
+        if phone_number and len(phone_number) != 10:
+            raise forms.ValidationError('Phone number must be 10 digits long.')
         return phone_number
 
     def clean_email(self):
@@ -28,21 +21,20 @@ class CustomUserCreationForm(forms.ModelForm):
         if CustomUser.objects.filter(email=email).exists():
             raise forms.ValidationError("Email already exists")
         return email
-    
-    def save(self, commit=True):
-        user = super().save(commit=False)
-        user.set_password(self.cleaned_data['password'])
-        if commit:
-            user.save()
-        return user
 
-class CustomLoginForm(AuthenticationForm):
+class LoginForm(AuthenticationForm):
     username = forms.CharField(label='Phone Number', widget=forms.TextInput(attrs={'class': 'form-control'}))
     password = forms.CharField(label='Password', widget=forms.PasswordInput(attrs={'class': 'form-control'}))
 
 
-class CustomUserEditForm(forms.ModelForm):
+class UserEditForm(forms.ModelForm):
     class Meta:
         model = CustomUser
-        fields = ['first_name', 'last_name', 'phone_number', 'email',
-                   'is_admin', 'is_staff', 'is_customer', 'is_active', 'is_superuser']
+        fields = ['first_name', 'last_name', 'phone_number', 'email', 'profile_picture']
+        
+
+class AdminUserEditForm(forms.ModelForm):
+    class Meta:
+        model = CustomUser
+        fields = ['first_name', 'last_name', 'phone_number', 'email', 'specialty', 'loyalty_points',
+                   'is_admin', 'is_staff', 'is_customer', 'is_active', 'is_superuser', 'profile_picture']

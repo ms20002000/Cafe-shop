@@ -27,6 +27,16 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     first_name = models.CharField(max_length=30, blank=True)
     last_name = models.CharField(max_length=30, blank=True)
     email = models.EmailField(blank=True)
+    profile_picture = models.ImageField(upload_to='profile_pictures/', blank=True, null=True)  
+    loyalty_points = models.PositiveIntegerField(default=0, blank=True, null=True)  
+    specialty = models.CharField(max_length=100, blank=True, null=True, choices=[
+        ('M', 'Manager'),
+        ('Ca', 'Cashier'),
+        ('B', 'Bartender'),
+        ('Co', 'Cook'),
+        ('W', 'Waiter'),
+        ('Ws', 'Waitress'),
+    ])
 
     is_customer = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)  
