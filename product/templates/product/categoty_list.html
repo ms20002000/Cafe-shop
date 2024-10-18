@@ -1,4 +1,5 @@
-<form method='post'>{% csrf_token %}
+Menu
+<form method='post' enctype="multipart/form-data">{% csrf_token %}
     {% for category in categories %}
         <a href="{% url 'product_list' category.id %}">{{ category.name }}</a>
     {% endfor %}

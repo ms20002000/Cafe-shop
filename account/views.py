@@ -70,8 +70,8 @@ def staff_dashboard(request):
         form = UserEditForm(instance=request.user)
     return render(request, 'account/staff_dashboard.html', {'form': form})
 
-def home(request):
-    return render(request, 'account/home.html', {})
+# def home(request):
+#     return render(request, 'account/home.html', {})
 
 @user_passes_test(admin_required, login_url='permission_denied')
 def list_user(request):
