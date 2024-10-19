@@ -5,26 +5,61 @@ from django.contrib.auth.decorators import user_passes_test
 from .models import CustomUser
 from django.contrib import messages
 from django.contrib.auth.views import PasswordChangeView
+from django.views import View
+from django.views.generic import TemplateView, ListView
+from order.models import Order
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 
-def user_login(request):
-    if request.method == 'POST':
+
+class StaffLogin(View):
+    def get(self, request):
+        form = LoginForm()
+        return render(request, 'account/login.html', {'form': form})
+
+    def post(self, request):
         form = LoginForm(request, data=request.POST)
         if form.is_valid():
             phone_number = form.cleaned_data.get('username')
             password = form.cleaned_data.get('password')
-            user = authenticate(request, phone_number=phone_number, password=password)
-            if user is not None and user.is_admin:
-                login(request, user)
-                return redirect('admin_dashboard')
-            elif user is not None and user.is_staff:
+            user = authenticate(request, username=phone_number, password=password)
+            
+            if user is not None and user.is_staff:
                 login(request, user)
                 return redirect('staff_dashboard')
-            elif user is not None and user.is_customer:
-                login(request, user)
-                return redirect('home')  
-    else:
-        form = LoginForm()
-    return render(request, 'account/login.html', {'form': form})
+            else:
+                messages.error(request, 'Invalid credentials or not a staff member')
+                return redirect('staff_login')
+
+
+class StaffDashboard(LoginRequiredMixin, UserPassesTestMixin, ListView):
+    template_name = 'account/staff_dashboard.html'
+    model = Order
+    context_object_name = 'orders'
+
+    def test_func(self):
+        return self.request.user.is_staff 
+
+    def get_queryset(self):
+        status = self.request.GET.get('status')
+        if status:
+            return Order.objects.filter(status=status)
+        return Order.objects.all()
+    
+    def get_queryset(self):
+        search_query = self.request.GET.get('phone_number')
+        if search_query:
+            return Order.objects.filter(customer__phone_number__icontains=search_query)
+        return super().get_queryset()
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['staff_name'] = self.request.user.first_name
+        return context
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['staff_name'] = self.request.user.first_name
+        return context
 
 
 def logout_user(request):
@@ -45,22 +80,6 @@ def admin_required(user):
 def admin_dashboard(request):
     return render(request, 'account/admin_dashboard.html', {})
 
-def staff_required(user):
-    return user.is_authenticated and user.is_staff
-
-@user_passes_test(staff_required, login_url='permission_denied')
-def staff_dashboard(request):
-    if request.method == 'POST':
-        form = UserEditForm(request.POST, request.FILES, instance=request.user)
-        if form.is_valid():
-            form.save()
-            return redirect('staff_dashboard')
-    else:
-        form = UserEditForm(instance=request.user)
-    return render(request, 'account/staff_dashboard.html', {'form': form})
-
-# def home(request):
-#     return render(request, 'account/home.html', {})
 
 @user_passes_test(admin_required, login_url='permission_denied')
 def list_user(request):
