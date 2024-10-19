@@ -150,3 +150,9 @@ INTERNAL_IPS = [
 #media
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+#authentication
+AUTHENTICATION_BACKENDS = [
+    'account.authentication.PhoneNumberAuthBackend',  
+    'django.contrib.auth.backends.ModelBackend',  
+]
