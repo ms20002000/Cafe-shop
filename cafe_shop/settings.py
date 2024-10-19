@@ -86,6 +86,16 @@ DATABASES = {
     }
 }
 
+# DATABASES = {
+# 'default': {
+#     'ENGINE': 'django.db.backends.postgresql',
+#     'NAME': 'CafeShop',
+#     'USER': 'mohamed',
+#     'PASSWORD': '',
+#     'HOST': 'localhost', 
+#     'PORT': '5432', 
+#     }
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
