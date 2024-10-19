@@ -1,0 +1,22 @@
+<h2>Update Order</h2>
+
+<form method="POST">
+    {% csrf_token %}
+    
+    {{ form.as_p }}
+    
+    <h3>Order Items</h3>
+    {{ formset.management_form }}
+    {% for form in formset %}
+        <div>
+            {{ form.as_p }}
+            {% if form.instance.pk %}
+                <p>Current Product: {{ form.instance.product.name }}</p>
+            {% endif %}
+        </div>
+    {% endfor %}
+    
+    <button type="submit">Save Changes</button>
+</form>
+
+<a href="{% url 'staff_dashboard' %}">Back to Dashboard</a>
