@@ -1,5 +1,7 @@
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.db import models
+from django.utils.translation import gettext_lazy as _
+
 
 class CustomUserManager(BaseUserManager):
     def create_user(self, phone_number, password=None, **extra_fields):
@@ -23,6 +25,14 @@ class CustomUserManager(BaseUserManager):
         return self.create_user(phone_number, password, **extra_fields)
 
 class CustomUser(AbstractBaseUser, PermissionsMixin):
+
+    class JobSpecialty(models.TextChoices):
+        MANAGER = "M", _("Manager")
+        CASHIER = "CA", _("Cashier")
+        BARTENDER = "B", _("Bartender")
+        COOK = "CO", _("Cook")
+        WAITER = "W", _("Waiter")
+        WAITRESS = "WS", _("Waitress")
     
     phone_number = models.CharField(max_length=15, unique=True)
     first_name = models.CharField(max_length=30, blank=True)
@@ -30,14 +40,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(blank=True)
     profile_picture = models.ImageField(upload_to='profile_pictures/', blank=True, null=True)  
     loyalty_points = models.PositiveIntegerField(default=0, blank=True, null=True)  
-    specialty = models.CharField(max_length=100, blank=True, null=True, choices=[
-        ('M', 'Manager'),
-        ('Ca', 'Cashier'),
-        ('B', 'Bartender'),
-        ('Co', 'Cook'),
-        ('W', 'Waiter'),
-        ('Ws', 'Waitress'),
-    ])
+    specialty = models.CharField(max_length=100, blank=True, null=True, choices=JobSpecialty)
 
     is_customer = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)  

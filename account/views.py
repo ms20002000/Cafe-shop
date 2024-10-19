@@ -1,22 +1,10 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate, logout
-from .forms import CustomUserCreationForm, LoginForm, AdminUserEditForm, UserEditForm
+from .forms import LoginForm, AdminUserEditForm, UserEditForm
 from django.contrib.auth.decorators import user_passes_test
 from .models import CustomUser
 from django.contrib import messages
 from django.contrib.auth.views import PasswordChangeView
-
-def register(request):
-    if request.method == 'POST':
-        form = CustomUserCreationForm(request.POST, request.FILES)
-        if form.is_valid():
-            user = form.save()
-            login(request, user)
-            messages.success(request, 'Account created successfully!')
-            return redirect('home')  
-    else:
-        form = CustomUserCreationForm()
-    return render(request, 'account/register.html', {'form': form})
 
 def user_login(request):
     if request.method == 'POST':
@@ -37,6 +25,7 @@ def user_login(request):
     else:
         form = LoginForm()
     return render(request, 'account/login.html', {'form': form})
+
 
 def logout_user(request):
     if request.method == 'POST':
