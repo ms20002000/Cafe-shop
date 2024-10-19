@@ -1,21 +1,31 @@
 from django.shortcuts import render, redirect
-from .models import Cart, Order, CartItem, OrderItem
+from .models import Cart, Order, CartItem
+from django.views.generic.edit import CreateView, DeleteView, UpdateView
+from django.urls import reverse_lazy
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 
-def finalize_order(request):
-    cart = Cart.objects.get(user=request.user)
-    order = Order.objects.create(user=request.user, cart=cart, total_price=0)
-    
-    cart_items = CartItem.objects.filter(cart=cart)
-    total_price = 0
-    for item in cart_items:
-        OrderItem.objects.create(
-            order=order,
-            menu_item=item.menu_item,
-            quantity=item.quantity
-        )
-        total_price += item.menu_item.price * item.quantity
-    
-    order.total_price = total_price
-    order.save()
-    cart_items.delete() 
-    return redirect('order_summary', order_id=order.id)
+class OrderCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
+    model = Order
+    fields = ['customer', 'product', 'status', 'quantity']
+    template_name = 'staff/order_form.html'
+    success_url = reverse_lazy('staff_dashboard')
+
+    def test_func(self):
+        return self.request.user.is_staff
+
+class OrderDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = Order
+    template_name = 'staff/order_confirm_delete.html'
+    success_url = reverse_lazy('staff_dashboard')
+
+    def test_func(self):
+        return self.request.user.is_staff
+
+class OrderUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Order
+    fields = ['status']
+    template_name = 'staff/order_update_form.html'
+    success_url = reverse_lazy('staff_dashboard')
+
+    def test_func(self):
+        return self.request.user.is_staff
