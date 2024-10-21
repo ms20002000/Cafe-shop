@@ -40,22 +40,18 @@ class StaffDashboard(LoginRequiredMixin, UserPassesTestMixin, ListView):
         return self.request.user.is_staff 
 
     def get_queryset(self):
+        queryset = Order.objects.all()
+    
         status = self.request.GET.get('status')
         if status:
-            return Order.objects.filter(status=status)
-        return Order.objects.all()
-    
-    def get_queryset(self):
+            queryset = queryset.filter(status=status)
+        
         search_query = self.request.GET.get('phone_number')
         if search_query:
-            return Order.objects.filter(customer__phone_number__icontains=search_query)
-        return super().get_queryset()
+            queryset = queryset.filter(customer__phone_number__icontains=search_query)
+        
+        return queryset
     
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['staff_name'] = self.request.user.first_name
-        return context
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['staff_name'] = self.request.user.first_name
