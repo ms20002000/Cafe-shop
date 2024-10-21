@@ -1009,6 +1009,14 @@ textarea {
   background: #ffffff;
 }
 
+.bg-blur {
+  background: rgba(255, 255, 255, 0.7); /* پس‌زمینه نیمه‌شفاف */
+  backdrop-filter: blur(10px); /* افکت بلور */
+  -webkit-backdrop-filter: blur(10px); /* برای پشتیبانی از مرورگرهای Webkit */
+  border-radius: 12px; /* گرد کردن گوشه‌ها */
+  padding: 15px; /* اضافه کردن padding برای زیبایی */
+}
+
 .bg-card {
   background-color: #fff6e9;
 }
@@ -1735,7 +1743,12 @@ textarea {
   left: 0;
   width: 100%;
   z-index: 1000;
-  background: #ffffff;
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  border-top-left-radius: 20px; /* گرد کردن گوشه بالا چپ */
+  border-top-right-radius: 20px; /* گرد کردن گوشه بالا راست */
 }
 .menubar-footer .inner {
   padding-left: 0;
@@ -1751,7 +1764,7 @@ textarea {
   width: 20%;
 }
 .menubar-footer .inner li a {
-  color: #a1a1a1;
+  color: #6B8E83;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1762,7 +1775,7 @@ textarea {
 }
 .menubar-footer .inner li a span {
   font-size: 24px;
-  color: #d3d9d8;
+  color: #6B8E83;
 }
 .menubar-footer .inner li.active a {
   color: #033f38;
@@ -3842,6 +3855,7 @@ a.mapboxgl-ctrl-logo,
   align-items: center;
   gap: 20px;
 }
+
 .box-total .tf-btn i {
   font-size: 24px;
   color: #ffffff;
@@ -3849,6 +3863,12 @@ a.mapboxgl-ctrl-logo,
 
 .total {
   flex-shrink: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  padding-bottom: 15px;
+  text-align: center;
 }
 .total p {
   font-size: 14px;
@@ -3856,7 +3876,6 @@ a.mapboxgl-ctrl-logo,
   line-height: normal;
   margin-bottom: 4px;
   color: #a1a1a1;
-  padding-right: 30px;
 }
 .total span {
   font-size: 20px;
