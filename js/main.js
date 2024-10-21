@@ -131,30 +131,68 @@
   ------------------------------------------------------------------------------------- */
   var btnQuantity = function () {
     $(".minus-btn").on("click", function (e) {
-      e.preventDefault();
-      var $this = $(this);
-      var $input = $this.closest("div").find("input");
-      var value = parseInt($input.val());
+        e.preventDefault();
+        var $this = $(this);
+        var $input = $this.closest("div").find("input");
+        var value = parseInt($input.val());
 
-      if (value > 1) {
-        value = value - 1;
-      }
+        if (value > 1) {
+            value = value - 1;
+        }
 
-      $input.val(value);
+        $input.val(value);
+        updateTotalPrice($input);
     });
+
     $(".plus-btn").on("click", function (e) {
-      e.preventDefault();
-      var $this = $(this);
-      var $input = $this.closest("div").find("input");
-      var value = parseInt($input.val());
+        e.preventDefault();
+        var $this = $(this);
+        var $input = $this.closest("div").find("input");
+        var value = parseInt($input.val());
 
-      if (value > 0) {
-        value = value + 1;
-      }
+        if (value > 0) {
+            value = value + 1;
+        }
 
-      $input.val(value);
+        $input.val(value);
+        updateTotalPrice($input);
     });
-  };
+
+    // ذخیره مقادیر برای هر تب
+    var quantities = {};
+
+    // رویداد برای تغییر تب‌ها
+    $('.nav-link').on('click', function () {
+        var activeTab = $(this).attr('data-bs-target');
+        var $activePane = $(activeTab);
+        var $input = $activePane.find('.quantity');
+
+        // بازیابی مقدار ذخیره شده برای تب فعال
+        var quantity = quantities[activeTab] || 1;
+        $input.val(quantity);
+
+        // به‌روزرسانی قیمت کل با توجه به مقدار بازیابی شده
+        updateTotalPrice($input);
+    });
+
+    // ذخیره مقدار فعلی در زمان تغییر مقدار
+    $('.quantity').on('input', function () {
+        var $this = $(this);
+        var activeTab = $this.closest('.tab-pane').attr('id');
+        quantities['#' + activeTab] = $this.val();
+    });
+};
+
+// تابع برای به‌روزرسانی قیمت کل
+function updateTotalPrice($input) {
+    var parentTab = $input.closest('.tab-pane');
+    var pricePerUnit = parseFloat(parentTab.data('price'));
+    var quantity = parseInt($input.val());
+    var totalPrice = (pricePerUnit * quantity).toFixed(2);
+    parentTab.find('.total-price').text(totalPrice + ' تومان');
+}
+
+
   /* press heart
   ------------------------------------------------------------------------------------- */
   var pressHeart = function () {
