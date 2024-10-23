@@ -6,7 +6,7 @@ from .models import CustomUser
 from django.contrib import messages
 from django.contrib.auth.views import PasswordChangeView
 from django.views import View
-from django.views.generic import TemplateView, ListView
+from django.views.generic import ListView
 from order.models import Order
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 
@@ -41,7 +41,7 @@ class StaffDashboard(LoginRequiredMixin, UserPassesTestMixin, ListView):
 
     def get_queryset(self):
         queryset = Order.objects.all()
-    
+        
         status = self.request.GET.get('status')
         if status:
             queryset = queryset.filter(status=status)

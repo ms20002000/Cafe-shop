@@ -1,6 +1,7 @@
 from .models import CustomUser
+from django.contrib.auth.backends import BaseBackend
 
-class PhoneNumberAuthBackend:
+class PhoneNumberAuthBackend(BaseBackend):
     """
     Authenticate using phone number and password.
     """
