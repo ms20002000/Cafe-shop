@@ -9,6 +9,7 @@ from django.views import View
 from django.views.generic import ListView
 from order.models import Order
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.utils.dateparse import parse_date
 
 
 class StaffLogin(View):
@@ -49,6 +50,20 @@ class StaffDashboard(LoginRequiredMixin, UserPassesTestMixin, ListView):
         search_query = self.request.GET.get('phone_number')
         if search_query:
             queryset = queryset.filter(customer__phone_number__icontains=search_query)
+
+        table_number = self.request.GET.get('table_number')
+        if table_number:
+            queryset = queryset.filter(table__number=table_number)
+
+        start_date = self.request.GET.get('start_date')
+        end_date = self.request.GET.get('end_date')
+
+        if start_date:
+            start_date = parse_date(start_date)
+            queryset = queryset.filter(created_at__date__gte=start_date)
+        if end_date:
+            end_date = parse_date(end_date)
+            queryset = queryset.filter(created_at__date__lte=end_date)
         
         return queryset
     

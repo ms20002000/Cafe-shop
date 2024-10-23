@@ -8,4 +8,4 @@ class OrderForm(forms.ModelForm):
         fields = ['status', 'payment_method', 'table'] 
 
 OrderItemFormSet = inlineformset_factory(Order, OrderItem, fields=('product', 'quantity'),
-                                          extra=1, can_delete=True)
+                                          extra=3, can_delete=True)

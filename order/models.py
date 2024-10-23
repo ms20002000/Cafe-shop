@@ -3,16 +3,16 @@ from account.models import CustomUser
 from product.models import Product
 
 class Table(models.Model):
-    number = models.IntegerField()
+    number = models.PositiveIntegerField(unique=True)
     qr_code = models.CharField(max_length=200)
 
     def __str__(self):
-        return self.number
+        return str(self.number)
 
 class Order(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=20, choices=[('P', 'Pending'), ('C', 'Completed')])
-    total_price = models.DecimalField(max_digits=10, decimal_places=2)
+    total_price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     payment_method = models.CharField(max_length=20, default='Cash')
     table = models.OneToOneField(Table, on_delete=models.CASCADE, related_name='order', null=True, blank=True)
     modify_by = models.OneToOneField(CustomUser, default=1, on_delete=models.CASCADE)
@@ -28,6 +28,12 @@ class Order(models.Model):
         for item in self.items.all():
             total += item.total_price()
         return total
+
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            super().save(*args, **kwargs)
+        self.total_price = self.total_price_amount()
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f'Order {self.id} by {self.user.phone_number}'
