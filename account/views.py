@@ -122,3 +122,6 @@ class PasswordChange(PasswordChangeView):
             return redirect('staff_dashboard')  
         else:
             return redirect('home')
+
+def HomeView(request):
+    return render(request, 'account/home.html', {})

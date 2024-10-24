@@ -1,0 +1,56 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fa">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <link rel="stylesheet" href="{% static 'main/css/boostrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'main/css/swiper-bundle.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'main/css/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'main/fonts/font-icons.css' %}">
+    <link rel="shortcut icon" href="{% static 'main/images/logo/48.png' %}">
+    <link rel="apple-touch-icon-precomposed" href="{% static 'main/images/logo/48.png' %}">
+
+    <title>{% block title %}{% endblock %}</title>
+</head>
+
+<body class="{% block body_class %}{% endblock %}">
+        {% comment %} <div class="preload preload-container">
+            <div class="preload-logo">
+              <div class="spinner"></div>
+            </div>
+          </div> {% endcomment %}
+
+    <div class="header absolute">
+        <div class="tf-container">
+            <div class="menu-bar mt-10">
+                <a href="home" class="back-btn primary"><i class="icon-right"></i></a>
+            </div>
+        </div>
+    </div>
+
+    <div class="app">
+        {% block content %}
+
+        {% endblock %}
+    </div>
+
+    <div class="menubar-footer footer-fixed">
+        <ul class="inner">
+            <li><a href="/"><span class="icon-home"></span>خانه</a></li>
+            {% comment %} <li><a href="{% url 'nearby' %}"><span class="icon-discovery"></span> نزدیک</a></li> {% endcomment %}
+            <li><a href="/cart"><span class="icon-buy"></span> سبد خرید</a></li>
+            {% comment %} <li><a href="{% url 'favorite' %}"><span class="icon-heart"></span> مورد علاقه</a></li> {% endcomment %}
+            <li><a href="/account"><span class="icon-profile"></span> پروفایل</a></li>
+        </ul>
+    </div>
+
+    <script type="text/javascript" src="{% static 'main/js/bootstrap.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'main/js/jquery.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'main/js/swiper-bundle.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'main/js/main.js' %}"></script>
+</body>
+
+</html>

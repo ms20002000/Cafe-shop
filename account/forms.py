@@ -3,9 +3,20 @@ from django.contrib.auth.forms import AuthenticationForm
 from .models import CustomUser
 
 class LoginForm(AuthenticationForm):
-    username = forms.CharField(label='Phone Number', widget=forms.TextInput(attrs={'class': 'form-control'}))
-    password = forms.CharField(label='Password', widget=forms.PasswordInput(attrs={'class': 'form-control'}))
-
+    username = forms.CharField(
+        label='شماره تلفن',
+        widget=forms.TextInput(attrs={
+            'class': 'form-control', 
+            'placeholder': 'شماره تلفن خود را وارد کنید'
+        })
+    )
+    password = forms.CharField(
+        label='رمز عبور',
+        widget=forms.PasswordInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'رمز عبور خود را وارد کنید'
+        })
+    )
 
 class UserEditForm(forms.ModelForm):
     class Meta:
