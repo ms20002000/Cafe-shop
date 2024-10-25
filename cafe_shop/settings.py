@@ -159,3 +159,4 @@ AUTHENTICATION_BACKENDS = [
     'account.authentication.PhoneNumberAuthBackend',  
     'django.contrib.auth.backends.ModelBackend',  
 ]
+CART_COOKIE_NAME = 'cart'
