@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+{% block title %}حساب کاربری{% endblock %}
+{% load static %}
+
+{% block content %}
+<body class="appProfile">
+    <div class="app profile pb-90">
+        <div class="title-header-bar fixed-top bg-white">
+            <a href="/" class="back-btn"><i class="icon-right"></i></a>
+            <h1>پروفایل</h1>
+        </div>
+        <div class="tf-container pt-80">
+            <div class="box-profile">
+                <div class="img">
+                    <img src="{% static 'main/images/avt/avt-1.jpg' %}" alt="تصویر">
+                </div>
+                <div class="info">
+                    <h3>الئونور پنا</h3>
+                    <span>+84 37 308 5530</span>
+                </div>
+            </div>
+            <ul class="mt-30">
+                <li>
+                    <a href="rate-coffee.html" class="list-view line pt-16 pb-16">
+                        <i class="icon icon-star"></i>
+                        <span>امتیاز من</span>
+                        <i class="icon-left"></i>
+                    </a>
+                </li>
+            </ul>
+            <ul class="mt-50">
+                <li>
+                    <a href="account-information.html" class="list-view line pb-16">
+                        <i class="icon icon-profile"></i>
+                        <span>اطلاعات حساب</span>
+                        <i class="icon-left"></i>
+                    </a>
+                </li>
+                <li>
+                    <a href="payment-method.html" class="list-view line pt-16 pb-16">
+                        <i class="icon icon-lock"></i>
+                        <span>تغییر رمز عبور</span>
+                        <i class="icon-left"></i>
+                    </a>
+                </li>
+            </ul>
+            <ul class="mt-50">
+                <li>
+                    <a href="order-track.html" class="list-view line pb-16">
+                        <i class="icon icon-buy"></i>
+                        <span>سفارش های من</span>
+                        <i class="icon-left"></i>
+                    </a>
+                </li>
+            </ul>
+            <a href="sign-in.html" class="list-view mt-50">
+                <i class="icon icon-setting"></i>
+                <span>داشبورد ادمین</span>
+                <i class="icon-left"></i>
+            </a>
+            <a href="sign-in.html" class="list-view mt-50">
+                <i class="icon icon-logout"></i>
+                <span>خروج</span>
+                <i class="icon-left"></i>
+            </a>
+        </div>
+        
+    </div>
+{% endblock %}

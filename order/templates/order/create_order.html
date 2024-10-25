@@ -1,0 +1,15 @@
+<h2>Create New Order</h2>
+
+<form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <h3>Order Items</h3>
+    {{ formset.management_form }}
+    {% for form in formset %}
+        {{ form.as_p }}
+    {% endfor %}
+    
+    <button type="submit">Submit</button>
+</form>
+
+<a href="{% url 'staff_dashboard' %}">Back to Dashboard</a>

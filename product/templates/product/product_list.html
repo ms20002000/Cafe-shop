@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% comment %} <form method='post' enctype="multipart/form-data">{% csrf_token %}
+    {% for product in products %}
+        <a href="{% url 'product_detail' product.category.id product.id %}">{{ product.name }}</a>
+        <img src="{{ product.product_photo.url }}" alt="{{ product.name }}" style="width: 150px; height: 150px;">
+    {% endfor %}
+</form> {% endcomment %}
+
+
+
+{% block title %}محصولات دسته بندی{% endblock %}
+{% load static %}
+
+{% block content %}
+
+<body class="appFavorite2">
+
+    <div class="app profile pb-90">
+        <div class="title-header-bar fixed-top bg-white">
+            <a href="/" class="back-btn"><i class="icon-right"></i></a>
+            {% if products %}
+                <h1>محصولات دسته بندی</h1>
+            {% else %}
+                <h1>محصولی در این دسته بندی وجود ندارد</h1>
+            {% endif %}
+        </div>
+
+        <div class="tf-container pt-80">
+            <ul>
+                    {% for product in products %}
+                        <li class="tf-box-row style-2 mb-12">
+                            <div class="img-box">
+                                <img src="{{ product.product_photo.url }}" alt="{{ product.name }}">
+                            </div>
+                            <div class="content-box">
+                                <h5><a href="{% url 'product_detail' product.category.id product.id %}">{{ product.name }}</a></h5>
+                                <ul class="review">
+                                    <li>توضیحات محصول</li>
+                                </ul>
+                                <span class="price">10.48 تومان</span>
+                                <a href="{% url 'product_detail' product.category.id product.id %}" class="btn-add">+</a>
+                            </div>
+                        </li>
+                    {% endfor %}
+            </ul>
+        </div>
+    </div>
+{% endblock %}
