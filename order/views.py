@@ -3,7 +3,12 @@ from .models import Order, OrderItem
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from .forms import OrderForm, OrderItemFormSet 
+from .forms import OrderForm, OrderItemFormSet, OrderCreateForm
+from cart.cart import Cart
+from django.contrib.auth.decorators import login_required
+
+
+
 
 class OrderCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     model = Order
@@ -68,3 +73,24 @@ class OrderUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
             return redirect(self.success_url)
         else:
             return self.form_invalid(form)
+        
+
+def order_create(request):
+    cart = Cart(request)
+    if request.method == 'POST':
+        form = OrderCreateForm(request.POST)
+        if form.is_valid():
+            order = form.save()
+            for item in cart:
+                OrderItem.objects.create(order=order, product=item['product'], price=item['price'], quantity=item['quantity'])
+            cart.clear()
+            return render(request, 'orders/order/created.html', {'order': order})
+    else:
+        form = OrderCreateForm()
+    return render(request, 'orders/order/create.html', {'cart': cart, 'form': form})
+
+
+@login_required
+def order_history(request):
+    orders = Order.objects.filter(user=request.user).order_by('-date_ordered')
+    return render(request, 'order_history.html', {'orders': orders})
