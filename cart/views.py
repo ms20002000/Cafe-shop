@@ -1,4 +1,9 @@
-from django.http import JsonResponse
+from cart.py import Cart
+from forms.py import CartAddProductForm
+from django.shortcuts import get_object_or_404 , redirect , render
+from product.models import Product
+from django.views.decorators.http import require_POST
+"""from django.http import JsonResponse
 from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 import json
@@ -21,7 +26,7 @@ class CartView(LoginRequiredMixin, UserPassesTestMixin, View):
         data = json.loads(request.body)
         item_name = data.get('name')
         item_count = data.get('count')
-        item_price = data.get('price')v 
+        item_price = data.get('price')
 
         # Initialize cart in session if it doesn't exist
         if 'cart' not in request.session:
@@ -63,3 +68,55 @@ class CartView(LoginRequiredMixin, UserPassesTestMixin, View):
             return JsonResponse({'message': 'Item removed from cart'}, status=204)
         
         return JsonResponse({'message': 'Item not found in cart'}, status=404)
+"""
+@require_POST
+def cart_add(request, product_id):
+
+    cart = Cart(request)
+
+    product = get_object_or_404(Product, id=product_id)
+
+    form = CartAddProductForm(request.POST)
+
+    if form.is_valid():
+
+        cd = form.cleaned_data
+
+        cart.add(product=product,
+
+                 quantity=cd['quantity'],
+
+                 override_quantity=cd['override'])
+
+    return redirect('cart:cart_detail')
+
+
+
+
+
+@require_POST
+def cart_remove(request, product_id):
+
+    cart = Cart(request)
+
+    product = get_object_or_404(Product, id=product_id)
+
+    cart.remove(product)
+
+    return redirect('cart:cart_detail')
+
+
+
+def cart_detail(request):
+
+    cart = Cart(request)
+
+    for item in cart:
+
+        item['update_quantity_form'] = CartAddProductForm(initial={
+
+                            'quantity': item['quantity'],
+
+                            'override': True})
+
+    return render(request, 'cart/detail.html', {'cart': cart})

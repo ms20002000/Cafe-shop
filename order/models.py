@@ -14,7 +14,7 @@ class Order(models.Model):
     status = models.CharField(max_length=20, choices=[('P', 'Pending'), ('C', 'Completed')])
     total_price = models.DecimalField(max_digits=10, decimal_places=2)
     modify_by = models.OneToOneField(CustomUser, default='Customer', on_delete=models.CASCADE)
-    payment_method = models.CharField(default='Cash')
+    payment_method = models.CharField(default='Cash' , max_length=100)
     table = models.OneToOneField(Table, on_delete=models.CASCADE, related_name='order')
 
     def total_items_count(self):
