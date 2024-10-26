@@ -1,6 +1,6 @@
 from django.db import models
 from account.models import CustomUser
-from product.models import Product
+from product.models import Product, Category
 
 class Table(models.Model):
     number = models.PositiveIntegerField(unique=True)

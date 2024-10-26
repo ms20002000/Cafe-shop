@@ -6,10 +6,12 @@ from .models import CustomUser
 from django.contrib import messages
 from django.contrib.auth.views import PasswordChangeView
 from django.views import View
-from django.views.generic import ListView
-from order.models import Order
+from django.views.generic import ListView, TemplateView
+from order.models import Order, Product, Category
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.utils.dateparse import parse_date
+from django.db.models import Count, Sum, F
+from datetime import datetime, timedelta
 
 
 class StaffLogin(View):
@@ -23,8 +25,10 @@ class StaffLogin(View):
             phone_number = form.cleaned_data.get('username')
             password = form.cleaned_data.get('password')
             user = authenticate(request, username=phone_number, password=password)
-            
-            if user is not None and user.is_staff:
+            if user is not None and user.is_admin:
+                login(request, user)
+                return redirect('manager_dashboard')
+            elif user is not None and user.is_staff:
                 login(request, user)
                 return redirect('staff_dashboard')
             else:
@@ -81,35 +85,6 @@ def logout_user(request):
     return render(request, 'account/logout.html', {})
 
 
-def permission_denied_view(request):
-    return render(request, 'account/permission_denied.html', {})
-
-def admin_required(user):
-    return user.is_authenticated and user.is_admin 
-
-@user_passes_test(admin_required, login_url='permission_denied')
-def admin_dashboard(request):
-    return render(request, 'account/admin_dashboard.html', {})
-
-
-@user_passes_test(admin_required, login_url='permission_denied')
-def list_user(request):
-    users = CustomUser.objects.all()
-    return render(request, 'account/list_users.html', {'users': users})
-
-@user_passes_test(admin_required, login_url='permission_denied')
-def edit_user(request, id):
-    user = get_object_or_404(CustomUser, id=id)  
-    if request.method == 'POST':
-        form = AdminUserEditForm(request.POST, request.FILES, instance=user)
-        if form.is_valid():
-            form.save()  
-            messages.success(request, 'User details updated successfully!')
-            return redirect('list_user')  
-    else:
-        form = AdminUserEditForm(instance=user)  
-    return render(request, 'account/edit_user.html', {'form': form})
-
 class PasswordChange(PasswordChangeView):
     template_name = 'account/change_password.html'
     def form_valid(self, form):
@@ -125,3 +100,49 @@ class PasswordChange(PasswordChangeView):
 
 def HomeView(request):
     return render(request, 'account/home.html', {})
+
+
+
+
+
+class ManagerPanelView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
+    template_name = 'account/manager_dashboard.html'
+
+    def test_func(self):
+        return self.request.user.is_admin
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        
+        # Top-selling items (filter by date if provided)
+        start_date = self.request.GET.get('start_date')
+        end_date = self.request.GET.get('end_date')
+        products_queryset = Product.objects.annotate(total_sold=Sum('order_items__quantity')).order_by('-total_sold')
+        if start_date and end_date:
+            products_queryset = products_queryset.filter(order_items__order__created_at__range=[start_date, end_date])
+        context['top_items'] = products_queryset[:10]  # top 10 items
+
+        # Total Sales
+        context['total_sales'] = Order.objects.aggregate(total_sales=Sum('total_price'))['total_sales'] or 0
+
+        # Daily, Monthly, and Yearly Sales
+        today = datetime.today()
+        context['daily_sales'] = Order.objects.filter(created_at__date=today).aggregate(daily_sales=Sum('total_price'))['daily_sales'] or 0
+        context['monthly_sales'] = Order.objects.filter(created_at__month=today.month, created_at__year=today.year).aggregate(monthly_sales=Sum('total_price'))['monthly_sales'] or 0
+        context['yearly_sales'] = Order.objects.filter(created_at__year=today.year).aggregate(yearly_sales=Sum('total_price'))['yearly_sales'] or 0
+
+        # Sales by Category
+        context['sales_by_category'] = Category.objects.annotate(total_sales=Sum('products__order_items__quantity')).order_by('-total_sales')
+
+        # Sales by Time of Day (e.g., morning, afternoon, evening)
+        morning_start, morning_end = today.replace(hour=6, minute=0), today.replace(hour=12, minute=0)
+        afternoon_start, afternoon_end = today.replace(hour=12, minute=0), today.replace(hour=18, minute=0)
+        evening_start, evening_end = today.replace(hour=18, minute=0), today.replace(hour=23, minute=59)
+        context['morning_sales'] = Order.objects.filter(created_at__range=[morning_start, morning_end]).aggregate(total=Sum('total_price'))['total'] or 0
+        context['afternoon_sales'] = Order.objects.filter(created_at__range=[afternoon_start, afternoon_end]).aggregate(total=Sum('total_price'))['total'] or 0
+        context['evening_sales'] = Order.objects.filter(created_at__range=[evening_start, evening_end]).aggregate(total=Sum('total_price'))['total'] or 0
+
+        # Customer Demographics
+        context['total_customers'] = CustomUser.objects.filter(is_customer=True).count()
+
+        return context

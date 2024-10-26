@@ -1,0 +1,53 @@
+<!-- templates/manager/manager_panel.html -->
+
+
+<h1>Manager Panel</h1>
+
+<h2>Total Sales</h2>
+<p>{{ total_sales }}</p>
+
+<h2>Daily, Monthly, and Yearly Sales</h2>
+<ul>
+    <li><strong>Daily Sales:</strong> {{ daily_sales }}</li>
+    <li><strong>Monthly Sales:</strong> {{ monthly_sales }}</li>
+    <li><strong>Yearly Sales:</strong> {{ yearly_sales }}</li>
+</ul>
+
+<h2>Top-Selling Items</h2>
+<table>
+    <tr>
+        <th>Item</th>
+        <th>Total Sold</th>
+    </tr>
+    {% for item in top_items %}
+    <tr>
+        <td>{{ item.name }}</td>
+        <td>{{ item.total_sold }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+<h2>Sales by Category</h2>
+<table>
+    <tr>
+        <th>Category</th>
+        <th>Total Sales</th>
+    </tr>
+    {% for category in sales_by_category %}
+    <tr>
+        <td>{{ category.name }}</td>
+        <td>{{ category.total_sales }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+<h2>Sales by Time of Day</h2>
+<ul>
+    <li><strong>Morning Sales:</strong> {{ morning_sales }}</li>
+    <li><strong>Afternoon Sales:</strong> {{ afternoon_sales }}</li>
+    <li><strong>Evening Sales:</strong> {{ evening_sales }}</li>
+</ul>
+
+<h2>Customer Demographics</h2>
+<p><strong>Total Customers:</strong> {{ total_customers }}</p>
+
