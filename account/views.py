@@ -53,7 +53,7 @@ class StaffDashboard(LoginRequiredMixin, UserPassesTestMixin, ListView):
         
         search_query = self.request.GET.get('phone_number')
         if search_query:
-            queryset = queryset.filter(customer__phone_number__icontains=search_query)
+            queryset = queryset.filter(modify_by__phone_number__icontains=search_query)
 
         table_number = self.request.GET.get('table_number')
         if table_number:

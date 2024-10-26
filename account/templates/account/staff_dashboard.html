@@ -48,7 +48,7 @@
         <thead>
             <tr>
                 <th>Order ID</th>
-                <th>Customer Phone</th>
+                <th>Phone Number</th>
                 <th>Status</th>
                 <th>Table Number</th>
                 <th>Date Created</th>
@@ -59,7 +59,7 @@
             {% for order in orders %}
             <tr>
                 <td>{{ order.id }}</td>
-                <td>{{ order.customer.phone_number }}</td>
+                <td>{{ order.modify_by.phone_number }}</td>
                 <td>{{ order.status }}</td>
                 <td>{{ order.table.number }}</td>
                 <td>{{ order.created_at|date:"Y-m-d" }}</td>

@@ -15,7 +15,7 @@ class Order(models.Model):
     total_price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     payment_method = models.CharField(max_length=20, default='Cash')
     table = models.OneToOneField(Table, on_delete=models.CASCADE, related_name='order', null=True, blank=True)
-    modify_by = models.OneToOneField(CustomUser, default=1, on_delete=models.CASCADE)
+    modify_by = models.ForeignKey(CustomUser, default=1, on_delete=models.CASCADE)
 
     def total_items_count(self):
         total = 0
