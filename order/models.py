@@ -2,6 +2,7 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from account.models import CustomUser
 from product.models import Product, Category
+from django.utils.translation import gettext_lazy as _
 
 class Table(models.Model):
     number = models.PositiveIntegerField(unique=True)
@@ -11,10 +12,24 @@ class Table(models.Model):
         return str(self.number)
 
 class Order(models.Model):
+
+    class StatusOrder(models.TextChoices):
+        PENDING = "P", _("Pending")
+        REGISTERED = "R", _("Registered")
+        APPROVED = "A", _("Approved")
+        CANCELLED = "CA", _("Cancelled")
+        COOKING = "CK", _("Cooking")
+        COMPLETED = "C", _("Completed")
+
+
+    class PaymentMethod(models.TextChoices):
+        CASH = "C", _("Cash")
+        INTERNET = "I", _("Internet")
+
     created_at = models.DateTimeField(auto_now_add=True)
-    status = models.CharField(max_length=20, choices=[('P', 'Pending'), ('C', 'Completed')])
+    status = models.CharField(max_length=20, choices=StatusOrder.choices, default=StatusOrder.PENDING)
     total_price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    payment_method = models.CharField(max_length=20, default='Cash')
+    payment_method = models.CharField(max_length=20, default=PaymentMethod.CASH, choices=PaymentMethod.choices)
     table = models.ForeignKey(Table, on_delete=models.CASCADE, related_name='orders', null=True, blank=True)
     modify_by = models.ForeignKey(CustomUser, default=1, on_delete=models.CASCADE)
 

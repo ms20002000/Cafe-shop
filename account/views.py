@@ -116,22 +116,31 @@ class ManagerPanelView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
         # Top-selling items (filter by date if provided)
         start_date = self.request.GET.get('start_date')
         end_date = self.request.GET.get('end_date')
-        products_queryset = Product.objects.annotate(total_sold=Sum('order_items__quantity')).order_by('-total_sold')
+        products_queryset = Product.objects.annotate(total_sold=Sum('order_items__quantity')
+                                                     ).order_by('-total_sold')
         if start_date and end_date:
-            products_queryset = products_queryset.filter(order_items__order__created_at__range=[start_date, end_date])
+            products_queryset = products_queryset.filter(
+                order_items__order__created_at__range=[start_date, end_date])
         context['top_items'] = products_queryset[:10]
 
         # Total Sales
-        context['total_sales'] = Order.objects.aggregate(total_sales=Sum('total_price'))['total_sales'] or 0
+        context['total_sales'] = Order.objects.aggregate(total_sales=Sum('total_price')
+                                                         )['total_sales'] or 0
 
         # Daily, Monthly, and Yearly Sales
         today = timezone.localtime(timezone.now())
-        context['daily_sales'] = Order.objects.filter(created_at__date=today.date()).aggregate(daily_sales=Sum('total_price'))['daily_sales'] or 0
-        context['monthly_sales'] = Order.objects.filter(created_at__month=today.month, created_at__year=today.year).aggregate(monthly_sales=Sum('total_price'))['monthly_sales'] or 0
-        context['yearly_sales'] = Order.objects.filter(created_at__year=today.year).aggregate(yearly_sales=Sum('total_price'))['yearly_sales'] or 0
+        context['daily_sales'] = Order.objects.filter(created_at__date=today.date()
+                                ).aggregate(daily_sales=Sum('total_price'))['daily_sales'] or 0
+        context['monthly_sales'] = Order.objects.filter(
+            created_at__month=today.month, created_at__year=today.year
+            ).aggregate(monthly_sales=Sum('total_price'))['monthly_sales'] or 0
+        context['yearly_sales'] = Order.objects.filter(
+            created_at__year=today.year).aggregate(
+                yearly_sales=Sum('total_price'))['yearly_sales'] or 0
 
         # Sales by Category
-        context['sales_by_category'] = Category.objects.annotate(total_sales=Sum('products__order_items__quantity')).order_by('-total_sales')
+        context['sales_by_category'] = Category.objects.annotate(
+            total_sales=Sum('products__order_items__quantity')).order_by('-total_sales')
 
         # Sales by Time of Day (morning, afternoon, evening)
         morning_start = today.replace(hour=6, minute=0, second=0, microsecond=0)
@@ -141,9 +150,15 @@ class ManagerPanelView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
         evening_start = today.replace(hour=18, minute=0, second=0, microsecond=0)
         evening_end = today.replace(hour=23, minute=59, second=59, microsecond=0)
 
-        context['morning_sales'] = Order.objects.filter(created_at__range=[morning_start, morning_end]).aggregate(total=Sum('total_price'))['total'] or 0
-        context['afternoon_sales'] = Order.objects.filter(created_at__range=[afternoon_start, afternoon_end]).aggregate(total=Sum('total_price'))['total'] or 0
-        context['evening_sales'] = Order.objects.filter(created_at__range=[evening_start, evening_end]).aggregate(total=Sum('total_price'))['total'] or 0
+        context['morning_sales'] = Order.objects.filter(
+            created_at__range=[morning_start, morning_end]).aggregate(
+                total=Sum('total_price'))['total'] or 0
+        context['afternoon_sales'] = Order.objects.filter(
+            created_at__range=[afternoon_start, afternoon_end]).aggregate(
+                total=Sum('total_price'))['total'] or 0
+        context['evening_sales'] = Order.objects.filter(
+            created_at__range=[evening_start, evening_end]).aggregate(
+                total=Sum('total_price'))['total'] or 0
 
         # Customer Demographics
         context['total_customers'] = CustomUser.objects.filter(is_customer=True).count()
