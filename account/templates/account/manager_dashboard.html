@@ -47,3 +47,61 @@
 
 <h2>Customer Demographics</h2>
 <p><strong>Total Customers:</strong> {{ total_customers }}</p>
+
+<h2>Sales by Customer (Phone)</h2>
+<table>
+    <tr>
+        <th>Customer Phone</th>
+        <th>Total Spent</th>
+    </tr>
+    {% for customer in sales_by_customer %}
+    <tr>
+        <td>{{ customer.phone_number }}</td>
+        <td>{{ customer.total_spent }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+<h2>Sales by Employee</h2>
+<table>
+    <tr>
+        <th>Employee</th>
+        <th>Total Orders Handled</th>
+    </tr>
+    {% for employee in sales_by_employee %}
+    <tr>
+        <td>{{ employee.first_name }} {{ employee.last_name }} </td>
+        <td>{{ employee.total_orders_handled }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+<h2>Customer Order History</h2>
+<table>
+    <tr>
+        <th>Order ID</th>
+        <th>Customer Phone</th>
+        <th>Total Price</th>
+        <th>Status</th>
+        <th>Order Date</th>
+    </tr>
+    {% for order in customer_order_history %}
+    <tr>
+        <td>{{ order.id }}</td>
+        <td>{{ order.customer.phone_number }}</td>
+        <td>{{ order.total_price }}</td>
+        <td>{{ order.get_status_display }}</td>
+        <td>{{ order.created_at }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+<h2>Peak Business Hour</h2>
+{% if peak_business_hour %}
+<p>The peak business hour is: {{ peak_business_hour }}:00 with total sales of {{ peak_business_hour_sales }}</p>
+{% else %}
+<p>No peak business hour data available.</p>
+{% endif %}
+
+<h2>Download Sales Report</h2>
+<p><a href="{% url 'export_sales_report' %}" class="btn btn-primary">Download Sales Report (CSV)</a></p>

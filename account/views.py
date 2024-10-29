@@ -12,6 +12,9 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.utils.dateparse import parse_date
 from django.db.models import Count, Sum, F
 from django.utils import timezone
+import csv
+from django.http import HttpResponse
+from django.db.models.functions import ExtractHour
 
 class StaffLogin(View):
     def get(self, request):
@@ -101,9 +104,6 @@ def HomeView(request):
     return render(request, 'account/home.html', {})
 
 
-
-
-
 class ManagerPanelView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
     template_name = 'account/manager_dashboard.html'
 
@@ -124,8 +124,8 @@ class ManagerPanelView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
         context['top_items'] = products_queryset[:10]
 
         # Total Sales
-        context['total_sales'] = Order.objects.aggregate(total_sales=Sum('total_price')
-                                                         )['total_sales'] or 0
+        context['total_sales'] = Order.objects.aggregate(
+                            total_sales=Sum('total_price'))['total_sales'] or 0
 
         # Daily, Monthly, and Yearly Sales
         today = timezone.localtime(timezone.now())
@@ -163,4 +163,43 @@ class ManagerPanelView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
         # Customer Demographics
         context['total_customers'] = CustomUser.objects.filter(is_customer=True).count()
 
+        # Sales by Customer (phone)
+        # context['sales_by_customer'] = CustomUser.objects.filter(is_customer=True).annotate(
+        #     total_spent=Sum('customer_orders__total_price')).order_by('-total_spent')
+
+        # Sales by Employee Report
+        context['sales_by_employee'] = CustomUser.objects.filter(is_staff=True).annotate(
+            total_orders_handled=Count('order'))
+
+        # Customer Order History
+        # context['customer_order_history'] = Order.objects.select_related('customer').all()
+
+        # Peak Business Hour
+        peak_hour_data = Order.objects.annotate(hour=ExtractHour('created_at')).values('hour').annotate(
+            total_sales=Sum('total_price')).order_by('-total_sales').first()
+        if peak_hour_data:
+            context['peak_business_hour'] = peak_hour_data['hour']
+            context['peak_business_hour_sales'] = peak_hour_data['total_sales']
+        else:
+            context['peak_business_hour'] = None
+            context['peak_business_hour_sales'] = 0
+
         return context
+    
+class ExportSalesReportView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
+
+    def test_func(self):
+        return self.request.user.is_admin
+
+    def get(self, request, *args, **kwargs):
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="sales_report.csv"'
+
+        writer = csv.writer(response)
+        writer.writerow(['Order ID', 'Customer', 'Employee', 'Total Price', 'Status', 'Created At'])
+
+        orders = Order.objects.all()
+        for order in orders:
+            writer.writerow([order.id, order.modify_by.phone_number, order.modify_by.first_name, order.total_price, order.status, order.created_at])
+
+        return response

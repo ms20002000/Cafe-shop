@@ -8,4 +8,5 @@ urlpatterns = [
     path('staff_dashboard/', StaffDashboard.as_view(), name='staff_dashboard'),
     path('logout/', logout_user, name='logout'),
     path('change_password/', PasswordChange.as_view(), name='change_password'),
+    path('export_sales_report/', ExportSalesReportView.as_view(), name='export_sales_report'),
 ]
