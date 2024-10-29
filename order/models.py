@@ -3,6 +3,7 @@ from django.db import models
 from account.models import CustomUser
 from product.models import Product, Category
 from django.utils.translation import gettext_lazy as _
+from django.db.models import Q
 
 class Table(models.Model):
     number = models.PositiveIntegerField(unique=True)
@@ -10,6 +11,13 @@ class Table(models.Model):
 
     def __str__(self):
         return str(self.number)
+    
+    @staticmethod
+    def available_tables():
+        tables_with_non_completed_orders = Order.objects.exclude(
+            Q(status=Order.StatusOrder.COMPLETED) | Q(status=Order.StatusOrder.CANCELLED)
+            ).values_list('table', flat=True)
+        return Table.objects.exclude(id__in=tables_with_non_completed_orders)
 
 class Order(models.Model):
 
@@ -24,7 +32,7 @@ class Order(models.Model):
 
     class PaymentMethod(models.TextChoices):
         CASH = "C", _("Cash")
-        INTERNET = "I", _("Internet")
+        ONLINEPAY = "O", _("OnlinePay")
 
     created_at = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=20, choices=StatusOrder.choices, default=StatusOrder.PENDING)
@@ -40,8 +48,15 @@ class Order(models.Model):
         return sum(item.total_price() for item in self.items.all())
 
     def clean(self):
-        if self.status == 'P' and Order.objects.filter(table=self.table, status='P').exclude(pk=self.pk).exists():
-            raise ValidationError(f'Table {self.table} already has a pending order.')
+        active_statuses = [
+            Order.StatusOrder.PENDING,
+            Order.StatusOrder.REGISTERED,
+            Order.StatusOrder.APPROVED,
+            Order.StatusOrder.COOKING,
+        ]
+
+        if Order.objects.filter(table=self.table, status__in=active_statuses).exclude(pk=self.pk).exists():
+            raise ValidationError(f'Table {self.table} cannot be selected as it has an active order that is not completed.')
 
     def save(self, *args, **kwargs):
         self.clean()
