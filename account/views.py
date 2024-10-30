@@ -15,6 +15,7 @@ from django.utils import timezone
 import csv
 from django.http import HttpResponse
 from django.db.models.functions import ExtractHour
+from datetime import datetime
 
 class StaffLogin(View):
     def get(self, request):
@@ -116,11 +117,15 @@ class ManagerPanelView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
         # Top-selling items (filter by date if provided)
         start_date = self.request.GET.get('start_date')
         end_date = self.request.GET.get('end_date')
-        products_queryset = Product.objects.annotate(total_sold=Sum('order_items__quantity')
-                                                     ).order_by('-total_sold')
-        if start_date and end_date:
-            products_queryset = products_queryset.filter(
-                order_items__order__created_at__range=[start_date, end_date])
+        if not start_date:
+            start_date = datetime.min  
+        if not end_date:
+            end_date = timezone.now() 
+
+        products_queryset = Product.objects.filter(
+            order_items__order__created_at__range=[start_date, end_date]
+                    ).annotate(total_sold=Sum('order_items__quantity')
+                                    ).order_by('-total_sold')
         context['top_items'] = products_queryset[:10]
 
         # Total Sales
