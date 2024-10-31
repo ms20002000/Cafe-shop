@@ -6,7 +6,8 @@ from django.conf import settings
 
 from django.utils import timezone
 
-
+from product.models import Product
+from django.shortcuts import get_object_or_404 
 
 class Cart:
 
@@ -32,32 +33,21 @@ class Cart:
 
 
 
-    def add(self, product, quantity=1, override_quantity=False):
+    def add(self, product_identifier):
+        # Attempt to retrieve the product by ID first
+        try:
+            product_id = int(product_identifier)  # Convert to int if it's a numeric string
+            product = Product.objects.get(id=product_id)
+        except (ValueError, Product.DoesNotExist):
+            # If that fails, try to get it by name
+            product = get_object_or_404(Product, name=product_identifier)
 
-        """
-
-        Add a product to the cart or update its quantity.
-
-        """
-
-        product_id = str(product.id)
-
-        if product_id not in self.cart:
-
-            self.cart[product_id] = {'quantity': 0,
-
-                                     'price': str(product.price)}
-
-        if override_quantity:
-
-            self.cart[product_id]['quantity'] = quantity
-
+        # Now you can safely access product.id
+        if product.id in self.cart:
+            self.cart[product.id]['quantity'] += 1  # Update quantity if exists
         else:
-
-            self.cart[product_id]['quantity'] += quantity
-
-        self.save()
-
+            self.cart[product.id] = {'quantity': 1, 'price': product.price}  # Add new product
+        self.save()  # Save the cart state
 
 
     def save(self):

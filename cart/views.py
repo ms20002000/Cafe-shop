@@ -1,5 +1,5 @@
-from cart.py import Cart
-from forms.py import CartAddProductForm
+
+from .forms import CartAddProductForm
 from django.shortcuts import get_object_or_404 , redirect , render
 from product.models import Product
 from django.views.decorators.http import require_POST
@@ -69,6 +69,39 @@ class CartView(LoginRequiredMixin, UserPassesTestMixin, View):
         
         return JsonResponse({'message': 'Item not found in cart'}, status=404)
 """
+
+class Cart:
+    def __init__(self, request):
+        self.session = request.session
+        cart = self.session.get('cart')
+        if not cart:
+            cart = self.session['cart'] = {}
+        self.cart = cart
+
+    def add(self, product, quantity=1, override_quantity=False):
+        product_id = str(product.id)
+        if product_id not in self.cart:
+            self.cart[product_id] = {'quantity': 0, 'price': str(product.price)}
+        if override_quantity:
+            self.cart[product_id]['quantity'] = quantity
+        else:
+            self.cart[product_id]['quantity'] += quantity
+        self.save()
+
+    def save(self):
+        self.session.modified = True
+
+    def remove(self, product):
+        product_id = str(product.id)
+        if product_id in self.cart:
+            del self.cart[product_id]
+            self.save()
+
+    def iter(self):
+        for item in self.cart.values():
+            yield item
+
+
 @require_POST
 def cart_add(request, product_id):
 
@@ -108,15 +141,27 @@ def cart_remove(request, product_id):
 
 
 def cart_detail(request):
+    cart = Cart(request)  # This line should work if Cart is defined correctly
 
-    cart = Cart(request)
-
-    for item in cart:
-
+    # Prepare the cart items with forms for updating quantities
+    for item in cart.iter():
         item['update_quantity_form'] = CartAddProductForm(initial={
+            'quantity': item['quantity'],
+            'override': True
+        })
 
-                            'quantity': item['quantity'],
+    return render(request, 'test_cart.html', {'cart': cart})
 
-                            'override': True})
 
-    return render(request, 'cart/detail.html', {'cart': cart})
+@require_POST
+def cart_add_multiple(request):
+    cart = Cart(request)
+    product_identifiers = request.POST.getlist('product_id[]')
+    print(product_identifiers)
+    
+    for identifier in product_identifiers:
+        product = get_object_or_404(Product, id=identifier)  # Fetch the Product object
+        print(f"product{product}")
+        cart.add(product)  # Now pass the actual Product object
+    
+    return redirect('cart:cart_detail')  # Redirect to the cart detail page

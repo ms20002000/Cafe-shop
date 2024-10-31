@@ -83,48 +83,58 @@ class OrderUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         else:
             return self.form_invalid(form)
         
-    class OrderSessionView(View):
-        def generate_random_id(self, length=8):
-            """Generate a random ID consisting of uppercase letters and digits."""
-            characters = string.ascii_uppercase + string.digits
-            random_id = ''.join(random.choice(characters) for _ in range(length))
-            return random_id
+from django.views import View
+from django.http import JsonResponse
+import string
+import random
+from django.conf import settings
 
-        def post(self, request, *args, **kwargs):
-            """Add the cart from cookies to the session."""
-            cart_items = request.COOKIES.get(settings.CART_COOKIE_NAME)
+class OrderSessionView(View):
+    def generate_random_id(self, length=8):
+        """Generate a random ID consisting of uppercase letters and digits."""
+        characters = string.ascii_uppercase + string.digits
+        random_id = ''.join(random.choice(characters) for _ in range(length))
+        return random_id
 
-            if cart_items:
-                # Prepare order details for the session
-                order_details = {
-                    'order_id': self.generate_random_id(),
-                    'order_details': cart_items,  # Store the cart items directly
-                    'status': 'Created'  # Initial status
-                }
-                
-                # Save order details to the session
-                request.session['order'] = order_details
-                
-                return JsonResponse({'message': 'Cart saved to session', 'order': order_details}, status=200)
+    def get(self, request, *args, **kwargs):
+        """Retrieve the order session."""
+        order = request.session.get('cart')
+        if order:
+            return JsonResponse({'message': 'Order retrieved successfully', 'order': order}, status=200)
+        else:
+            return JsonResponse({'message': 'No order session found'}, status=404)
+
+    def post(self, request, *args, **kwargs):
+        """Add the cart from cookies to the session."""
+        cart_items = request.COOKIES.get(settings.CART_COOKIE_NAME)
+
+        if cart_items:
+            order_details = {
+                'order_id': self.generate_random_id(),
+                'order_details': cart_items,
+                'status': 'Created'
+            }
+            request.session['order'] = order_details
+            return JsonResponse({'message': 'Cart saved to session', 'order': order_details}, status=200)
+        else:
+            return JsonResponse({'message': 'No cart items found in cookies'}, status=404)
+
+    def delete(self, request, *args, **kwargs):
+        """Delete the order session."""
+        if 'order' in request.session:
+            del request.session['order']
+            return JsonResponse({'message': 'Order session deleted successfully'}, status=200)
+        else:
+            return JsonResponse({'message': 'No order session found'}, status=404)
+
+    def put(self, request, *args, **kwargs):
+        """Update the status of the order."""
+        if 'order' in request.session:
+            new_status = request.POST.get('status')
+            if new_status:
+                request.session['order']['status'] = new_status
+                return JsonResponse({'message': 'Order status updated', 'order': request.session['order']}, status=200)
             else:
-                return JsonResponse({'message': 'No cart items found in cookies'}, status=404)
-
-        def delete(self, request, *args, **kwargs):
-            """Delete the order session."""
-            if 'order' in request.session:
-                del request.session['order']
-                return JsonResponse({'message': 'Order session deleted successfully'}, status=200)
-            else:
-                return JsonResponse({'message': 'No order session found'}, status=404)
-
-        def put(self, request, *args, **kwargs):
-            """Update the status of the order."""
-            if 'order' in request.session:
-                new_status = request.POST.get('status')
-                if new_status:
-                    request.session['order']['status'] = new_status
-                    return JsonResponse({'message': 'Order status updated', 'order': request.session['order']}, status=200)
-                else:
-                    return JsonResponse({'message': 'No status provided'}, status=400)
-            else:
-                return JsonResponse({'message': 'No order session found'}, status=404)
+                return JsonResponse({'message': 'No status provided'}, status=400)
+        else:
+            return JsonResponse({'message': 'No order session found'}, status=404)

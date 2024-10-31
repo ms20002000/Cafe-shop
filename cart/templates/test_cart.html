@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 20px;
+}
+
+.container {
+    max-width: 800px;
+    margin: auto;
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    text-align: center;
+    color: #333;
+}
+
+.cart-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.product-name {
+    flex: 1;
+}
+
+.product-price {
+    margin-right: 20px;
+}
+
+button {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+button:hover {
+    background-color: #218838;
+}
+
+input[type="number"] {
+    width: 60px;
+    margin-right: 10px;
+}
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Your Shopping Cart</h1>
+        <div id="cart-items">
+            <!-- Cart items will be dynamically populated here -->
+            {% for item in cart.iter %}
+<div class="cart-item">
+    <span class="product-name">{{ item.name }}</span>
+    <span class="product-price">${{ item.price }}</span>
+    {% if item.id %}
+    <form method="POST" action="{% url 'cart:cart_remove' item.id %}">
+        {% csrf_token %}
+        <button type="submit">Remove</button>
+    </form>
+    <form method="POST" action="{% url 'cart:cart_add' item.id %}">
+        {% csrf_token %}
+        <input type="number" name="quantity" value="{{ item.quantity }}" min="1">
+        <input type="hidden" name="override" value="True">
+        <button type="submit">Update</button>
+    </form>
+    {% else %}
+    <span class="error">Invalid item ID</span>
+    {% endif %}
+</div>
+{% endfor %}
+        </div>
+        <form id="add-product-form" method="POST" action="{% url 'cart:cart_add_multiple' %}">
+            {% csrf_token %}
+            <input type="text" name="product_id[]" placeholder="Enter product ID" required>
+            <button type="submit">Add Multiple Products</button>
+        </form>
+    </div>
+    <script src="script.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+    const addProductForm = document.getElementById('add-product-form');
+    addProductForm.addEventListener('submit', function(event) {
+        const productIdInput = addProductForm.querySelector('input[name="product_id[]"]');
+        if (!productIdInput.value.trim()) {
+            event.preventDefault();
+            alert('Please enter a product ID.');
+        }
+    });
+});
+    </script>
+</body>
+</html>
