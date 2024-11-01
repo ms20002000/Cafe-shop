@@ -1,23 +1,117 @@
-<h2>Update Order</h2>
+{% extends 'staff-base.html' %}
+{% block title %}حساب کاربری{% endblock %}
+{% load static %}
+{% block content %}
 
-<form method="POST">
-    {% csrf_token %}
-    
-    {{ form.as_p }}
-    
-    <h3>Order Items</h3>
-    {{ formset.management_form }}
-    {% for form in formset %}
-        <div>
-            {% if form.instance.pk %}
-            <p>Current Product: {{ form.instance.product.name }}</p>
-            {% endif %}
-            {{ form.as_p }}
+<div class="page-content">
+
+    <nav class="page-breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item">سفارشات</li>
+        <li class="breadcrumb-item"><a href="{% url 'staff_dashboard' %}">لیست سفارشات</a></li>
+        <li class="breadcrumb-item active" aria-current="page">ویرایش سفارش</li>
+      </ol>
+    </nav>
+
+    <div class="row">
+        <div class="col-md-12 stretch-card">
+            <form>
+          <div class="card">
+            <div class="card-body">
+              <h6 class="card-title">اطلاعات سفارش</h6>
+              <form>
+                <div class="row">
+                  <div class="col-sm-4">
+                    <div class="mb-3">
+                      <label class="form-label">وضعیت</label>
+                      <select class="form-select" id="exampleFormControlSelect1">
+
+                        <option selected disabled>وضعیت های موجود در این آپشن ها قرار خواهند گرفت</option>
+                      </select>
+                    </div>
+                  </div><!-- Col -->
+                  <div class="col-sm-4">
+                    <div class="mb-3">
+                      <label class="form-label">روش پرداخت</label>
+                      <select class="form-select" id="exampleFormControlSelect1">
+                        <option selected disabled>روش های پرداخت موجود در این آپشن ها قرار خواهند گرفت</option>
+                      </select>
+                    </div>
+                  </div><!-- Col -->
+                  <div class="col-sm-4">
+                    <div class="mb-3">
+                      <label class="form-label">شماره میز</label>
+                      <select class="form-select" id="exampleFormControlSelect1">
+                        <option selected disabled>شماره میز در این آپشن ها قرار خواهند گرفت</option>
+                      </select>
+                    </div>
+                  </div><!-- Col -->
+                </div><!-- Row -->
+                <div class="row">
+					<div class="col-md-12 grid-margin stretch-card">
+						<div class="card">
+							<div class="card-body">
+								<h6 class="card-title">آیتم های سفارش</h6>
+								<div class="table-responsive pt-3">
+									<table class="table table-bordered">
+										<thead>
+											<tr>
+												<th>نام</th>
+												<th>تعداد</th>
+												<th>عملیات</th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr>
+												<td>
+                                                    <select class="form-select" id="exampleFormControlSelect1">
+                                                    <option selected disabled>نام محصول در اینجا قرار میگیرد</option>
+                                                  </select></td>
+												<td>
+													<input type="number" class="form-control" id="exampleInputNumber1" value="تعداد محصول در اینجا">
+												</td>
+												<td>
+                                                    <input type="checkbox" class="form-check-input" id="checkDefault">
+                                                    <label class="form-check-label" for="checkDefault">
+                                                      حذف
+                                                    </label>
+                                                </td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+              </form>
+              <button type="button" class="btn btn-primary submit">به‌روز‌رسانی</button>
+            </div>
+          </div>
         </div>
-    {% endfor %}
-    
-    <button type="submit">Save Changes</button>
-</form>
+      </div>
 
-<a href="{% url 'staff_dashboard' %}">Back to Dashboard</a> 
+    <h2>Update Order</h2>
 
+    <form method="POST">
+        {% csrf_token %}
+        
+        {{ form.as_p }}
+        
+        <h3>Order Items</h3>
+        {{ formset.management_form }}
+        {% for form in formset %}
+            <div>
+                {% if form.instance.pk %}
+                <p>Current Product: {{ form.instance.product.name }}</p>
+                {% endif %}
+                {{ form.as_p }}
+            </div>
+        {% endfor %}
+        
+        <button type="submit">Save Changes</button>
+    </form>
+
+    <a href="{% url 'staff_dashboard' %}">Back to Dashboard</a> 
+</div>
+{% endblock %}
