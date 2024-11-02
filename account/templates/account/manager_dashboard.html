@@ -115,5 +115,20 @@
 <h2>Add Staff</h2>
 <p><a href="{% url 'add_staff' %}" class="btn btn-primary">Add Staff</a></p>
 
+<h2>Add Category</h2>
+<p><a href="{% url 'add_category' %}" class="btn btn-primary">Add Category</a></p>
+
+<h2>Add Product</h2>
+<p><a href="{% url 'add_product' %}" class="btn btn-primary">Add Product</a></p>
+
+<h2>Staff List and Update</h2>
+<p><a href="{% url 'staff_list' %}" class="btn btn-primary">Staff List</a></p>
+
 <h2>Download Sales Report</h2>
 <p><a href="{% url 'export_sales_report' %}" class="btn btn-primary">Download Sales Report (CSV)</a></p>
+
+<h2>Logout</h2>
+<form method="POST" action="{% url 'logout' %}">
+    {% csrf_token %}
+    <button type="submit">Logout</button>
+</form>

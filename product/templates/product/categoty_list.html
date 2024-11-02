@@ -39,6 +39,11 @@
                                     <span>64</span>
                                 </div>
                             </a>
+                            {% if request.user.is_admin %}
+                            <button>
+                                <a href="{% url 'update_category' category.id %}">Edit</a>
+                            </button>
+                            {% endif %}
                         </li>
                         {% endfor %}
                     </ul>

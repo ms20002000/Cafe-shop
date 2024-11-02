@@ -40,6 +40,11 @@
                                 <span class="price">10.48 تومان</span>
                                 <a href="{% url 'product_detail' product.category.id product.id %}" class="btn-add">+</a>
                             </div>
+                            {% if request.user.is_admin %}
+                            <button>
+                                <a href="{% url 'update_product' product.id %}">Edit</a>
+                            </button>
+                            {% endif %}
                         </li>
                     {% endfor %}
             </ul>

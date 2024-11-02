@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate, logout
-from .forms import LoginForm, StaffAddForm
-from django.contrib.auth.decorators import user_passes_test
+from .forms import LoginForm, StaffAddForm, StaffUpdateForm
+from django.views.generic.edit import UpdateView
 from .models import CustomUser
 from django.contrib import messages
 from django.contrib.auth.views import PasswordChangeView
@@ -12,6 +12,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.utils.dateparse import parse_date
 from django.db.models import Count, Sum, F
 from django.utils import timezone
+from django.urls import reverse_lazy
 import csv
 from django.http import HttpResponse
 from django.db.models.functions import ExtractHour
@@ -101,8 +102,8 @@ class PasswordChange(PasswordChangeView):
         else:
             return redirect('home')
 
-def HomeView(request):
-    return render(request, 'account/home.html', {})
+# def HomeView(request):
+#     return render(request, 'account/home.html', {})
 
 
 class ManagerPanelView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
@@ -228,3 +229,24 @@ class AddStaffView(LoginRequiredMixin, UserPassesTestMixin, View):
             user.save()
             return redirect('manager_dashboard')
         return render(request, self.template_name, {'form': form})
+
+class StaffListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
+    model = CustomUser
+    template_name = 'account/staff_list.html'
+    context_object_name = 'staff_list'
+
+    def get_queryset(self):
+        return CustomUser.objects.filter(is_staff=True)
+
+    def test_func(self):
+        return self.request.user.is_admin
+
+
+class StaffUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = CustomUser
+    form_class = StaffUpdateForm
+    template_name = 'account/update_staff.html'
+    success_url = reverse_lazy('staff_list')
+
+    def test_func(self):
+        return self.request.user.is_admin
