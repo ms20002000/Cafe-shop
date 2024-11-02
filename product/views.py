@@ -11,6 +11,29 @@ def home(request):
     categories = Category.objects.filter(is_available=True)
     return render(request, 'product/home.html', {'categories': categories})
 
+
+class ProductView(View):
+    template_name = 'product/home.html'
+
+    def get(self, request):
+        categories = Category.objects.filter(is_available=True)
+        print(categories)
+        return render(request, self.template_name, {'categories': categories})
+
+    def post(self, request):
+        query = request.POST.get('q', '')  # Get the search parameter from the POST data
+        products = Product.objects.filter(name__icontains=query)  # Search only by name
+
+        # Check if products queryset is empty
+        is_empty = not products.exists()  # Set to True if no products are found
+
+        context = {
+            'products': products,
+            'query': query,
+            'is_empty': is_empty,  # Pass the is_empty variable to the template
+        }
+        return render(request, self.template_name, context)
+
     
 def product_list(request, name):
     category = get_object_or_404(Category, name=name)
