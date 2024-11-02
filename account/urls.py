@@ -1,8 +1,8 @@
 from django.urls import path
 from .views import *
+from product.views import ProductUpdateView, CategoryUpdateView
 
 urlpatterns = [
-    # path('', HomeView, name='home'),
     path('login/', StaffLogin.as_view(), name='staff_login'),
     path('manager_dashboard/', ManagerPanelView.as_view(), name='manager_dashboard'),
     path('staff_list/', StaffListView.as_view(), name='staff_list'),

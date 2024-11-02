@@ -33,12 +33,12 @@
                                 <img src="{{ product.product_photo.url }}" alt="{{ product.name }}">
                             </div>
                             <div class="content-box">
-                                <h5><a href="{% url 'product_detail' product.category.id product.id %}">{{ product.name }}</a></h5>
+                                <h5><a href="{% url 'product_detail' product.category.name product.name %}">{{ product.name }}</a></h5>
                                 <ul class="review">
                                     <li>توضیحات محصول</li>
                                 </ul>
                                 <span class="price">10.48 تومان</span>
-                                <a href="{% url 'product_detail' product.category.id product.id %}" class="btn-add">+</a>
+                                <a href="{% url 'product_detail' product.category.name product.name %}" class="btn-add">+</a>
                             </div>
                             {% if request.user.is_admin %}
                             <button>

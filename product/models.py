@@ -1,7 +1,7 @@
 from django.db import models
 
 class Category(models.Model):
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, unique=True)
     category_photo = models.ImageField(upload_to='category_photos/', default='category_photos/default.jpg')
     is_available = models.BooleanField(default=True)
 

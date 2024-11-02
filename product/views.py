@@ -7,14 +7,13 @@ from django.views.generic.edit import UpdateView
 from django.urls import reverse_lazy
 
 
-
-def category_list(request):
+def home(request):
     categories = Category.objects.filter(is_available=True)
-    return render(request, 'product/categoty_list.html', {'categories': categories})
+    return render(request, 'product/home.html', {'categories': categories})
 
     
-def product_list(request, id):
-    category = get_object_or_404(Category, id=id)
+def product_list(request, name):
+    category = get_object_or_404(Category, name=name)
     if category.name == 'All Products':
         products = Product.objects.filter(is_available=True)
     else:    
@@ -23,8 +22,8 @@ def product_list(request, id):
     
 
 
-def product_detail(request, id, product_id):
-    product = get_object_or_404(Product, id=product_id)
+def product_detail(request, name, product_name):
+    product = get_object_or_404(Product, name=product_name)
     return render(request, 'product/product_detail.html', {'product': product})
 
 
@@ -50,7 +49,7 @@ class CategoryUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Category
     form_class = CategoryUpdateForm
     template_name = 'product/update_category.html'
-    success_url = reverse_lazy('category_list')  
+    success_url = reverse_lazy('home')  
 
     def test_func(self):
         return self.request.user.is_admin
@@ -78,7 +77,7 @@ class ProductUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Product
     form_class = ProductUpdateForm
     template_name = 'product/update_product.html'
-    success_url = reverse_lazy('category_list')  
+    success_url = reverse_lazy('home')  
 
     def test_func(self):
         return self.request.user.is_admin

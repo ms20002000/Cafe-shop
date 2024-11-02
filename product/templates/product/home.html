@@ -30,7 +30,7 @@
                     <ul class="wrap-categories">
                         {% for category in categories %}
                         <li class="categories-item">
-                            <a href="{% url 'product_list' category.id %}">
+                            <a href="{% url 'product_list' category.name %}">
                                 <div class="box-img">
                                     <img src="{{ category.category_photo.url }}" alt="{{ category.name }}">
                                 </div>
