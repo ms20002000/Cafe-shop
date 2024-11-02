@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Session Management</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            cursor: pointer;
+            border-radius: 4px;
+            margin: 5px;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+
+        .message {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 4px;
+        }
+
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Manage Your Order Session</h1>
+        <div id="message" class="message" style="display: none;"></div>
+        <button id="save-cart">Save Cart to Session</button>
+        <button id="delete-order">Delete Order Session</button>
+        <input type="text" id="status-input" placeholder="Enter new status" />
+        <button id="update-status">Update Order Status</button>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const messageDiv = document.getElementById('message');
+
+            document.getElementById('save-cart').addEventListener('click', function() {
+                fetch('/your-api-endpoint/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'same-origin'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    showMessage(data.message, 'success');
+                })
+                .catch(error => {
+                    showMessage('Error saving cart: ' + error.message, 'error');
+                });
+            });
+
+            document.getElementById('delete-order').addEventListener('click', function() {
+                fetch('/your-api-endpoint/', {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'same-origin'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    showMessage(data.message, 'success');
+                })
+                .catch(error => {
+                    showMessage('Error deleting order: ' + error.message, 'error');
+                });
+            });
+
+            document.getElementById('update-status').addEventListener('click', function() {
+                const status = document.getElementById('status-input').value;
+                fetch('/your-api-endpoint/', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ status: status }),
+                    credentials: 'same-origin'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    showMessage(data.message, 'success');
+                })
+                .catch(error => {
+                    showMessage('Error updating status: ' + error.message, 'error');
+                });
+            });
+
+            function showMessage(message, type) {
+                messageDiv.textContent = message;
+                messageDiv.className = 'message ' + (type === 'success' ? 'success' : 'error');
+                messageDiv.style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>

@@ -4,7 +4,11 @@ from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from .forms import OrderForm, OrderItemFormSet 
-
+from django.http import JsonResponse
+from django.conf import settings
+import string
+import random
+from django.views import View
 class OrderCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     model = Order
     form_class = OrderForm
@@ -13,6 +17,11 @@ class OrderCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
 
     def test_func(self):
         return self.request.user.is_staff
+    
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['is_update'] = False  
+        return kwargs
 
     def form_valid(self, form):
         order = form.save(commit=False)
@@ -49,6 +58,11 @@ class OrderUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
     def test_func(self):
         return self.request.user.is_staff
+    
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['is_update'] = True  
+        return kwargs
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -68,3 +82,59 @@ class OrderUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
             return redirect(self.success_url)
         else:
             return self.form_invalid(form)
+        
+from django.views import View
+from django.http import JsonResponse
+import string
+import random
+from django.conf import settings
+
+class OrderSessionView(View):
+    def generate_random_id(self, length=8):
+        """Generate a random ID consisting of uppercase letters and digits."""
+        characters = string.ascii_uppercase + string.digits
+        random_id = ''.join(random.choice(characters) for _ in range(length))
+        return random_id
+
+    def get(self, request, *args, **kwargs):
+        """Retrieve the order session."""
+        order = request.session.get('cart')
+        if order:
+            return JsonResponse({'message': 'Order retrieved successfully', 'order': order}, status=200)
+        else:
+            return JsonResponse({'message': 'No order session found'}, status=404)
+
+    def post(self, request, *args, **kwargs):
+        """Add the cart from cookies to the session."""
+        cart_items = request.COOKIES.get(settings.CART_COOKIE_NAME)
+
+        if cart_items:
+            order_details = {
+                'order_id': self.generate_random_id(),
+                'order_details': cart_items,
+                'status': 'Created'
+            }
+            request.session['order'] = order_details
+            return JsonResponse({'message': 'Cart saved to session', 'order': order_details}, status=200)
+        else:
+            return JsonResponse({'message': 'No cart items found in cookies'}, status=404)
+
+    def delete(self, request, *args, **kwargs):
+        """Delete the order session."""
+        if 'order' in request.session:
+            del request.session['order']
+            return JsonResponse({'message': 'Order session deleted successfully'}, status=200)
+        else:
+            return JsonResponse({'message': 'No order session found'}, status=404)
+
+    def put(self, request, *args, **kwargs):
+        """Update the status of the order."""
+        if 'order' in request.session:
+            new_status = request.POST.get('status')
+            if new_status:
+                request.session['order']['status'] = new_status
+                return JsonResponse({'message': 'Order status updated', 'order': request.session['order']}, status=200)
+            else:
+                return JsonResponse({'message': 'No status provided'}, status=400)
+        else:
+            return JsonResponse({'message': 'No order session found'}, status=404)

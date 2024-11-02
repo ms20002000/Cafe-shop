@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'product',
     'cart',
     'order',
+    'site_information',
 ]
 
 MIDDLEWARE = [
@@ -54,6 +55,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    'account.middleware.RestrictStaffAdminAccessMiddleware',
 ]
 
 ROOT_URLCONF = 'cafe_shop.urls'
@@ -71,6 +74,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'site_information.context_processors.site_info',
             ],
         },
     },
@@ -159,3 +163,4 @@ AUTHENTICATION_BACKENDS = [
     'account.authentication.PhoneNumberAuthBackend',  
     'django.contrib.auth.backends.ModelBackend',  
 ]
+CART_COOKIE_NAME = 'cart'

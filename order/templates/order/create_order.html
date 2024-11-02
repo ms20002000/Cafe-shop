@@ -1,15 +1,203 @@
-<h2>Create New Order</h2>
+{% extends 'staff-base.html' %}
+{% block title %}حساب کاربری{% endblock %}
+{% load static %}
+{% block content %}
 
-<form method="POST">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <h3>Order Items</h3>
-    {{ formset.management_form }}
-    {% for form in formset %}
-        {{ form.as_p }}
-    {% endfor %}
-    
-    <button type="submit">Submit</button>
-</form>
+<div class="page-content">
+    <nav class="page-breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'staff_dashboard' %}">سفارشات</a></li>
+            <li class="breadcrumb-item">ایجاد سفارش</li>
+        </ol>
+    </nav>
 
-<a href="{% url 'staff_dashboard' %}">Back to Dashboard</a>
+    <div class="row">
+        <div class="col-12">
+            <form method="post" action="{% url 'order_create' %}">
+                {% csrf_token %}
+                <div class="card" style="width: 100%;">
+                    <div class="card-body">
+                        <h6 class="card-title">ایجاد سفارش</h6>
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="id_status">وضعیت</label>
+                                    <select class="form-select" id="id_status" name="status">
+                                        {% for choice in form.status.field.choices %}
+                                            <option value="{{ choice.0 }}" {% if form.status.value == choice.0 %}selected{% endif %}>
+                                                {{ choice.1 }}
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="id_payment_method">روش پرداخت</label>
+                                    <select class="form-select" id="id_payment_method" name="payment_method">
+                                        {% for choice in form.payment_method.field.choices %}
+                                            <option value="{{ choice.0 }}" {% if form.payment_method.value == choice.0 %}selected{% endif %}>
+                                                {{ choice.1 }}
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="id_table">شماره میز</label>
+                                    <select class="form-select" id="id_table" name="table">
+                                        {% for choice in form.table.field.choices %}
+                                            <option value="{{ choice.0 }}" {% if form.table.value == choice.0 %}selected{% endif %}>
+                                                {{ choice.1 }}
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h6 class="card-title">آیتم های سفارش</h6>
+                                        <div class="table-responsive pt-3">
+                                            <table class="table table-bordered">
+                                                <thead>
+                                                    <tr>
+                                                        <th>نام</th>
+                                                        <th>تعداد</th>
+                                                        <th>عملیات</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="tableBody">
+                                                    {{ formset.management_form }}
+                                                    {% for form_item in formset %}
+                                                        <tr>
+                                                            <td>{{ form_item.product }}</td>
+                                                            <td>{{ form_item.quantity }}</td>
+                                                            <td>
+                                                                <button type="button" class="btn btn-danger btn-icon" onclick="removeRow(this)" data-bs-toggle="tooltip" data-bs-placement="top" title="حذف">
+                                                                    <i data-feather="trash-2"></i>
+                                                                </button>
+                                                            </td>
+                                                        </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                            <div class="text-center">
+                                                <button type="button" class="btn btn-primary" style="margin-top:15px" onclick="addRow()">افزودن سطر</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="submit" id="submitBtn" class="btn btn-primary mt-3">ایجاد سفارش</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    const productChoices = [
+        {% for choice in formset.forms.0.product.field.choices %}
+            { value: "{{ choice.0 }}", text: "{{ choice.1 }}" },
+        {% endfor %}
+    ];
+
+    function addRow() {
+        const tableBody = document.getElementById('tableBody');
+
+        // ایجاد یک ردیف جدید
+        const newRow = document.createElement('tr');
+
+        // ایجاد سلول برای انتخاب محصول
+        const productCell = document.createElement('td');
+        const productSelect = document.createElement('select');
+        productSelect.classList.add('form-select');
+        productSelect.name = "product";
+        productChoices.forEach(choice => {
+            const option = document.createElement('option');
+            option.value = choice.value;
+            option.text = choice.text;
+            productSelect.appendChild(option);
+        });
+        productCell.appendChild(productSelect);
+        newRow.appendChild(productCell);
+
+        // ایجاد سلول برای تعداد
+        const quantityCell = document.createElement('td');
+        const quantityInput = document.createElement('input');
+        quantityInput.type = "number";
+        quantityInput.name = "quantity";
+        quantityInput.min = "1";
+        quantityInput.value = "1";
+        quantityInput.classList.add('form-control');
+        quantityCell.appendChild(quantityInput);
+        newRow.appendChild(quantityCell);
+
+        // ایجاد سلول برای دکمه حذف
+        const actionCell = document.createElement('td');
+        const deleteButton = document.createElement('button');
+        deleteButton.type = "button";
+        deleteButton.classList.add('btn', 'btn-danger', 'btn-icon');
+        deleteButton.setAttribute("onclick", "removeRow(this)");
+        deleteButton.setAttribute("data-bs-toggle", "tooltip");
+        deleteButton.setAttribute("data-bs-placement", "top");
+        deleteButton.setAttribute("title", "حذف");
+        deleteButton.innerHTML = '<i data-feather="trash-2"></i>';
+        actionCell.appendChild(deleteButton);
+        newRow.appendChild(actionCell);
+
+        // اضافه کردن سطر جدید به جدول
+        tableBody.appendChild(newRow);
+        
+        // بروزرسانی آیکون ها
+        feather.replace();
+
+        // بررسی کامل بودن فرم
+        checkFormCompletion();
+    }
+
+    function removeRow(button) {
+        const tableBody = document.getElementById('tableBody');
+        if (tableBody.rows.length > 1) {
+            const row = button.closest('tr');
+            row.remove();
+            checkFormCompletion();
+        } else {
+            alert("حداقل یک سطر باید باقی بماند.");
+        }
+    }
+
+    function checkFormCompletion() {
+        const rows = document.querySelectorAll('#tableBody tr');
+        let isValid = true;
+
+        rows.forEach(row => {
+            const select = row.querySelector('select');
+            const input = row.querySelector('input');
+
+            if (!select.value || !input.value || input.value <= 0) {
+                isValid = false;
+                select.classList.add('is-invalid');
+                input.classList.add('is-invalid');
+            } else {
+                select.classList.remove('is-invalid');
+                input.classList.remove('is-invalid');
+            }
+        });
+
+        document.getElementById('submitBtn').disabled = !isValid;
+    }
+
+    document.addEventListener('input', checkFormCompletion);
+</script>
+
+
+{% endblock %}

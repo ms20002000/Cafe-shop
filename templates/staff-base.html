@@ -90,7 +90,7 @@
           </li> {% endcomment %}
           <li class="nav-item nav-category">سفارشات</li>
           <li class="nav-item">
-            <a href="/account/staff_dashboard/" class="nav-link">
+            <a href="{% url 'staff_dashboard' %}" class="nav-link">
               <i class="link-icon" data-feather="list"></i>
               <span class="link-title">لیست سفارشات</span>
             </a>
@@ -238,10 +238,11 @@
                       <span>پروفایل</span>
                     </a>
                   <li class="dropdown-item py-2">
-                    <a href="javascript:;" class="text-body ms-0">
-                      <i class="me-2 icon-md" data-feather="log-out"></i>
-                      <span>خروج</span>
-                    </a>
+                    <form method="POST" action="{% url 'logout' %}">
+                      {% csrf_token %}
+                      <i class="me-2 icon-md" data-feather="log-out"></i><button type="submit">خروج</button>
+                  </form>
+
                   </li>
                 </ul>
               </div>
@@ -266,6 +267,7 @@
 
   <script src="{% static 'staff/vendors/core/core.js' %}"></script>
   <script src="{% static 'staff/vendors/flatpickr/flatpickr.min.js' %}"></script>
+  <script src="{% static 'staff/js/flatpickr.js' %}"></script>
   <script src="{% static 'staff/vendors/apexcharts/apexcharts.min.js' %}"></script>
   <script src="{% static 'staff/vendors/feather-icons/feather.min.js' %}"></script>
   <script src="{% static 'staff/js/persian-date-0.1.8.min.js' %}"></script>

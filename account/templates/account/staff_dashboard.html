@@ -11,6 +11,107 @@
       </ol>
     </nav>
 
+
+    <div class="accordion" id="accordionExample" style="margin-bottom:15px">
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="headingOne">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                فیلتر بر اساس وضعیت
+            </button>
+          </h2>
+          <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+            <div class="accordion-body">
+                <div class="col-sm-6">
+                    <div class="mb-3">
+                        <form method="GET">
+                            <label for="exampleFormControlSelect1" class="form-label">انتخاب وضعیت</label>
+                            <select class="form-select" name="status" id="status">
+                            <option value="" selected>All</option>
+                            <option value="Pending">Pending</option>
+                            <option value="Registered">Registered</option>
+                            <option value="Approved">Approved</option>
+                            <option value="Cancelled">Cancelled</option>
+                            <option value="Completed">Completed</option>
+                            </select>
+                            <button type="submit" class="btn btn-primary" style="margin-top:15px">فیلتر</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+          </div>
+        </div>
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="headingTwo">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+              فیلتر بر اساس شماره همراه
+            </button>
+          </h2>
+          <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+            <div class="accordion-body">
+                <div class="col-sm-6">
+                    <div class="mb-3">
+                        <form method="GET">
+                            <input type="text" class="form-control" name="phone_number" id="phone_number" placeholder="شماره همراه مد نظر را وارد نمایید">
+                            <button type="submit" class="btn btn-primary" style="margin-top:15px">فیلتر</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+          </div>
+        </div>
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="headingThree">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+              فیلتر بر اساس شماره میز
+            </button>
+          </h2>
+          <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
+            <div class="accordion-body">
+                <div class="col-sm-6">
+                    <div class="mb-3">
+                        <form method="GET">
+                            <label for="table_number" class="form-label">شماره میز را وارد نمایید</label>
+                            <input type="number" class="form-control" name="table_number" id="table_number" min="1">
+                            <button type="submit" class="btn btn-primary" style="margin-top:15px">فیلتر</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+          </div>
+        </div>
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="headingFour">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+              فیلتر بر اساس تاریخ
+            </button>
+          </h2>
+          <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour" data-bs-parent="#accordionExample">
+            <div class="accordion-body">
+                <div class="col-sm-6">
+                    <div class="mb-3">
+                        <form method="GET">
+
+                            <div class="input-group flatpickr" id="flatpickr-date" for="start_date">
+                                <label class="d-block w-100 text-muted">شروع</label>
+                                <input type="text" class="form-control" name="start_date" id="start_date" placeholder=" انتخاب تاریخ شروع" data-input>
+                                <span class="input-group-text input-group-addon" data-toggle><i data-feather="calendar"></i></span>
+                            </div>
+                            <div class="input-group flatpickr" id="flatpickr-date" for="end_date">
+                                <label class="d-block w-100 text-muted">پایان</label>
+                                <input type="text" class="form-control" name="end_date" id="end_date" placeholder=" انتخاب تاریخ شروع" data-input>
+                                <span class="input-group-text input-group-addon" data-toggle><i data-feather="calendar"></i></span>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary" style="margin-top:15px">فیلتر</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+          </div>
+        </div>
+    </div>
+
+
     <div class="row">
       <div class="col-md-12 grid-margin stretch-card">
         <div class="card">
@@ -36,8 +137,8 @@
                         <td>{{ order.status }}</td>
                         <td>{{ order.created_at|date:"Y-m-d" }}</td>
                         <td>
-                            <a href="{% url 'order_update' order.id %}">Update</a>
-                            <a href="{% url 'order_delete' order.id %}">Delete</a>
+                            <a href="{% url 'order_update' order.id %}"><button type="button" class="btn btn-primary btn-icon" data-bs-toggle="tooltip" data-bs-placement="top" title="ویرایش سفارش"><i data-feather="edit"></i></button></a>
+                            <a href="{% url 'order_delete' order.id %}"><button type="button" class="btn btn-danger btn-icon" data-bs-toggle="tooltip" data-bs-placement="top" title="حذف"><i data-feather="trash-2"></i></button></a>
                         </td>
                     </tr>
                     {% empty %}
@@ -65,27 +166,8 @@
 <body>
     <h1>Welcome, {{ staff_name }}</h1>
 
-    <form method="GET">
-        <label for="status">Filter by Status:</label>
-        <select name="status" id="status">
-            <option value="">All</option>
-            <option value="pending">Pending</option>
-            <option value="completed">Completed</option>
-        </select>
-        <button type="submit">Filter</button>
-    </form>
 
-    <form method="GET">
-        <label for="phone_number">Search by Phone Number:</label>
-        <input type="text" name="phone_number" id="phone_number">
-        <button type="submit">Search</button>
-    </form>
 
-    <form method="GET">
-        <label for="table_number">Filter by Table Number:</label>
-        <input type="number" name="table_number" id="table_number" min="1">
-        <button type="submit">Filter</button>
-    </form>
 
     <form method="GET">
         <label for="start_date">Start Date:</label>
@@ -117,6 +199,63 @@
             <tr>
                 <td>{{ order.id }}</td>
                 <td>{{ order.customer.phone_number }}</td>
+                <td>{{ order.status }}</td>
+                <td>{{ order.table.number }}</td>
+                <td>{{ order.created_at|date:"Y-m-d" }}</td>
+                <td>
+                    <a href="{% url 'order_update' order.id %}">Update</a>
+                    <a href="{% url 'order_delete' order.id %}">Delete</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6">No orders available.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <form method="POST" action="{% url 'logout' %}">
+        {% csrf_token %}
+        <button type="submit">Logout</button>
+    </form>
+</body>
+</html>
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ staff_name }} Dashboard</title>
+</head>
+<body>
+    <h1>Welcome, {{ staff_name }}</h1>
+
+
+
+    <h2>Orders</h2>
+    <p>For creating new orders click on,
+    <a href="{% url 'order_create' %}">create</a>
+    </p>
+    <table>
+        <thead>
+            <tr>
+                <th>Order ID</th>
+                <th>Phone Number</th>
+                <th>Status</th>
+                <th>Table Number</th>
+                <th>Date Created</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in orders %}
+            <tr>
+                <td>{{ order.id }}</td>
+                <td>{{ order.modify_by.phone_number }}</td>
                 <td>{{ order.status }}</td>
                 <td>{{ order.table.number }}</td>
                 <td>{{ order.created_at|date:"Y-m-d" }}</td>
