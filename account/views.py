@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate, logout
-from .forms import LoginForm, AdminUserEditForm, UserEditForm
+from .forms import LoginForm, StaffAddForm
 from django.contrib.auth.decorators import user_passes_test
 from .models import CustomUser
 from django.contrib import messages
@@ -208,3 +208,23 @@ class ExportSalesReportView(LoginRequiredMixin, UserPassesTestMixin, TemplateVie
             writer.writerow([order.id, order.modify_by.phone_number, order.modify_by.first_name, order.total_price, order.status, order.created_at])
 
         return response
+    
+
+class AddStaffView(LoginRequiredMixin, UserPassesTestMixin, View):
+    template_name = 'account/add_staff.html'
+
+    def test_func(self):
+        return self.request.user.is_admin  
+
+    def get(self, request):
+        form = StaffAddForm()
+        return render(request, self.template_name, {'form': form})
+
+    def post(self, request):
+        form = StaffAddForm(request.POST)
+        if form.is_valid():
+            user = form.save(commit=False)
+            user.is_staff = True  
+            user.save()
+            return redirect('manager_dashboard')
+        return render(request, self.template_name, {'form': form})

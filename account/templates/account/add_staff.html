@@ -1,0 +1,10 @@
+<!-- add_staff.html -->
+{% extends "base.html" %}
+{% block content %}
+<h2>افزودن کارمند جدید</h2>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">افزودن</button>
+</form>
+{% endblock %}
