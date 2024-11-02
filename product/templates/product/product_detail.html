@@ -65,9 +65,14 @@
                     <span class="total-price">{{ product.price }} تومان</span>
                 </div>
                 
+                <form action="{% url 'cart_add' product.id %}" method="post" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="tf-btn large primary"><i class="icon-buy"></i> افزودن به سبد خرید</button>
+                </form>
+
                 <div class="mb-20" style="padding-bottom: 60px;">
                     <a href="cart.html" class="tf-btn large primary"><i class="icon-buy"></i> افزودن به سبد خرید</a>              
-                </div>
+                </div>  
             </div>
         </div>
 {% endblock %}

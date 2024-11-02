@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>سبد خرید</h2>
+{% if cart_items %}
+    <ul>
+    {% for item in cart_items %}
+        <li>
+            {{ item.product.name }} - {{ item.quantity }} عدد
+            <form action="{% url 'cart_remove' item.product.id %}" method="post" style="display:inline;">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger">حذف</button>
+            </form>
+        </li>
+    {% endfor %}
+    </ul>
+    <p>جمع کل: {{ cart.get_total_price }}</p>
+    
+    <form action="{% url 'finalize_cart' %}" method="post">
+        {% csrf_token %}
+        {{ order_form.as_p }}
+        <button type="submit" class="btn btn-primary">ثبت نهایی سبد خرید</button>
+    </form>
+{% else %}
+    <p>سبد خرید شما خالی است.</p>
+{% endif %}
+{% endblock %}

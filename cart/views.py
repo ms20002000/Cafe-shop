@@ -1,167 +1,99 @@
-
-from .forms import CartAddProductForm
-from django.shortcuts import get_object_or_404 , redirect , render
-from product.models import Product
+from order.models import Order, OrderItem
+from django.contrib import messages
+from decimal import Decimal
+from .forms import OrderCreateForm, CartAddProductForm
+from .cart import Cart
+from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
-"""from django.http import JsonResponse
-from django.views import View
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-import json
-from django.shortcuts import render
-
-class CartView(LoginRequiredMixin, UserPassesTestMixin, View):
-    # Ensure user passes test (you can define your own test)
-    def test_func(self):
-        return self.request.user.is_authenticated
-
-    def get(self, request):
-        # Retrieve the cart from the session
-        cart = request.session.get('cart', {})
-        
-        # Render the cart.html template with the cart data
-        return render(request, 'cart/cart.html', {'cart': cart})
-
-    def post(self, request):
-        # Get data from the request
-        data = json.loads(request.body)
-        item_name = data.get('name')
-        item_count = data.get('count')
-        item_price = data.get('price')
-
-        # Initialize cart in session if it doesn't exist
-        if 'cart' not in request.session:
-            request.session['cart'] = {}
-
-        # Update the cart with the new item
-        request.session['cart'][item_name] = {
-            'count': item_count,
-            'price': item_price
-        }
-
-        # Save the session
-        request.session.modified = True
-
-        return JsonResponse({'message': 'Item added to cart'}, status=201)
-
-    def put(self, request):
-        # Update an existing item in the cart
-        data = json.loads(request.body)
-        item_name = data.get('name')
-        item_count = data.get('count')
-
-        if 'cart' in request.session and item_name in request.session['cart']:
-            # Update the item count
-            request.session['cart'][item_name]['count'] = item_count
-            request.session.modified = True
-            return JsonResponse({'message': 'Cart item updated'}, status=200)
-        
-        return JsonResponse({'message': 'Item not found in cart'}, status=404)
-
-    def delete(self, request):
-        # Remove an item from the cart
-        data = json.loads(request.body)
-        item_name = data.get('name')
-
-        if 'cart' in request.session and item_name in request.session['cart']:
-            del request.session['cart'][item_name]
-            request.session.modified = True
-            return JsonResponse({'message': 'Item removed from cart'}, status=204)
-        
-        return JsonResponse({'message': 'Item not found in cart'}, status=404)
-"""
-
-class Cart:
-    def __init__(self, request):
-        self.session = request.session
-        cart = self.session.get('cart')
-        if not cart:
-            cart = self.session['cart'] = {}
-        self.cart = cart
-
-    def add(self, product, quantity=1, override_quantity=False):
-        product_id = str(product.id)
-        if product_id not in self.cart:
-            self.cart[product_id] = {'quantity': 0, 'price': str(product.price)}
-        if override_quantity:
-            self.cart[product_id]['quantity'] = quantity
-        else:
-            self.cart[product_id]['quantity'] += quantity
-        self.save()
-
-    def save(self):
-        self.session.modified = True
-
-    def remove(self, product):
-        product_id = str(product.id)
-        if product_id in self.cart:
-            del self.cart[product_id]
-            self.save()
-
-    def iter(self):
-        for item in self.cart.values():
-            yield item
-
+from product.models import Product
+from django.conf import settings
+from order.models import Order
 
 @require_POST
 def cart_add(request, product_id):
-
     cart = Cart(request)
-
     product = get_object_or_404(Product, id=product_id)
-
-    form = CartAddProductForm(request.POST)
-
-    if form.is_valid():
-
-        cd = form.cleaned_data
-
-        cart.add(product=product,
-
-                 quantity=cd['quantity'],
-
-                 override_quantity=cd['override'])
-
-    return redirect('cart:cart_detail')
-
-
-
+    cart.add(product_id)    
+    response = redirect('cart_detail')
+    response.set_cookie(settings.CART_COOKIE_NAME, cart.save(), max_age=3600)  
+    return response
 
 
 @require_POST
 def cart_remove(request, product_id):
-
     cart = Cart(request)
-
     product = get_object_or_404(Product, id=product_id)
-
     cart.remove(product)
-
-    return redirect('cart:cart_detail')
-
+    return redirect('cart_detail')
 
 
 def cart_detail(request):
-    cart = Cart(request)  # This line should work if Cart is defined correctly
-
-    # Prepare the cart items with forms for updating quantities
-    for item in cart.iter():
+    cart = Cart(request)
+    cart_items = list(cart.iter())
+    for item in cart_items:
         item['update_quantity_form'] = CartAddProductForm(initial={
             'quantity': item['quantity'],
             'override': True
         })
 
-    return render(request, 'test_cart.html', {'cart': cart})
+    order_form = OrderCreateForm()
+    return render(request, 'cart/cart_detail.html', {
+        'cart_items': cart_items,
+        'cart': cart,
+        'order_form': order_form
+    })
+
 
 
 @require_POST
-def cart_add_multiple(request):
+def finalize_cart(request):
     cart = Cart(request)
-    product_identifiers = request.POST.getlist('product_id[]')
-    print(product_identifiers)
-    
-    for identifier in product_identifiers:
-        product = get_object_or_404(Product, id=identifier)  # Fetch the Product object
-        print(f"product{product}")
-        cart.add(product)  # Now pass the actual Product object
-    
-    return redirect('cart:cart_detail')  # Redirect to the cart detail page
+    order_form = OrderCreateForm(request.POST)
+
+    active_order_id = request.session.get('order_id')
+    if active_order_id:
+        active_order = Order.objects.filter(id=active_order_id).first()
+        if active_order and active_order.status not in [Order.StatusOrder.COMPLETED, Order.StatusOrder.CANCELLED]:
+            response = redirect('order_summary')
+            response.delete_cookie(settings.CART_COOKIE_NAME)
+            return response
+
+    if order_form.is_valid():
+        table = order_form.cleaned_data['table']
+        phone_number = order_form.cleaned_data['phone_number']
+
+        order = Order.objects.create(
+            table=table,
+            total_price=cart.get_total_price(),
+            status=Order.StatusOrder.PENDING,
+        )
+
+
+        for item in cart.iter():
+            product = item['product']
+            quantity = item['quantity']
+            total_price = Decimal(item['price']) * quantity
+            OrderItem.objects.create(
+                order=order,
+                product=product,
+                quantity=quantity
+            )
+
+        request.session['order_id'] = order.id
+
+        cart.clear()
+        response = redirect('order_summary')
+        response.delete_cookie(settings.CART_COOKIE_NAME)
+        return response
+    else:
+        return redirect('cart_detail')
+
+
+def order_summary(request):
+    order_id = request.session.get('order_id')
+    if order_id:
+        order = get_object_or_404(Order, id=order_id)
+    else:
+        order = None 
+
+    return render(request, 'cart/order_summary.html', {'order': order})
