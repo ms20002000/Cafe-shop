@@ -1747,21 +1747,21 @@ textarea {
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border-top: 1px solid rgba(255, 255, 255, 0.2);
-  border-top-left-radius: 20px; /* گرد کردن گوشه بالا چپ */
-  border-top-right-radius: 20px; /* گرد کردن گوشه بالا راست */
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
 }
 .menubar-footer .inner {
   padding-left: 0;
   padding-right: 0;
-  display: flex;
+  display: grid;
   max-width: 1024px;
   margin-right: auto;
   margin-left: auto;
   align-items: center;
+  gap: 0;
 }
 .menubar-footer .inner li {
   padding: 0 0;
-  width: 20%;
 }
 .menubar-footer .inner li a {
   color: #6B8E83;
@@ -1784,6 +1784,7 @@ textarea {
 .menubar-footer .inner li.active a span {
   color: #033f38;
 }
+
 
 .bottom-fixed {
   width: 100%;
