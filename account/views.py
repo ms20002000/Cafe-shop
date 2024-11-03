@@ -84,11 +84,8 @@ class StaffDashboard(LoginRequiredMixin, UserPassesTestMixin, ListView):
 
 
 def logout_user(request):
-    if request.method == 'POST':
-        logout(request)
-        return redirect('home')
-    
-    return render(request, 'account/logout.html', {})
+    logout(request)
+    return redirect('home')
 
 
 class PasswordChange(PasswordChangeView):
