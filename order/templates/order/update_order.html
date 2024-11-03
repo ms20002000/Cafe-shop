@@ -1,5 +1,5 @@
 {% extends 'staff-base.html' %}
-{% block title %}حساب کاربری{% endblock %}
+{% block title %}به‌روز‌رسانی سفارش{% endblock %}
 {% load static %}
 {% block content %}
 
@@ -14,83 +14,75 @@
     </nav>
 
     <div class="row">
-        <div class="col-md-12 stretch-card">
-            <form>
-          <div class="card">
-            <div class="card-body">
-              <h6 class="card-title">اطلاعات سفارش</h6>
-              <form>
-                <div class="row">
-                  <div class="col-sm-4">
-                    <div class="mb-3">
-                      <label class="form-label">وضعیت</label>
-                      <select class="form-select" id="exampleFormControlSelect1">
-
-                        <option selected disabled>وضعیت های موجود در این آپشن ها قرار خواهند گرفت</option>
-                      </select>
-                    </div>
-                  </div><!-- Col -->
-                  <div class="col-sm-4">
-                    <div class="mb-3">
-                      <label class="form-label">روش پرداخت</label>
-                      <select class="form-select" id="exampleFormControlSelect1">
-                        <option selected disabled>روش های پرداخت موجود در این آپشن ها قرار خواهند گرفت</option>
-                      </select>
-                    </div>
-                  </div><!-- Col -->
-                  <div class="col-sm-4">
-                    <div class="mb-3">
-                      <label class="form-label">شماره میز</label>
-                      <select class="form-select" id="exampleFormControlSelect1">
-                        <option selected disabled>شماره میز در این آپشن ها قرار خواهند گرفت</option>
-                      </select>
-                    </div>
-                  </div><!-- Col -->
-                </div><!-- Row -->
-                <div class="row">
-					<div class="col-md-12 grid-margin stretch-card">
-						<div class="card">
-							<div class="card-body">
-								<h6 class="card-title">آیتم های سفارش</h6>
-								<div class="table-responsive pt-3">
-									<table class="table table-bordered">
-										<thead>
-											<tr>
-												<th>نام</th>
-												<th>تعداد</th>
-												<th>عملیات</th>
-											</tr>
-										</thead>
-										<tbody>
-											<tr>
-												<td>
-                                                    <select class="form-select" id="exampleFormControlSelect1">
-                                                    <option selected disabled>نام محصول در اینجا قرار میگیرد</option>
-                                                  </select></td>
-												<td>
-													<input type="number" class="form-control" id="exampleInputNumber1" value="تعداد محصول در اینجا">
-												</td>
-												<td>
-                                                    <input type="checkbox" class="form-check-input" id="checkDefault">
-                                                    <label class="form-check-label" for="checkDefault">
-                                                      حذف
-                                                    </label>
-                                                </td>
-											</tr>
-										</tbody>
-									</table>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-              </form>
-              <button type="button" class="btn btn-primary submit">به‌روز‌رسانی</button>
-            </div>
-          </div>
-        </div>
+      <div class="col-md-12 stretch-card">
+          <form method="post">
+              {% csrf_token %}
+              <div class="card">
+                  <div class="card-body">
+                      <h6 class="card-title">اطلاعات سفارش</h6>
+                      <div class="row">
+                          <div class="col-sm-4">
+                              <div class="mb-3">
+                                  <label class="form-label" for="{{ form.status.id_for_label }}">وضعیت</label>
+                                  {{ form.status }}
+                              </div>
+                          </div>
+                          <div class="col-sm-4">
+                              <div class="mb-3">
+                                  <label class="form-label" for="{{ form.payment_method.id_for_label }}">روش پرداخت</label>
+                                  {{ form.payment_method }}
+                              </div>
+                          </div>
+                          <div class="col-sm-4">
+                              <div class="mb-3">
+                                  <label class="form-label" for="{{ form.table.id_for_label }}">شماره میز</label>
+                                  {{ form.table }}
+                              </div>
+                          </div>
+                      </div>
+  
+                      <div class="row">
+                          <div class="col-md-12 grid-margin stretch-card">
+                              <div class="card">
+                                  <div class="card-body">
+                                      <h6 class="card-title">آیتم‌های سفارش</h6>
+                                      <div class="table-responsive pt-3">
+                                          <table class="table table-bordered">
+                                              <thead>
+                                                  <tr>
+                                                      <th>نام</th>
+                                                      <th>تعداد</th>
+                                                      <th>عملیات</th>
+                                                  </tr>
+                                              </thead>
+                                              <tbody>
+                                                  {% for formset in order_item_formset %}
+                                                  <tr>
+                                                      <td>{{ formset.product }}</td>
+                                                      <td>{{ formset.quantity }}</td>
+                                                      <td>
+                                                          <label for="{{ formset.DELETE.id_for_label }}">
+                                                              {{ formset.DELETE }}
+                                                              حذف
+                                                          </label>
+                                                      </td>
+                                                  </tr>
+                                                  {% endfor %}
+                                              </tbody>
+                                          </table>
+                                      </div>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+  
+                      <button type="submit" class="btn btn-primary submit">به‌روز‌رسانی</button>
+                  </div>
+              </div>
+          </form>
       </div>
-
+  </div>
+  
     <h2>Update Order</h2>
 
     <form method="POST">

@@ -124,8 +124,8 @@
 <h2>Staff List and Update</h2>
 <p><a href="{% url 'staff_list' %}" class="btn btn-primary">Staff List</a></p>
 
-<h2>Download Sales Report</h2>
-<p><a href="{% url 'export_sales_report' %}" class="btn btn-primary">Download Sales Report (CSV)</a></p>
+{% comment %} <h2>Download Sales Report</h2>
+<p><a href="{% url 'export_sales_report' %}" class="btn btn-primary">Download Sales Report (CSV)</a></p {% endcomment %}
 
 <h2>Logout</h2>
 <form method="POST" action="{% url 'logout' %}">

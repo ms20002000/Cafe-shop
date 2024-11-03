@@ -11,7 +11,7 @@
   <meta name="keywords"
     content="nobleui, bootstrap, bootstrap 5, bootstrap5, admin, dashboard, template, responsive, css, sass, html, theme, front-end, ui kit, web">
 
-  <title>صفحه کاربری - نام فروشگاه</title>
+    <title>{% block title %}{% endblock %}</title>
 
   <link rel="stylesheet" href="{% static 'staff/vendors/core/core.css' %}">
   <link rel="stylesheet" href="{% static 'staff/css/persian-datepicker-0.4.5.min.css' %}">
@@ -237,12 +237,13 @@
                       <i class="me-2 icon-md" data-feather="user"></i>
                       <span>پروفایل</span>
                     </a>
+                  </li>
                   <li class="dropdown-item py-2">
-                    <form method="POST" action="{% url 'logout' %}">
-                      {% csrf_token %}
-                      <i class="me-2 icon-md" data-feather="log-out"></i><button type="submit">خروج</button>
-                  </form>
-
+                    <a href="{% url 'logout' %}" class="text-body ms-0">
+                      <i class="me-2 icon-md" data-feather="log-out"></i>
+                      <span>خروج</span>
+                    </a>
+                  </li>
                   </li>
                 </ul>
               </div>

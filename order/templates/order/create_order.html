@@ -1,5 +1,5 @@
 {% extends 'staff-base.html' %}
-{% block title %}حساب کاربری{% endblock %}
+{% block title %}ایجاد سفارش{% endblock %}
 {% load static %}
 {% block content %}
 
@@ -113,10 +113,8 @@
     function addRow() {
         const tableBody = document.getElementById('tableBody');
 
-        // ایجاد یک ردیف جدید
         const newRow = document.createElement('tr');
 
-        // ایجاد سلول برای انتخاب محصول
         const productCell = document.createElement('td');
         const productSelect = document.createElement('select');
         productSelect.classList.add('form-select');
@@ -154,13 +152,10 @@
         actionCell.appendChild(deleteButton);
         newRow.appendChild(actionCell);
 
-        // اضافه کردن سطر جدید به جدول
         tableBody.appendChild(newRow);
         
-        // بروزرسانی آیکون ها
         feather.replace();
 
-        // بررسی کامل بودن فرم
         checkFormCompletion();
     }
 
