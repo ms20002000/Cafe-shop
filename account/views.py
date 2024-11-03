@@ -1,7 +1,9 @@
+# import xlsxwriter
+from order.models import Order, OrderItem
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate, logout
-from .forms import LoginForm, AdminUserEditForm, UserEditForm
-from django.contrib.auth.decorators import user_passes_test
+from .forms import LoginForm, StaffAddForm, StaffUpdateForm
+from django.views.generic.edit import UpdateView
 from .models import CustomUser
 from django.contrib import messages
 from django.contrib.auth.views import PasswordChangeView
@@ -12,10 +14,11 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.utils.dateparse import parse_date
 from django.db.models import Count, Sum, F
 from django.utils import timezone
+from django.urls import reverse_lazy
 import csv
 from django.http import HttpResponse
 from django.db.models.functions import ExtractHour
-from datetime import datetime
+from datetime import datetime, timedelta
 
 class StaffLogin(View):
     def get(self, request):
@@ -101,8 +104,8 @@ class PasswordChange(PasswordChangeView):
         else:
             return redirect('home')
 
-def HomeView(request):
-    return render(request, 'account/home.html', {})
+# def HomeView(request):
+#     return render(request, 'account/home.html', {})
 
 
 class ManagerPanelView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
@@ -133,21 +136,34 @@ class ManagerPanelView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
                             total_sales=Sum('total_price'))['total_sales'] or 0
 
         # Daily, Monthly, and Yearly Sales
-        today = timezone.localtime(timezone.now())
-        context['daily_sales'] = Order.objects.filter(created_at__date=today.date()
-                                ).aggregate(daily_sales=Sum('total_price'))['daily_sales'] or 0
-        context['monthly_sales'] = Order.objects.filter(
-            created_at__month=today.month, created_at__year=today.year
-            ).aggregate(monthly_sales=Sum('total_price'))['monthly_sales'] or 0
-        context['yearly_sales'] = Order.objects.filter(
-            created_at__year=today.year).aggregate(
-                yearly_sales=Sum('total_price'))['yearly_sales'] or 0
+        today = timezone.localtime(timezone.now()).date() 
+        one_month_ago = today - timedelta(days=30)  
+        one_year_ago = today - timedelta(days=365)  
+
+        daily_sales = Order.objects.filter(created_at__date=today).aggregate(
+            daily_sales=Sum('total_price')
+        )['daily_sales'] or 0
+
+        monthly_sales = Order.objects.filter(
+            created_at__date__gte=one_month_ago, created_at__date__lte=today
+        ).aggregate(monthly_sales=Sum('total_price'))['monthly_sales'] or 0
+
+        yearly_sales = Order.objects.filter(
+            created_at__date__gte=one_year_ago, created_at__date__lte=today
+        ).aggregate(yearly_sales=Sum('total_price'))['yearly_sales'] or 0
+
+        context = {
+            'daily_sales': daily_sales,
+            'monthly_sales': monthly_sales,
+            'yearly_sales': yearly_sales,
+        }
 
         # Sales by Category
         context['sales_by_category'] = Category.objects.annotate(
             total_sales=Sum('products__order_items__quantity')).order_by('-total_sales')
 
         # Sales by Time of Day (morning, afternoon, evening)
+        today = timezone.localtime(timezone.now())
         morning_start = today.replace(hour=6, minute=0, second=0, microsecond=0)
         morning_end = today.replace(hour=12, minute=0, second=0, microsecond=0)
         afternoon_start = today.replace(hour=12, minute=0, second=0, microsecond=0)
@@ -190,21 +206,121 @@ class ManagerPanelView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
             context['peak_business_hour_sales'] = 0
 
         return context
-    
-class ExportSalesReportView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
+
+
+# class ExportSalesReportView(LoginRequiredMixin, UserPassesTestMixin, View):
+
+#     def test_func(self):
+#         return self.request.user.is_admin
+
+#     def get(self, request, *args, **kwargs):
+#         response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+#         response['Content-Disposition'] = 'attachment; filename="sales_report.xlsx"'
+
+#         workbook = xlsxwriter.Workbook(response, {'in_memory': True})
+
+#         orders = Order.objects.all().order_by('created_at')  
+#         order_items = OrderItem.objects.all().order_by('order__created_at')  
+
+#         # sheet 1
+#         orders_sheet = workbook.add_worksheet('Orders')
+#         orders_headers = ['Order ID', 'Customer', 'Employee', 'Total Price', 'Status', 'Created At']
+#         for col_num, header in enumerate(orders_headers):
+#             orders_sheet.write(0, col_num, header)
+
+#         for row_num, order in enumerate(orders, start=1):
+#             orders_sheet.write(row_num, 0, order.id)
+#             orders_sheet.write(row_num, 1, order.modify_by.phone_number if order.modify_by else '')
+#             orders_sheet.write(row_num, 2, order.modify_by.first_name if order.modify_by else '')
+#             orders_sheet.write(row_num, 3, order.total_price)
+#             orders_sheet.write(row_num, 4, order.status)
+#             orders_sheet.write(row_num, 5, order.created_at.strftime('%Y-%m-%d %H:%M'))
+
+#         # sheet 2
+#         order_items_sheet = workbook.add_worksheet('Order Items')
+#         order_items_headers = ['Order ID', 'Product', 'Quantity', 'Unit Price', 'Total Price', 'Order Created At']
+#         for col_num, header in enumerate(order_items_headers):
+#             order_items_sheet.write(0, col_num, header)
+
+#         for row_num, item in enumerate(order_items, start=1):
+#             order_items_sheet.write(row_num, 0, item.order.id)
+#             order_items_sheet.write(row_num, 1, item.product.name if item.product else '')
+#             order_items_sheet.write(row_num, 2, item.quantity)
+#             order_items_sheet.write(row_num, 3, item.product.price)
+#             order_items_sheet.write(row_num, 4, item.quantity * item.product.price)
+#             order_items_sheet.write(row_num, 5, item.order.created_at.strftime('%Y-%m-%d %H:%M'))
+
+#         # sheet 3
+#         summary_sheet = workbook.add_worksheet('Sales Summary')
+
+#         today = timezone.localtime(timezone.now()).date()
+#         one_month_ago = today - timedelta(days=30)  
+#         one_year_ago = today - timedelta(days=365)  
+
+#         summary_data = {
+#             'Total Sales': Order.objects.aggregate(total_sales=Sum('total_price'))['total_sales'] or 0,
+            
+#             'Daily Sales': Order.objects.filter(
+#                 created_at__date=today
+#             ).aggregate(daily_sales=Sum('total_price'))['daily_sales'] or 0,
+
+#             'Monthly Sales': Order.objects.filter(
+#                 created_at__date__gte=one_month_ago, created_at__date__lte=today
+#             ).aggregate(monthly_sales=Sum('total_price'))['monthly_sales'] or 0,
+
+#             'Yearly Sales': Order.objects.filter(
+#                 created_at__date__gte=one_year_ago, created_at__date__lte=today
+#             ).aggregate(yearly_sales=Sum('total_price'))['yearly_sales'] or 0,
+#         }
+
+#         summary_headers = ['Metric', 'Amount']
+#         for col_num, header in enumerate(summary_headers):
+#             summary_sheet.write(0, col_num, header)
+
+#         for row_num, (metric, amount) in enumerate(summary_data.items(), start=1):
+#             summary_sheet.write(row_num, 0, metric)
+#             summary_sheet.write(row_num, 1, amount)
+
+#         workbook.close()
+#         return response
+
+
+class AddStaffView(LoginRequiredMixin, UserPassesTestMixin, View):
+    template_name = 'account/add_staff.html'
+
+    def test_func(self):
+        return self.request.user.is_admin  
+
+    def get(self, request):
+        form = StaffAddForm()
+        return render(request, self.template_name, {'form': form})
+
+    def post(self, request):
+        form = StaffAddForm(request.POST)
+        if form.is_valid():
+            user = form.save(commit=False)
+            user.is_staff = True  
+            user.save()
+            return redirect('manager_dashboard')
+        return render(request, self.template_name, {'form': form})
+
+class StaffListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
+    model = CustomUser
+    template_name = 'account/staff_list.html'
+    context_object_name = 'staff_list'
+
+    def get_queryset(self):
+        return CustomUser.objects.filter(is_staff=True)
 
     def test_func(self):
         return self.request.user.is_admin
 
-    def get(self, request, *args, **kwargs):
-        response = HttpResponse(content_type='text/csv')
-        response['Content-Disposition'] = 'attachment; filename="sales_report.csv"'
 
-        writer = csv.writer(response)
-        writer.writerow(['Order ID', 'Customer', 'Employee', 'Total Price', 'Status', 'Created At'])
+class StaffUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = CustomUser
+    form_class = StaffUpdateForm
+    template_name = 'account/update_staff.html'
+    success_url = reverse_lazy('staff_list')
 
-        orders = Order.objects.all()
-        for order in orders:
-            writer.writerow([order.id, order.modify_by.phone_number, order.modify_by.first_name, order.total_price, order.status, order.created_at])
-
-        return response
+    def test_func(self):
+        return self.request.user.is_admin

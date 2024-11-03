@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% block title %}ویرایش دسته‌بندی {{ category.name }}{% endblock %}
+{% load static %}
+
+{% block content %}
+<div class="header"> 
+    <div class="title-header-bar fixed-top bg-white">
+        <a  class="back-btn"><i class="icon-right"></i></a>
+        <h1>ویرایش دسته‌بندی {{ category.name }}</h1>
+  
+    </div>
+</div>
+<div class="app pt-80">
+    <div class="tf-container">
+        <div class="box-driver line">
+            <div class="inner">
+                <div class="img">
+                    <a href="{% url 'update_category' category.id %}">
+                        <img src="{{ category.category_photo.url }}" alt="{{ category.name }}">
+                    </a>
+                </div>
+                <div class="info">
+                    <h3><a href="{% url 'update_category' category.id %}">{{ category.name }}</a></h3>
+                </div>
+            </div>
+        </div>
+        <form method="post" action="{% url 'product' %}">
+            {% csrf_token %}
+            <h3 class="mt-30 fw-7 lh-26" style="margin-bottom: 15px;">تغییر نام</h3>
+                {{ form.name }}
+            <h3 class="mt-30 fw-7 lh-26" style="margin-bottom: 15px;">تغییر عکس</h3>
+                <label for="id_category_photo">{{ form.category_photo.label }}</label>
+                {{ form.category_photo }}
+                {% if form.category_photo.errors %}
+                    <div class="error">
+                        {% for error in form.category_photo.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            <h3 class="mt-30 fw-7 lh-26" style="margin-bottom: 15px;">تنظیمات بیشتر</h3>
+            <label for="id_is_available">{{ form.is_available.label }}:</label>
+            {{ form.is_available }}
+            {% if form.is_available.errors %}
+                <div class="error">
+                    {% for error in form.is_available.errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+                
+                <button type="submit" style="margin-top:15px">ذخیره کردن</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

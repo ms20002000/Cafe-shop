@@ -1,0 +1,10 @@
+<!-- add_product.html -->
+{% extends "base.html" %}
+{% block content %}
+<h2>افزودن محصول جدید</h2>
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">افزودن</button>
+</form>
+{% endblock %}

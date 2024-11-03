@@ -30,16 +30,26 @@
                     {% for product in products %}
                         <li class="tf-box-row style-2 mb-12">
                             <div class="img-box">
-                                <img src="{{ product.product_photo.url }}" alt="{{ product.name }}">
+                                {% if request.user.is_admin %}
+                                        <a href="{% url 'update_product' product.id %}" class="btn-edit top-left"><i class="bi bi-pencil"></i></a>
+                                {% endif %}
+                                <a href="{% url 'product_detail' product.category.name product.name %}">
+                                    <img src="{{ product.product_photo.url }}" alt="{{ product.name }}">
+                                </a>
                             </div>
                             <div class="content-box">
-                                <h5><a href="{% url 'product_detail' product.category.id product.id %}">{{ product.name }}</a></h5>
+                                <h5><a href="{% url 'product_detail' product.category.name product.name %}">{{ product.name }}</a></h5>
                                 <ul class="review">
-                                    <li>توضیحات محصول</li>
+                                    <li>{{ product.description }}</li>
                                 </ul>
-                                <span class="price">10.48 تومان</span>
-                                <a href="{% url 'product_detail' product.category.id product.id %}" class="btn-add">+</a>
+                                <span class="price">{{ product.price }} تومان</span>
+                                <a href="{% url 'product_detail' product.category.name product.name %}" class="btn-add">+</a>
                             </div>
+                            {% comment %} {% if request.user.is_admin %}
+                            <button>
+                                <a href="{% url 'update_product' product.id %}">Edit</a>
+                            </button>
+                            {% endif %} {% endcomment %}
                         </li>
                     {% endfor %}
             </ul>

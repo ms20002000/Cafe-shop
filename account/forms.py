@@ -1,3 +1,4 @@
+from django.contrib.auth.forms import UserCreationForm
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm
 from .models import CustomUser
@@ -18,14 +19,14 @@ class LoginForm(AuthenticationForm):
         })
     )
 
-class UserEditForm(forms.ModelForm):
-    class Meta:
-        model = CustomUser
-        fields = ['first_name', 'last_name', 'phone_number', 'email', 'profile_picture']
-        
 
-class AdminUserEditForm(forms.ModelForm):
+class StaffAddForm(UserCreationForm):
     class Meta:
         model = CustomUser
-        fields = ['first_name', 'last_name', 'phone_number', 'email', 'specialty', 'loyalty_points',
-                   'is_admin', 'is_staff', 'is_customer', 'is_active', 'is_superuser', 'profile_picture']
+        fields = ['phone_number', 'first_name', 'last_name', 'specialty', 'is_staff','email', 'profile_picture']
+
+
+class StaffUpdateForm(forms.ModelForm):
+    class Meta:
+        model = CustomUser
+        fields = ['first_name', 'last_name', 'phone_number', 'email', 'specialty', 'is_staff', 'is_active', 'profile_picture']

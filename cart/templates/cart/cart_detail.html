@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% block title %}سبد خرید{% endblock %}
+{% load static %}
+{% block content %}
+<div class="header">
+    <div class="title-header-bar fixed-top bg-white">
+        <a href="#" class="back-btn"><i class="icon-right"></i></a>
+        <h1>سبد خرید</h1>
+    </div>
+</div>
+<div class="app pt-80 pb-70">
+    <div class="tf-container">
+        {% if cart_items %}
+            <ul>
+                {% for item in cart_items %}
+                <li class="tf-box-row style-2 qty mb-12">
+                    <a href="" class="img-box">
+                        <img src="{{ item.product.image_url }}" alt="{{ item.product.name }}">
+                    </a>
+                    <div class="content-box">
+                        <h5><a href="">{{ item.product.name }}</a></h5>
+                        <ul class="review">
+                            <li>
+                                <i class="icon-star"></i>
+                                <span>{{ item.product.rating }}</span>&nbsp;
+                                ({{ item.product.review_count }})
+                            </li>
+                            <li class="dot-icon"></li>
+                            <li>{{ item.product.delivery_time }} دقیقه</li>
+                        </ul>
+                        <div class="total-qty">
+                            <span class="price">{{ item.product.price }} تومان</span>
+                            <div class="sec-qty">
+                                <span class="btn-quantity minus-btn"><i class="icon-minus"></i></span>
+                                <input type="number" name="number" value="{{ item.quantity }}">
+                                <span class="btn-quantity active plus-btn"><i class="icon-plus"></i></span>
+                            </div>
+                            <form action="{% url 'cart_remove' item.product.id %}" method="post" style="display:inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger">حذف</button>
+                            </form>
+                        </div>
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+            <div class="mt-30 mb-30">
+                <p class="list-order line">
+                    جمع موقت: <span>{{ cart.get_subtotal_price }} تومان</span>
+                </p>
+                <p class="mt-15 list-order-total mb-26">
+                    کل: <span>{{ cart.get_total_price }} تومان</span>
+                </p>
+                <form action="{% url 'finalize_cart' %}" method="post">
+                    {% csrf_token %}
+                    {{ order_form.as_p }}
+                    <button type="submit" class="tf-btn large primary">ثبت نهایی سبد خرید</button>
+                </form>
+            </div>
+        {% else %}
+            <p>سبد خرید شما خالی است.</p>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}
+
+
+
+{% if cart_items %}
+    <ul>
+    {% for item in cart_items %}
+        <li>
+            {{ item.product.name }} - {{ item.quantity }} عدد
+            <form action="{% url 'cart_remove' item.product.id %}" method="post" style="display:inline;">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger">حذف</button>
+            </form>
+        </li>
+    {% endfor %}
+    </ul>
+    <p>جمع کل: {{ cart.get_total_price }}</p>
+    
+    <form action="{% url 'finalize_cart' %}" method="post">
+        {% csrf_token %}
+        {{ order_form.as_p }}
+        <button type="submit" class="btn btn-primary">ثبت نهایی سبد خرید</button>
+    </form>
+{% else %}
+    <p>سبد خرید شما خالی است.</p>
+{% endif %}

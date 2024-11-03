@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% block title %}ویرایش محصول {{ product.name }}{% endblock %}
+{% load static %}
+
+{% block content %}
+<div class="header"> 
+    <div class="title-header-bar fixed-top bg-white">
+        <a class="back-btn"><i class="icon-right"></i></a>
+        <h1>ویرایش محصول {{ product.name }}</h1>
+    </div>
+</div>
+<div class="app pt-80">
+    <div class="tf-container">
+        <div class="box-driver line">
+            <div class="inner">
+                <div class="img">
+                    <a href="{% url 'update_product' product.id %}">
+                        <img src="{{ product.product_photo.url }}" alt="{{ product.name }}">
+                    </a>
+                </div>
+                <div class="info">
+                    <h3><a href="{% url 'update_product' product.id %}">{{ product.name }}</a></h3>
+                </div>
+            </div>
+        </div>
+        
+        <form method="post" enctype="multipart/form-data" action="{% url 'update_product' product.id %}">
+            {% csrf_token %}
+            
+            <h3 class="mt-30 fw-7 lh-26" style="margin-bottom: 15px;">تغییر نام محصول</h3>
+            {{ form.name }}
+            
+            <h3 class="mt-30 fw-7 lh-26" style="margin-bottom: 15px;">توضیحات</h3>
+            {{ form.description }}
+            
+            <h3 class="mt-30 fw-7 lh-26" style="margin-bottom: 15px;">قیمت</h3>
+            {{ form.price }}
+
+            <h3 class="mt-30 fw-7 lh-26" style="margin-bottom: 15px;">موجودی انبار</h3>
+            {{ form.stock_quantity }}
+            
+            <h3 class="mt-30 fw-7 lh-26" style="margin-bottom: 15px;">دسته‌بندی</h3>
+            {{ form.category }}
+            
+            <h3 class="mt-30 fw-7 lh-26" style="margin-bottom: 15px;">تغییر عکس محصول</h3>
+            <label for="id_product_photo">{{ form.product_photo.label }}</label>
+            {{ form.product_photo }}
+            {% if form.product_photo.errors %}
+                <div class="error">
+                    {% for error in form.product_photo.errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <h3 class="mt-30 fw-7 lh-26" style="margin-bottom: 15px;">تنظیمات بیشتر</h3>
+            <label for="id_is_available">فعال بودن محصول:</label>
+            {{ form.is_available }}
+            {% if form.is_available.errors %}
+                <div class="error">
+                    {% for error in form.is_available.errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+            
+            <button type="submit" style="margin-top:15px; margin-bottom:75px">ذخیره کردن</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

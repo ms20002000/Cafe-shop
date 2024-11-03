@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block title %}افزودن دسته‌بندی{% endblock %}
+{% load static %}
+
+{% block content %}
+<div class="header"> 
+    <div class="title-header-bar fixed-top bg-white">
+        <a class="back-btn"><i class="icon-right"></i></a>
+        <h1>افزودن دسته‌بندی جدید</h1>
+    </div>
+</div>
+
+<div class="app pt-80">
+    <div class="tf-container">
+        <div class="box-driver line">
+            <div class="inner">
+                <form method="post" enctype="multipart/form-data" action="{% url 'add_category' %}">
+                    {% csrf_token %}
+                    
+                    <h3 class="mt-30 fw-7 lh-26" style="margin-bottom: 15px;">نام دسته‌بندی</h3>
+                    {{ form.name }}
+                    
+                    <h3 class="mt-30 fw-7 lh-26" style="margin-bottom: 15px;">عکس دسته‌بندی</h3>
+                    <label for="id_category_photo">{{ form.category_photo.label }}</label>
+                    {{ form.category_photo }}
+                    {% if form.category_photo.errors %}
+                        <div class="error">
+                            {% for error in form.category_photo.errors %}
+                                <p>{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    
+                    <!-- دکمه افزودن دسته‌بندی -->
+                    <button type="submit" style="margin-top:15px">افزودن</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

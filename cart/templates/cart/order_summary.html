@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>وضعیت سفارش</h2>
+
+{% if order %}
+    <p>شماره سفارش: {{ order.id }}</p>
+    <p>تاریخ ثبت سفارش: {{ order.created_at }}</p>
+    <p>وضعیت: {{ order.get_status_display }}</p>
+    <p>جزئیات:</p>
+    <ul>
+    {% for item in order.items.all %}
+        <li>{{ item.product.name }} - {{ item.quantity }} عدد - قیمت کل: {{ item.total_price }}</li>
+    {% endfor %}
+    </ul>
+    <p>جمع کل سفارش: {{ order.total_price }}</p>
+{% else %}
+    <p>سفارشی برای نمایش وجود ندارد.</p>
+{% endif %}
+
+<a href="{% url 'home' %}" class="btn btn-primary">بازگشت به صفحه اصلی</a>
+{% endblock %}

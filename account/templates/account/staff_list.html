@@ -1,0 +1,20 @@
+<!-- staff_list.html -->
+<h1>Staff Members</h1>
+<table>
+    <tr>
+        <th>Full Name</th>
+        <th>Email</th>
+        <th>Phone Number</th>
+        <th>Actions</th>
+    </tr>
+    {% for staff in staff_list %}
+    <tr>
+        <td>{{ staff.first_name }} {{ staff.last_name }}</td>
+        <td>{{ staff.email }}</td>
+        <td>{{ staff.phone_number }}</td>
+        <td>
+            <a href="{% url 'update_staff' staff.pk %}">Update</a>
+        </td>
+    </tr>
+    {% endfor %}
+</table>

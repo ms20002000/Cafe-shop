@@ -2560,6 +2560,31 @@ textarea {
   border-radius: 16px;
   box-shadow: 0px 8px 10px 0px rgba(0, 0, 0, 0.1);
   overflow: hidden;
+  position: relative;
+}
+.btn-edit.top-left {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #033f38;
+  color: #fff1d0;
+  font-size: 18px;
+  line-height: 27px;
+  border-radius: 50%;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  z-index: 1;
+}
+.btn-edit.top-left i {
+  font-size: 16px;
+}
+.btn-edit.top-left:hover {
+  color: #fff1d0;
+  background-color: #026b5b;
 }
 .wrap-categories .categories-item .box-img img {
   width: 100%;
