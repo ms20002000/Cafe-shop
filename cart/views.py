@@ -24,7 +24,9 @@ def cart_remove(request, product_id):
     cart = Cart(request)
     product = get_object_or_404(Product, id=product_id)
     cart.remove(product)
-    return redirect('cart_detail')
+    response = redirect('cart_detail')
+    response.set_cookie(settings.CART_COOKIE_NAME, cart.save(), max_age=3600)
+    return response
 
 
 def cart_detail(request):
@@ -80,6 +82,11 @@ def finalize_cart(request):
             )
 
         request.session['order_id'] = order.id
+        order_history = request.session.get('order_history', [])
+        order_history.append(order.id)
+        request.session['order_history'] = order_history
+
+        request.session.set_expiry(365 * 24 * 60 * 60)
 
         cart.clear()
         response = redirect('order_summary')
@@ -87,6 +94,12 @@ def finalize_cart(request):
         return response
     else:
         return redirect('cart_detail')
+
+
+def order_history(request):
+    order_history_ids = request.session.get('order_history', [])
+    orders = Order.objects.filter(id__in=order_history_ids).order_by('-created_at')
+    return render(request, 'cart/order_history.html', {'orders': orders})
 
 
 def order_summary(request):

@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h2>وضعیت سفارش</h2>
+<h2>وضعیت سفارش آخر</h2>
 
 {% if order %}
     <p>شماره سفارش: {{ order.id }}</p>
@@ -19,4 +19,6 @@
 {% endif %}
 
 <a href="{% url 'home' %}" class="btn btn-primary">بازگشت به صفحه اصلی</a>
+<hr>
+<a href="{% url 'order_history' %}" class="btn btn-primary">تاریخچه سفارشات</a> 
 {% endblock %}

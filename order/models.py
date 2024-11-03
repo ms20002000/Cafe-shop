@@ -23,7 +23,6 @@ class Order(models.Model):
 
     class StatusOrder(models.TextChoices):
         PENDING = "P", _("Pending")
-        REGISTERED = "R", _("Registered")
         APPROVED = "A", _("Approved")
         CANCELLED = "CA", _("Cancelled")
         COOKING = "CK", _("Cooking")
@@ -50,7 +49,6 @@ class Order(models.Model):
     def clean(self):
         active_statuses = [
             Order.StatusOrder.PENDING,
-            Order.StatusOrder.REGISTERED,
             Order.StatusOrder.APPROVED,
             Order.StatusOrder.COOKING,
         ]

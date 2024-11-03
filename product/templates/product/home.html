@@ -11,6 +11,14 @@
         </div>
         
         <div class="tf-container pt-100 pb-70">  
+            <div>
+                <h3>سبد خرید</h3>
+                <a href="{% url 'cart_detail' %}" class="icon-filter-3">Cart</a>
+            </div>
+            <div>
+                <h3>سفارشات</h3>
+                <a href="{% url 'order_summary' %}" class="icon-filter-3">Orders</a>
+            </div>
             <div class="search-box">
                 <form method="post" action="{% url 'product' %}">
                     {% csrf_token %}
