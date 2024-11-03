@@ -4084,12 +4084,12 @@ a.mapboxgl-ctrl-logo,
   align-items: center;
   justify-content: space-between;
 }
-.box-driver .inner {
+.box-driver .inner-update {
   display: flex;
   align-items: center;
   gap: 12px;
 }
-.box-driver .inner .img {
+.box-driver .inner-update .img {
   width: 42px;
   height: 42px;
   border-radius: 100px;

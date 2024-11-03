@@ -3,6 +3,7 @@
 {% load static %}
 
 {% block content %}
+
 <div class="header"> 
     <div class="title-header-bar fixed-top bg-white">
         <a  class="back-btn"><i class="icon-right"></i></a>
@@ -13,7 +14,7 @@
 <div class="app pt-80">
     <div class="tf-container">
         <div class="box-driver line">
-            <div class="inner">
+            <div class="inner-update">
                 <div class="img">
                     <a href="{% url 'update_category' category.id %}">
                         <img src="{{ category.category_photo.url }}" alt="{{ category.name }}">
@@ -24,7 +25,7 @@
                 </div>
             </div>
         </div>
-        <form method="post" action="{% url 'product' %}">
+        <form method="post" action="{% url 'home' %}">
             {% csrf_token %}
             <h3 class="mt-30 fw-7 lh-26" style="margin-bottom: 15px;">تغییر نام</h3>
                 {{ form.name }}
@@ -49,7 +50,7 @@
                 </div>
             {% endif %}
                 
-                <button type="submit" style="margin-top:15px">ذخیره کردن</button>
+                <button type="submit" style="margin-top:15px;margin-bottom:60px">ذخیره کردن</button>
             </div>
         </form>
     </div>
