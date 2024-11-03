@@ -31,15 +31,16 @@ class StaffLogin(View):
             phone_number = form.cleaned_data.get('username')
             password = form.cleaned_data.get('password')
             user = authenticate(request, username=phone_number, password=password)
-            if user is not None and user.is_admin:
+            if user is not None:
                 login(request, user)
-                return redirect('manager_dashboard')
-            elif user is not None and user.is_staff:
-                login(request, user)
-                return redirect('staff_dashboard')
+                if user.is_admin:
+                    return redirect('manager_dashboard')
+                elif user.is_staff:
+                    return redirect('staff_dashboard')
             else:
                 messages.error(request, 'Invalid credentials or not a staff member')
-                return redirect('staff_login')
+        
+        return render(request, 'account/login.html', {'form': form})
 
 
 class StaffDashboard(LoginRequiredMixin, UserPassesTestMixin, ListView):
