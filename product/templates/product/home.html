@@ -11,15 +11,23 @@
         </div>
         
         <div class="tf-container pt-100 pb-70">  
+            <div>
+                <h3>سبد خرید</h3>
+                <a href="{% url 'cart_detail' %}" class="icon-filter-3">Cart</a>
+            </div>
+            <div>
+                <h3>سفارشات</h3>
+                <a href="{% url 'order_summary' %}" class="icon-filter-3">Orders</a>
+            </div>
             <div class="search-box">
                 <!-- <a  href="search-result-02.html"  class="icon-filter-3" data-bs-toggle="modal" data-bs-target="#addCardActionSheet2"></a> -->
                 <!-- <input type="text" placeholder="قهوه خود را جستجو کنید..." >
                 <span style="color: #033f38;" class="icon icon-search"></span> -->
-                <form class="icon-filter-3" data-bs-target="#addCardActionSheet2" method="post"  action="{% url 'product' %}">
+                <form class="icon-filter-3" data-bs-target="#addCardActionSheet2" method="post"  action="{% url 'home' %}">
                     {% csrf_token %}
                     <input type="text" name="q" value="{{ query }}" placeholder="Search products by name...">
                     <button type="submit">Search</button>
-                </form>
+                </form> 
                 
                 <ul>
                     {% if is_empty %}

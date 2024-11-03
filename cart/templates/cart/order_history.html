@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>تاریخچه سفارشات</h2>
+{% if orders %}
+    <ul>
+    {% for order in orders %}
+        <li>
+            Table: {{ order.table }} 
+        </li>
+        <li>
+            Order Items: {% for item in order.items.all %}{{ item.product.name }} - {{ item.quantity }}{% endfor %}
+            {% comment %} <a href="{% url 'order_detail' order.id %}">View Details</a> {% endcomment %}
+        </li>
+        <li>
+            Status: {{ order.get_status_display }} 
+        </li>
+        <li>
+            Total: {{ order.total_price }} 
+        </li>
+        <hr>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No order history available.</p>
+{% endif %}
+{% endblock %}

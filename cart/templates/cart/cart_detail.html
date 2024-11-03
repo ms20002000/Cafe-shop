@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 
 {% block content %}
+<h2>بازگشت و ادامه سفارش</h2>
+<a href="{% url 'home' %}" class="btn btn-primary">بازگشت به فهرست محصولات</a>
 <h2>سبد خرید</h2>
 {% if cart_items %}
     <ul>
