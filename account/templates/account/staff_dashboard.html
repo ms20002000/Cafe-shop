@@ -6,7 +6,7 @@
 
     <nav class="page-breadcrumb">
       <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="#">سفارشات</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'staff_dashboard' %}">سفارشات</a></li>
         <li class="breadcrumb-item active" aria-current="page">لیست سفارشات</li>
       </ol>
     </nav>
@@ -27,11 +27,11 @@
                             <label for="exampleFormControlSelect1" class="form-label">انتخاب وضعیت</label>
                             <select class="form-select" name="status" id="status">
                             <option value="" selected>All</option>
-                            <option value="Pending">Pending</option>
-                            <option value="Registered">Registered</option>
-                            <option value="Approved">Approved</option>
-                            <option value="Cancelled">Cancelled</option>
-                            <option value="Completed">Completed</option>
+                            <option value="P">Pending</option>
+                            <option value="R">Registered</option>
+                            <option value="A">Approved</option>
+                            <option value="CA">Cancelled</option>
+                            <option value="C">Completed</option>
                             </select>
                             <button type="submit" class="btn btn-primary" style="margin-top:15px">فیلتر</button>
                         </form>
@@ -132,7 +132,7 @@
                     {% for order in orders %}
                     <tr>
                         <td>{{ order.id }}</td>
-                        <td>{{ order.customer.phone_number }}</td>
+                        <td>{{ order.modify_by.phone_number }}</td>
                         <td>{{ order.table.number }}</td>
                         <td>{{ order.status }}</td>
                         <td>{{ order.created_at|date:"Y-m-d" }}</td>
