@@ -9,7 +9,7 @@ class CategoryAddForm(forms.ModelForm):
 class ProductAddForm(forms.ModelForm):
     class Meta:
         model = Product
-        fields = ['name', 'price', 'description', 'stock_quantity', 'category', 'product_photo']
+        fields = ['name', 'price', 'description', 'category', 'product_photo']
 
 class CategoryUpdateForm(forms.ModelForm):
     class Meta:
@@ -24,4 +24,4 @@ class CategoryUpdateForm(forms.ModelForm):
 class ProductUpdateForm(forms.ModelForm):
     class Meta:
         model = Product
-        fields = ['name', 'description', 'price', 'category', 'stock_quantity', 'is_available', 'product_photo']
+        fields = ['name', 'description', 'price', 'category', 'is_available', 'product_photo']

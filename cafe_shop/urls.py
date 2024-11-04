@@ -25,7 +25,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', RedirectView.as_view(url='/menu/', permanent=True)),
     path('menu/', include('product.urls')),
-    path('account/', include('account.urls')),
+    path('accounts/', include('account.urls')),
     path('order/', include('order.urls')),
     path('__debug__/', include(debug_toolbar.urls)),
     path('cart/' , include("cart.urls")),

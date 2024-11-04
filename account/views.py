@@ -104,9 +104,6 @@ class PasswordChange(PasswordChangeView):
         else:
             return redirect('home')
 
-# def HomeView(request):
-#     return render(request, 'account/home.html', {})
-
 
 class ManagerPanelView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
     template_name = 'account/manager_dashboard.html'

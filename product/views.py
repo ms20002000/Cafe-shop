@@ -5,15 +5,18 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views import View
 from django.views.generic.edit import UpdateView
 from django.urls import reverse_lazy
-
+from django.db.models import Count, Sum
 
 
 class ProductView(View):
     template_name = 'product/home.html'
 
     def get(self, request):
-        categories = Category.objects.filter(is_available=True)
-        return render(request, self.template_name, {'categories': categories})
+        categories = Category.objects.filter(is_available=True).annotate(product_count=Count('products'))
+        products = Product.objects.annotate(total_sold=Sum('order_items__quantity')
+                                    ).order_by('-total_sold')
+        top_items = products[:10]
+        return render(request, self.template_name, {'categories': categories, 'top_items': top_items})
 
     def post(self, request):
         query = request.POST.get('q', '')  

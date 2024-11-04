@@ -26,3 +26,8 @@ class OrderCreateForm(forms.Form):
         label="شماره تلفن (اختیاری)",
         widget=forms.TextInput(attrs={'placeholder': 'مثلاً: 09123456789'})
     )
+    payment_method = forms.ChoiceField(
+        choices=[('cash', 'پرداخت نقدی'), ('credit', 'پرداخت اعتباری')],
+        label="روش پرداخت",
+        required=True
+    )

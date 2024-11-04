@@ -13,7 +13,6 @@ class Product(models.Model):
     name = models.CharField(max_length=100, unique=True)
     price = models.FloatField()
     description = models.TextField()
-    stock_quantity = models.IntegerField()
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='products')
     product_photo = models.ImageField(upload_to='product_photos/', default='product_photos/default.jpg')
     is_available = models.BooleanField(default=True)

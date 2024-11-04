@@ -38,13 +38,21 @@ def cart_detail(request):
             'override': True
         })
 
-    order_form = OrderCreateForm()
     return render(request, 'cart/cart_detail.html', {
+        'cart_items': cart_items,
+        'cart': cart,
+    })
+
+def checkout(request):
+    cart = Cart(request)
+    cart_items = list(cart.iter())
+    order_form = OrderCreateForm()
+
+    return render(request, 'cart/checkout.html', {
         'cart_items': cart_items,
         'cart': cart,
         'order_form': order_form
     })
-
 
 
 @require_POST
@@ -63,11 +71,13 @@ def finalize_cart(request):
     if order_form.is_valid():
         table = order_form.cleaned_data['table']
         phone_number = order_form.cleaned_data['phone_number']
+        payment_method = order_form.cleaned_data['payment_method']
 
         order = Order.objects.create(
             table=table,
             total_price=cart.get_total_price(),
             status=Order.StatusOrder.PENDING,
+            payment_method=payment_method,
         )
 
 
@@ -94,6 +104,7 @@ def finalize_cart(request):
         return response
     else:
         return redirect('cart_detail')
+
 
 
 def order_history(request):
