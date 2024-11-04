@@ -298,7 +298,7 @@ class AddStaffView(LoginRequiredMixin, UserPassesTestMixin, View):
             user = form.save(commit=False)
             user.is_staff = True  
             user.save()
-            return redirect('manager_dashboard')
+            return redirect('staff_list')
         return render(request, self.template_name, {'form': form})
 
 class StaffListView(LoginRequiredMixin, UserPassesTestMixin, ListView):

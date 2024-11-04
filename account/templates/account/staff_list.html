@@ -1,20 +1,51 @@
-<!-- staff_list.html -->
-<h1>Staff Members</h1>
-<table>
-    <tr>
-        <th>Full Name</th>
-        <th>Email</th>
-        <th>Phone Number</th>
-        <th>Actions</th>
-    </tr>
-    {% for staff in staff_list %}
-    <tr>
-        <td>{{ staff.first_name }} {{ staff.last_name }}</td>
-        <td>{{ staff.email }}</td>
-        <td>{{ staff.phone_number }}</td>
-        <td>
-            <a href="{% url 'update_staff' staff.pk %}">Update</a>
-        </td>
-    </tr>
-    {% endfor %}
-</table>
+{% extends 'staff-base.html' %}
+{% block title %}مدیریت کارکنان{% endblock %}
+{% load static %}
+{% block content %}
+<div class="page-content">
+
+    <nav class="page-breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'staff_list' %}">مدیریت کارکنان</a></li>
+        <li class="breadcrumb-item active" aria-current="page">لیست کارکنان</li>
+      </ol>
+    </nav>
+
+    <div class="row">
+      <div class="col-md-12 grid-margin stretch-card">
+        <div class="card">
+          <div class="card-body">
+            <div class="table-responsive">
+              <table id="dataTableExample" class="table">
+                <thead>
+                  <tr>
+                    <th>نام و نام‌خانوادگی</th>
+                    <th>ایمیل</th>
+                    <th>شماره همراه</th>
+                    <th>عملیات</th>
+                  </tr>
+                </thead>
+                <tbody>
+                    {% for staff in staff_list %}
+                    <tr>
+                        <td>{{ staff.first_name }} {{ staff.last_name }}</td>
+                        <td>{{ staff.email }}</td>
+                        <td>{{ staff.phone_number }}</td>
+                        <td>
+                            <a href="{% url 'update_staff' staff.pk %}"><button type="button" class="btn btn-primary btn-icon" data-bs-toggle="tooltip" data-bs-placement="top" title="ویرایش"><i data-feather="edit"></i></button></a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6">کاربری یافت نشد.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

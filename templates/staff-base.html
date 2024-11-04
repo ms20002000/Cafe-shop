@@ -95,14 +95,26 @@
               <span class="link-title">لیست سفارشات</span>
             </a>
           </li>
-          {% comment %} <li class="nav-item nav-category">مدیریت</li>
+          <li class="nav-item nav-category">مدیریت</li>
           <li class="nav-item">
-            <a href="pages/apps/chat.html" class="nav-link">
+            <a class="nav-link" data-bs-toggle="collapse" role="button" href="#table" aria-expanded="false"
+              aria-controls="table">
               <i class="link-icon" data-feather="users"></i>
-              <span class="link-title">مدیریت کاربران</span>
+              <span class="link-title">کارکنان</span>
+              <i class="link-arrow" data-feather="chevron-down"></i>
             </a>
+            <div class="collapse" id="table">
+              <ul class="nav sub-menu">
+                <li class="nav-item">
+                  <a href="{% url 'staff_list' %}" class="nav-link">لیست کارکنان</a>
+                </li>
+                <li class="nav-item">
+                  <a href="{% url 'add_staff' %}" class="nav-link">افزودن کارکنان</a>
+                </li>
+              </ul>
+            </div>
           </li>
-          <li class="nav-item">
+          {% comment %} <li class="nav-item">
             <a href="pages/apps/chat.html" class="nav-link">
               <i class="link-icon" data-feather="settings"></i>
               <span class="link-title">مدیریت سایت</span>
@@ -228,14 +240,14 @@
                   </div>
                   <div class="text-center">
                     <p class="tx-16 fw-bolder">فراز فلاح</p>
-                    <p class="tx-12 text-muted">arezomohebi@gmail.com</p>
+                    <p class="tx-12 text-muted">farazfallah0@gmail.com</p>
                   </div>
                 </div>
                 <ul class="list-unstyled p-1">
                   <li class="dropdown-item py-2">
-                    <a href="pages/general/profile.html" class="text-body ms-0">
-                      <i class="me-2 icon-md" data-feather="user"></i>
-                      <span>پروفایل</span>
+                    <a href="{% url 'home' %}" class="text-body ms-0">
+                      <i class="me-2 icon-md" data-feather="home"></i>
+                      <span>وبسایت کافه</span>
                     </a>
                   </li>
                   <li class="dropdown-item py-2">

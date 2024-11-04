@@ -1,6 +1,100 @@
-<h2>Update Staff</h2>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Save changes</button>
-</form>
+{% extends 'staff-base.html' %}
+{% block title %}ویرایش کارکنان{% endblock %}
+{% load static %}
+{% block content %}
+
+<div class="page-content">
+
+    <nav class="page-breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="{% url 'staff_list' %}">مدیریت کارکنان</a></li>
+          <li class="breadcrumb-item" aria-current="page">لیست کارکنان</li>
+          <li class="breadcrumb-item active" aria-current="page">ویرایش کارکنان</li>
+        </ol>
+    </nav>
+
+    <div class="row">
+        <div class="col-md-12 stretch-card">
+            <div class="card">
+                <div class="card-body">
+                    <form method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="mb-3">
+                                    <label class="form-label">نام</label>
+                                    <input type="text" name="first_name" class="form-control" placeholder="نام خود را وارد کنید" value="{{ form.first_name.value }}">
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="mb-3">
+                                    <label class="form-label">نام خانوادگی</label>
+                                    <input type="text" name="last_name" class="form-control" placeholder="نام خانوادگی خود را وارد کنید" value="{{ form.last_name.value }}">
+                                </div>
+                            </div>
+                        </div>
+    
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="mb-3">
+                                    <label class="form-label">شماره تلفن</label>
+                                    <input type="text" name="phone_number" class="form-control" placeholder="شماره تلفن خود را وارد کنید" value="{{ form.phone_number.value }}">
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="mb-3">
+                                    <label class="form-label">آدرس ایمیل</label>
+                                    <input type="email" name="email" class="form-control" placeholder="ایمیل خود را وارد کنید" value="{{ form.email.value }}">
+                                </div>
+                            </div>
+                        </div>
+    
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="mb-3">
+                                    <label class="form-label">تخصص</label>
+                                    <select name="specialty" class="form-control">
+                                        {% for choice in form.specialty.field.choices %}
+                                            <option value="{{ choice.0 }}" {% if choice.0 == form.specialty.value %}selected{% endif %}>{{ choice.1 }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="col-sm-3">
+                                <div class="mb-3 form-check">
+                                    <input type="checkbox" name="is_staff" class="form-check-input" id="is_staff" {% if form.is_staff.value %}checked{% endif %}>
+                                    <label class="form-check-label" for="is_staff">کارمند</label>
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="mb-3 form-check">
+                                    <input type="checkbox" name="is_active" class="form-check-input" id="is_active" {% if form.is_active.value %}checked{% endif %}>
+                                    <label class="form-check-label" for="is_active">فعال</label>
+                                </div>
+                            </div>
+                        </div>
+    
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="mb-3">
+                                    <label class="form-label">تصویر پروفایل</label>
+                                    <input type="file" name="profile_picture" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="mb-3">
+                                    <label class="form-label">رمز عبور</label>
+                                    <input type="password" class="form-control" autocomplete="off" placeholder="رمز عبور">
+                                </div>
+                            </div>
+                        </div>
+    
+                        <button type="submit" class="btn btn-primary">به روزرسانی</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
