@@ -1,6 +1,155 @@
+{% extends 'staff-base.html' %}
+{% block title %}مدیریت سفارشات{% endblock %}
+{% load static %}
+{% block content %}
+<div class="page-content">
+
+    <div class="d-flex justify-content-between align-items-center flex-wrap grid-margin">
+        <div>
+          <h4 class="mb-3 mb-md-0">به داشبورد خوش آمدید</h4>
+        </div>
+        <div class="d-flex align-items-center flex-wrap text-nowrap">
+          {% comment %} <div class="input-group flatpickr wd-200 me-2 mb-2 mb-md-0">
+            <span class="input-group-text input-group-addon bg-transparent border-primary" data-toggle><i
+                data-feather="calendar" class="text-primary"></i></span>
+            <input type="text" class="form-control bg-transparent border-primary tarikh" placeholder="انتخاب تاریخ">
+          </div> {% endcomment %}
+          {% comment %} <a href="{% url 'export_sales_report' %}" class="btn btn-primary btn-icon-text mb-2 mb-md-0">
+            <i class="btn-icon-prepend" data-feather="download-cloud"></i>
+            دانلود گزارش
+          </a> {% endcomment %}
+        </div>
+      </div>
+
+
+    <div class="row">
+        <div class="col-12 col-xl-12 stretch-card">
+        <div class="row flex-grow-1">
+            <div class="col-md-4 grid-margin stretch-card">
+            <div class="card">
+                <div class="card-body">
+                <div class="d-flex justify-content-between align-items-baseline">
+                    <h6 class="card-title mb-0">فروش روزانه</h6>
+                </div>
+                <div class="row">
+                    <div class="col-6 col-md-12 col-xl-5">
+                    <h3 class="mb-2" style="margin-top:10px">{{ daily_sales }}</h3>
+                    <div class="d-flex align-items-baseline">
+                        <p class="text-success">
+                        <span>+3.3%</span>
+                        <i data-feather="arrow-up" class="icon-sm mb-1"></i>
+                        </p>
+                    </div>
+                    </div>
+                    <div class="col-6 col-md-12 col-xl-7">
+                    <div id="customersChart" class="mt-md-3 mt-xl-0"></div>
+                    </div>
+                </div>
+                </div>
+            </div>
+            </div>
+            <div class="col-md-4 grid-margin stretch-card">
+            <div class="card">
+                <div class="card-body">
+                <div class="d-flex justify-content-between align-items-baseline">
+                    <h6 class="card-title mb-0">فروش ماهانه</h6>
+                </div>
+                <div class="row">
+                    <div class="col-6 col-md-12 col-xl-5">
+                    <h3 class="mb-2" style="margin-top:10px">{{ monthly_sales }}</h3>
+                    <div class="d-flex align-items-baseline">
+                        <p class="text-danger">
+                        <span>-2.8%</span>
+                        <i data-feather="arrow-down" class="icon-sm mb-1"></i>
+                        </p>
+                    </div>
+                    </div>
+                    <div class="col-6 col-md-12 col-xl-7">
+                    <div id="ordersChart" class="mt-md-3 mt-xl-0"></div>
+                    </div>
+                </div>
+                </div>
+            </div>
+            </div>
+            <div class="col-md-4 grid-margin stretch-card">
+            <div class="card">
+                <div class="card-body">
+                <div class="d-flex justify-content-between align-items-baseline">
+                    <h6 class="card-title mb-0">فروش سالانه</h6>
+                </div>
+                <div class="row">
+                    <div class="col-6 col-md-12 col-xl-5">
+                    <h3 class="mb-2" style="margin-top:10px">{{ yearly_sales }}</h3>
+                    <div class="d-flex align-items-baseline">
+                        <p class="text-success">
+                        <span>+2.8%</span>
+                        <i data-feather="arrow-up" class="icon-sm mb-1"></i>
+                        </p>
+                    </div>
+                    </div>
+                    <div class="col-6 col-md-12 col-xl-7">
+                    <div id="growthChart" class="mt-md-3 mt-xl-0"></div>
+                    </div>
+                </div>
+                </div>
+            </div>
+            </div>
+        </div>
+        </div>
+    </div> 
+
+
+    <div class="row">
+        <div class="col-lg-5 col-xl-4 grid-margin grid-margin-xl-0 stretch-card">
+          <div class="card">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-baseline mb-2">
+                <h6 class="card-title mb-0">جدول تست</h6>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-7 col-xl-8 stretch-card">
+          <div class="card">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-baseline mb-2">
+                <h6 class="card-title mb-0">فروش بر اساس دسته بندی</h6>
+              </div>
+              <div class="table-responsive" style="margin-top:10px">
+                <table class="table table-hover mb-0">
+                  <thead>
+                    <tr>
+                      <th class="pt-0"></th>
+                      <th class="pt-0">نام دسته بندی</th>
+                      <th class="pt-0">تعداد فروش</th>
+                      <th class="pt-0">عملیات</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for category in sales_by_category %}
+                    <tr>
+                      <td class="py-1">
+                        <img src="{{ category.category_photo.url }}" alt="{{ category.name }}">
+                      </td>
+                      <td>{{ category.name }}</td>
+                      <td>{{ category.total_sales }}</td>
+                      <td>
+                        <a href="{% url 'update_category' category.id %}"><button type="button" class="btn btn-primary btn-icon" data-bs-toggle="tooltip" data-bs-placement="top" title="مشاهده"><i data-feather="eye"></i></button></a>
+                      </td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
 <h1>Manager Panel</h1>
 
-<h2>Total Sales</h2>
+{% comment %} <h2>Total Sales</h2>
 <p>{{ total_sales }}</p>
 
 <h2>Daily, Monthly, and Yearly Sales</h2>
@@ -8,7 +157,7 @@
     <li><strong>Daily Sales:</strong> {{ daily_sales }}</li>
     <li><strong>Monthly Sales:</strong> {{ monthly_sales }}</li>
     <li><strong>Yearly Sales:</strong> {{ yearly_sales }}</li>
-</ul>
+</ul> {% endcomment %}
 
 <h2>Top-Selling Items</h2>
 <form method="GET">
@@ -33,7 +182,7 @@
     {% endfor %}
 </table>
 
-<h2>Sales by Category</h2>
+{% comment %} <h2>Sales by Category</h2>
 <table>
     <tr>
         <th>Category</th>
@@ -45,7 +194,7 @@
         <td>{{ category.total_sales }}</td>
     </tr>
     {% endfor %}
-</table>
+</table> {% endcomment %}
 
 <h2>Sales by Time of Day</h2>
 <ul>
@@ -111,24 +260,7 @@
 {% else %}
 <p>No peak business hour data available.</p>
 {% endif %}
-
-<h2>Add Staff</h2>
-<p><a href="{% url 'add_staff' %}" class="btn btn-primary">Add Staff</a></p>
-
-<h2>Add Category</h2>
-<p><a href="{% url 'add_category' %}" class="btn btn-primary">Add Category</a></p>
-
-<h2>Add Product</h2>
-<p><a href="{% url 'add_product' %}" class="btn btn-primary">Add Product</a></p>
-
-<h2>Staff List and Update</h2>
-<p><a href="{% url 'staff_list' %}" class="btn btn-primary">Staff List</a></p>
-
 {% comment %} <h2>Download Sales Report</h2>
 <p><a href="{% url 'export_sales_report' %}" class="btn btn-primary">Download Sales Report (CSV)</a></p {% endcomment %}
 
-<h2>Logout</h2>
-<form method="POST" action="{% url 'logout' %}">
-    {% csrf_token %}
-    <button type="submit">Logout</button>
-</form>
+{% endblock %}
