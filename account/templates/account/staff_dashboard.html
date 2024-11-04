@@ -1,4 +1,4 @@
-{% extends 'staff-base.html' %}
+{% comment %} {% extends 'staff-base.html' %}
 {% block title %}مدیریت سفارشات{% endblock %}
 {% load static %}
 {% block content %}
@@ -198,7 +198,7 @@
             {% for order in orders %}
             <tr>
                 <td>{{ order.id }}</td>
-                <td>{{ order.customer.phone_number }}</td>
+                <td>{{ order.modify_by.phone_number }}</td>
                 <td>{{ order.status }}</td>
                 <td>{{ order.table.number }}</td>
                 <td>{{ order.created_at|date:"Y-m-d" }}</td>
@@ -220,7 +220,7 @@
         <button type="submit">Logout</button>
     </form>
 </body>
-</html>
+</html> {% endcomment %}
 
 
 
@@ -232,7 +232,7 @@
     <title>{{ staff_name }} Dashboard</title>
 </head>
 <body>
-    <h1>Welcome, {{ staff_name }}</h1>
+    <h1>Welcome, {{ staff_name }}</h1> 
 
 
 
@@ -277,4 +277,4 @@
         <button type="submit">Logout</button>
     </form>
 </body>
-</html>
+</html> 

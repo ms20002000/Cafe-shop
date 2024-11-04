@@ -1,4 +1,3 @@
-# forms.py
 from .models import Category, Product
 from django import forms
 

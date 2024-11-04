@@ -7,30 +7,28 @@ from django.views.generic.edit import UpdateView
 from django.urls import reverse_lazy
 
 
-def home(request):
-    categories = Category.objects.filter(is_available=True)
-    return render(request, 'product/home.html', {'categories': categories})
-
 
 class ProductView(View):
     template_name = 'product/home.html'
 
     def get(self, request):
         categories = Category.objects.filter(is_available=True)
-        print(categories)
         return render(request, self.template_name, {'categories': categories})
 
     def post(self, request):
-        query = request.POST.get('q', '')  # Get the search parameter from the POST data
-        products = Product.objects.filter(name__icontains=query)  # Search only by name
+        query = request.POST.get('q', '')  
+        if query == '':
+            categories = Category.objects.filter(is_available=True)
+            return render(request, self.template_name, {'categories': categories})
+        
+        products = Product.objects.filter(name__icontains=query)  
 
-        # Check if products queryset is empty
-        is_empty = not products.exists()  # Set to True if no products are found
+        is_empty = not products.exists()  
 
         context = {
             'products': products,
             'query': query,
-            'is_empty': is_empty,  # Pass the is_empty variable to the template
+            'is_empty': is_empty, 
         }
         return render(request, self.template_name, context)
 

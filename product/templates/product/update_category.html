@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% comment %} {% extends 'base.html' %}
 {% block title %}ویرایش دسته‌بندی {{ category.name }}{% endblock %}
 {% load static %}
 
@@ -55,4 +55,11 @@
         </form>
     </div>
 </div>
-{% endblock %}
+{% endblock %}  {% endcomment %}
+
+<h2>Update Category</h2>
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Save changes</button>
+</form> 
