@@ -1,4 +1,4 @@
-{% comment %} {% extends 'staff-base.html' %}
+{% extends 'staff-base.html' %}
 {% block title %}مدیریت سفارشات{% endblock %}
 {% load static %}
 {% block content %}
@@ -156,7 +156,7 @@
 
   </div>
 {% endblock %}
-<!DOCTYPE html>
+{% comment %} <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -220,7 +220,7 @@
         <button type="submit">Logout</button>
     </form>
 </body>
-</html> {% endcomment %}
+</html>
 
 
 
@@ -277,4 +277,4 @@
         <button type="submit">Logout</button>
     </form>
 </body>
-</html> 
+</html>  {% endcomment %}

@@ -31,7 +31,7 @@
         <h4 class="pt-24">تعداد</h4>
         <div class="sec-qty mt-12">
             <span class="btn-quantity minus-btn"><i class="icon-minus"></i></span>
-            <input type="number" name="number" value="2">
+            <input type="number" name="number" value="1">
             <span class="btn-quantity active plus-btn"><i class="icon-plus"></i></span>
         </div>
         <div class="sec-size mt-30 mb-30">
@@ -45,86 +45,5 @@
         </form>
     </div>
 </div>
-<!-- <div class="bottom-fixed bg-white">
-    <div class="inner mb-20 box-total">
-    </div>
-</div> -->
-
-
-
-        {% comment %} <div class="banner-wrapper mb--30">
-            <img src="{{ product.product_photo.url }}" alt="تصاویر" class="banner-img2">
-        </div>
-        <div class="bg-white relative lr-top-radius">
-            <div class="tf-container">
-                <div class="title-detail pt-20 justify-center">
-                    <div class="content">
-                        <h1><a href="#" class="text-primary">{{ product.name }}</a></h1>
-                        <p>{{ product.description }}</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="section mt-20">
-            <div class="tf-container">
-                <ul class="nav nav-tabs tab-product-detail" role="tablist">
-                    <li class="nav-item" role="presentation">
-                        <a class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#small" role="tab" aria-controls="small" aria-selected="true">
-                            کوچک (24.12 تومان)
-                        </a>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <a class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#medium" role="tab" aria-controls="medium" aria-selected="false">
-                            متوسط (34.50 تومان)
-                        </a>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <a class="nav-link" id="contact-tab" data-bs-toggle="tab" data-bs-target="#large" role="tab" aria-controls="large" aria-selected="false">
-                            بزرگ (48.25 تومان)
-                        </a>
-                    </li>
-                </ul>
-                
-                <div class="tab-content mt-26 tab-size mb-30">
-                    <div class="tab-pane fade show active" id="small" role="tabpanel" data-price="24.12">
-                        <div class="sec-qty center">
-                            <span class="btn-quantity minus-btn"><i class="icon-minus"></i></span>
-                            <input type="number" class="quantity" value="1" min="1">
-                            <span class="btn-quantity active plus-btn"><i class="icon-plus"></i></span>
-                        </div>  
-                    </div>
-                    
-                    <div class="tab-pane fade" id="medium" role="tabpanel" data-price="34.50">
-                        <div class="sec-qty center">
-                            <span class="btn-quantity minus-btn"><i class="icon-minus"></i></span>
-                            <input type="number" class="quantity" value="1" min="1">
-                            <span class="btn-quantity active plus-btn"><i class="icon-plus"></i></span>
-                        </div> 
-                    </div>
-                    
-                    <div class="tab-pane fade" id="large" role="tabpanel" data-price="48.25">
-                        <div class="sec-qty center">
-                            <span class="btn-quantity minus-btn"><i class="icon-minus"></i></span>
-                            <input type="number" class="quantity" value="1" min="1">
-                            <span class="btn-quantity active plus-btn"><i class="icon-plus"></i></span>
-                        </div> 
-                    </div>
-                </div>
-                <div class="total mt-16">
-                    <p>قیمت کل:</p>
-                    <span class="total-price">{{ product.price }} تومان</span>
-                </div>
-                
-                <form action="{% url 'cart_add' product.id %}" method="post" style="display:inline;">
-                    {% csrf_token %}
-                    <button type="submit" class="tf-btn large primary"><i class="icon-buy"></i> افزودن به سبد خرید</button>
-                </form>
-
-                <div class="mb-20" style="padding-bottom: 60px;">
-                    <a href="cart.html" class="tf-btn large primary"><i class="icon-buy"></i> افزودن به سبد خرید</a>              
-                </div>  
-            </div>
-        </div> {% endcomment %}
-
 {% endblock %}
 

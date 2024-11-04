@@ -50,7 +50,6 @@
             {% if user.is_authenticated %}
                 <li><a href="{% url 'logout' %}"><span class="icon-logout"></span>خروج</a></li>
             {% else %}
-                <li><a href="{% url 'staff_login' %}"><span class="icon-profile"></span>ورود</a></li>
             {% endif %}
         </ul>
     </div>
