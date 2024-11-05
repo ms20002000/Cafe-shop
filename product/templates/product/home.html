@@ -157,10 +157,13 @@
                                         <img src="{{ item.product_photo.url }}" alt="{{ item.name }}">
                                     </a>
                                     <div class="content-box">
-                                        <h3><a href="product-details-1.html">{{ item.name }}</a></h3>
+                                        <h3><a href="{% url 'product_detail' item.category.name item.name %}">{{ item.name }}</a></h3>
                                         <ul class="review">
-                                            <li>{{ item.description }}</li>
+                                            <li class="description" data-url="{% url 'product_detail' item.category.name item.name %}">
+                                                {{ item.description }}
+                                            </li>
                                         </ul>
+
                                         <div class="box-price">
                                             <span class="price">{{ item.price }} تومان</span>
                                         </div>
@@ -172,5 +175,5 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div>        
 {% endblock %}

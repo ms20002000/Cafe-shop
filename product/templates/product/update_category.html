@@ -25,12 +25,12 @@
                 </div>
             </div>
         </div>
-        <form method="post"  enctype="multipart/form-data" action="{% url 'home' %}">
+        <form method="post"  enctype="multipart/form-data" action="{% url 'update_category' category.id %}">
             {% csrf_token %}
             <h3 class="mt-30 fw-7 lh-26" style="margin-bottom: 15px;">تغییر نام</h3>
             {{ form.name }}
             <h3 class="mt-30 fw-7 lh-26" style="margin-bottom: 15px;">تغییر عکس</h3>
-                <label for="id_category_photo">{{ form.category_photo.label }}</label>
+                <p style="margin-bottom:5px;color:red">برای تغییر عکس، از عکس های 1:1 ترجیحا با سایز 512*512 پیکسل استفاده نمایید.</p>
                 {{ form.category_photo }}
                 {% if form.category_photo.errors %}
                     <div class="error">

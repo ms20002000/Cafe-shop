@@ -76,7 +76,7 @@ class StaffDashboard(LoginRequiredMixin, UserPassesTestMixin, ListView):
             end_date = parse_date(end_date)
             queryset = queryset.filter(created_at__date__lte=end_date)
 
-        queryset = queryset.order_by('-created_at')
+        queryset = queryset.order_by('created_at')
         
         return queryset
     

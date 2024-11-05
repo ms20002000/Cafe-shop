@@ -1147,6 +1147,10 @@ textarea {
   padding: 20px;
   left: 0;
   right: 0;
+  justify-content: space-between;
+  background: rgba(255, 255, 255, 0.7); !important
+  backdrop-filter: blur(10px); /* اعمال افکت مات */
+  -webkit-backdrop-filter: blur(10px); /* برای پشتیبانی از مرورگرهای Webkit */
 }
 
 .header.absolute {
@@ -1738,14 +1742,16 @@ textarea {
   padding: 14px 15px 15px;
 }
 .menubar-footer.footer-fixed {
+  max-width: 1024px;
   position: fixed;
   bottom: 0;
-  left: 0;
+  left: 50%;
+  transform: translateX(-50%);
   width: 100%;
   z-index: 1000;
   background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
   border-top: 1px solid rgba(255, 255, 255, 0.2);
   border-top-left-radius: 20px;
   border-top-right-radius: 20px;
@@ -3067,9 +3073,11 @@ a.mapboxgl-ctrl-logo,
   }
 }
 .inner-headerbar {
+  border-radius: 0 0 15px 15px;
   display: flex;
   gap: 12px;
   justify-content: space-between;
+  
 }
 .inner-headerbar .header-home {
   flex: 1;

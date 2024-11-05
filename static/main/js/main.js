@@ -333,3 +333,19 @@ if(window.location.pathname.includes('profile.html')) {
     i.classList.add('active');
   }
 }
+
+document.addEventListener("DOMContentLoaded", function () {
+  document.querySelectorAll(".description").forEach(function (desc) {
+      const maxLength = 20;
+      const fullText = desc.textContent.trim();
+      
+      if (fullText.length > maxLength) {
+          const truncatedText = fullText.slice(0, maxLength) + "...";
+          desc.innerHTML = `
+              <span class="text">${truncatedText}</span>
+              <span class="fade-overlay"></span>
+              <a href="${desc.getAttribute('data-url')}" class="read-more">ادامه</a>
+          `;
+      }
+  });
+});

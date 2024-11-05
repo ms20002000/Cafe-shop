@@ -44,7 +44,7 @@
             {{ form.category }}
             
             <h3 class="mt-30 fw-7 lh-26" style="margin-bottom: 15px;">تغییر عکس محصول</h3>
-            <label for="id_product_photo">{{ form.product_photo.label }}</label>
+            <p style="margin-bottom:5px;color:red">برای تغییر عکس، از عکس های 1:1 ترجیحا با سایز 512*512 پیکسل استفاده نمایید.</p>
             {{ form.product_photo }}
             {% if form.product_photo.errors %}
                 <div class="error">
