@@ -27564,3 +27564,24 @@ div.tox .tox-dialog__body {
 .notification-error{
     background-color: var(--bs-notification-error);
 }
+
+.sales-data {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.sales-item {
+flex: 1;
+display: flex;
+align-items: center;
+justify-content: center;
+text-align: center;
+}
+
+hr {
+margin: 0;
+border: none;
+border-bottom: 1px solid #ccc;
+width: 100%;
+}

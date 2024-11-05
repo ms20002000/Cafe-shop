@@ -3,494 +3,174 @@
 {% load static %}
 
 {% block content %}
-<body class="appHome">
 
-    <div class="home-1">
-        <div class="inner-headerbar fixed-top bg-white">
-            <h1>سفارش قهوه!</h1>
+<body class="appHome2">
+
+    <div class="app home-2">
+        <div class="inner-headerbar fixed-top bg-primary st1">
+            <h1>نام سایت |
+                شعار سایت</h1>
         </div>
         
-        <div class="tf-container pt-100 pb-70">  
-            <div class="search-box">
-                <form method="post" action="{% url 'home' %}">
-                    {% csrf_token %}
-                    <input type="text" name="q" value="{{ query }}" placeholder="محصول خود را جستجو کنید..." >
-                    <span style="color: #033f38;" class="icon icon-search" !هئ></span>
-                    <button type="submit">جستجو</button>
-                </form>
-                {% if is_empty %}
-                    <div class="wrap-swiper">
-                        <div class="swiper cate-swiper">
-                            <div class="swiper-wrapper pt-24 pb-30">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="section">
-                        <div class="tf-container">
-                            <h2 class="mb-12">نتیجه جستجو</h2>
-                            <ul class="wrap-categories">
-                                <p>هیچ محصولی یافت نشد</p>
-                            </ul>
-                        </div>
-                    </div>
-                {% else %}
-                    <div class="wrap-swiper">
-                        <div class="swiper cate-swiper">
-                            <div class="swiper-wrapper pt-24 pb-30">
-                            </div>
-                        </div>
-                    </div>
 
-                    {% for product in products %}
-                        <div class="tab-content mt-16">
-                            <ul class="tab-pane fade show active" id="near" role="tabpanel">
-                                <li class="tf-box-row mb-12">
-                                    <a href="{% url 'product_detail' product.category.name product.name %}" class="img-box">
-                                        <img src="{{ product.product_photo.url }}" alt="{{ product.name }}">
+        <div class="pt-100">
+            <div class="tf-container">
+                <div class="search-box">
+                    <form method="post" action="{% url 'home' %}">
+                        {% csrf_token %}
+                        <input type="text" name="q" value="{{ query }}" placeholder="محصول خود را جستجو کنید..." >
+                        <span style="color: #033f38;" class="icon icon-search"></span>
+                        <button type="submit" style="margin-top:10px; background-color: #6B8E83 !important">جستجو</button>
+                    </form>
+                    {% if is_empty %}
+                        <div class="wrap-swiper">
+                            <div class="swiper cate-swiper">
+                                <div class="swiper-wrapper pt-24 pb-30">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="section">
+                            <div class="tf-container">
+                                <h2 class="mb-12">نتیجه جستجو</h2>
+                                <ul class="wrap-categories">
+                                    <p>هیچ محصولی یافت نشد</p>
+                                </ul>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="wrap-swiper">
+                            <div class="swiper cate-swiper">
+                                <div class="swiper-wrapper pt-24 pb-30">
+                                </div>
+                            </div>
+                        </div>
+    
+                        {% for product in products %}
+                            <div class="tab-content mt-16">
+                                <ul class="tab-pane fade show active" id="near" role="tabpanel">
+                                    <li class="tf-box-row mb-12">
+                                        <a href="{% url 'product_detail' product.category.name product.name %}" class="img-box">
+                                            <img src="{{ product.product_photo.url }}" alt="{{ product.name }}">
+                                        </a>
+                                        <div class="content-box">
+                                            <h5><a href="{% url 'product_detail' product.category.name product.name %}">{{ product.name }}</a> </h5>
+                                            <p>{{ product.description }}</p>
+                                            <div class="box-price">
+                                                <ul class="price">
+                                                    <li class="accent">{{ product.price }} تومان</li>
+                                                </ul>
+                                                <a href="{% url 'product_detail' product.category.name product.name %}" class="btn-add">+</a>
+                                            </div>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="section recomand-sec">
+            <div class="tf-container">
+                <div class="wrap-swiper">
+                    <div class="swiper recomand-swiper">
+                        <div class="swiper-wrapper pb-30 pt-20">
+                            <div class="swiper-slide ml-2">
+                                <div class="recomand-box">
+                                    <div class="img-box">
+                                        <a href="product-details-1.html" class="bg">
+                                            <img src="images/food/recomand1.jpg" alt="تصویر">
+                                        </a>
+                                        <a href="product-details-1.html" class="logo">
+                                            <img src="images/food/recomand-logo.png" alt="لوگو">
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="swiper-slide">
+                                <div class="recomand-box">
+                                    <div class="img-box">
+                                        <a href="product-details-2.html" class="bg">
+                                            <img src="images/food/recomand2.jpg" alt="تصویر">
+                                        </a>
+                                        <a href="product-details-2.html" class="logo">
+                                            <img src="images/food/recomand-logo.png" alt="لوگو">
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="swiper-slide">
+                                <div class="recomand-box">
+                                    <div class="img-box">
+                                        <a href="product-details-3.html" class="bg">
+                                            <img src="images/food/recomand3.jpg" alt="تصویر">
+                                        </a>
+                                        <a href="product-details-3.html" class="logo">
+                                            <img src="images/food/recomand-logo.png" alt="لوگو">
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="tf-container">
+                <h2 class="mb-12">دسته‌بندی‌ها</h2>
+                <ul class="wrap-categories">
+                    {% for category in categories %}
+                    <li class="categories-item">
+                        <a href="{% url 'product_list' category.name %}">
+                            <div class="box-img" style="width: 100%; aspect-ratio: 1 / 1; overflow: hidden; position: relative;">
+                                <img src="{{ category.category_photo.url }}" alt="{{ category.name }}" style="width: 100%; height: 100%; object-fit: cover;">
+                                {% if request.user.is_admin %}
+                                    <a href="{% url 'update_category' category.id %}" class="btn-edit top-left"><i class="bi bi-pencil"></i></a>
+                                {% endif %}
+                            </div>
+                            <div class="content">
+                                <p>{{ category.name }}</p>
+                                <span>{{ category.product_count }}</span>
+                            </div>
+                        </a>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>     
+        
+        <div class="section mt-22" style="margin-bottom:60px;">
+            <div class="tf-container">
+                <div class="title-bar">
+                    <h2>محبوب‌ترین‌ها</h2>
+                    <a href="#">مشاهده همه <i class="icon-left"></i></a>
+                </div>
+                <div class="wrap-swiper">
+                    <div class="swiper drink-swiper">
+                        <div class="swiper-wrapper pb-30 pt-12">
+                            {% for item in top_items %}
+                            <div class="swiper-slide ml-2">
+                                <div class="tf-box-column lg">
+                                    <a href="{% url 'product_detail' item.category.name item.name %}" class="img-box">
+                                        <img src="{{ item.product_photo.url }}" alt="{{ item.name }}">
                                     </a>
                                     <div class="content-box">
-                                        <h5><a href="{% url 'product_detail' product.category.name product.name %}">{{ product.name }}</a> </h5>
-                                        <p>{{ product.description }}</p>
+                                        <h3><a href="product-details-1.html">{{ item.name }}</a></h3>
+                                        <ul class="review">
+                                            <li>{{ item.description }}</li>
+                                        </ul>
                                         <div class="box-price">
-                                            <ul class="price">
-                                                <li class="accent">{{ product.price }} تومان</li>
-                                            </ul>
-                                            <a href="{% url 'product_detail' product.category.name product.name %}" class="btn-add">+</a>
-                                        </div>
-                                    </div>
-                                </li>
-                            </ul>
-                        </div>
-                    {% endfor %}
-                {% endif %}
-            </div>
-            
-            <div class="wrap-swiper">
-                <div class="swiper cate-swiper">
-                    <div class="swiper-wrapper pt-24 pb-30">
-                    </div>
-                </div>
-            </div>
-
-            <div class="section">
-                <div class="tf-container">
-                    <h2 class="mb-12">دسته‌بندی‌ها</h2>
-                    <ul class="wrap-categories">
-                        {% for category in categories %}
-                        <li class="categories-item">
-                            <a href="{% url 'product_list' category.name %}">
-                                <div class="box-img" style="position: relative;">
-                                    <img src="{{ category.category_photo.url }}" alt="{{ category.name }}">
-                                    {% if request.user.is_admin %}
-                                        <a href="{% url 'update_category' category.id %}" class="btn-edit top-left"><i class="bi bi-pencil"></i></a>
-                                    {% endif %}
-                                </div>
-                                <div class="content">
-                                    <p>{{ category.name }}</p>
-                                    <span>{{ category.product_count }}</span>
-                                </div>
-                            </a>
-                        </li>
-                        {% endfor %}
-                    </ul>
-                </div>
-            </div>
-            
-            <div class="section mt-22">
-                <div class="tf-container">
-                    <div class="title-bar">
-                        <h2>محبوب‌ترین‌ها</h2>
-                        <a href="#" data-bs-toggle="modal" data-bs-target="#modalRightFull">مشاهده همه <i class="icon-left"></i></a>
-                    </div>
-                    <div class="wrap-swiper">
-                        <div class="swiper drink-swiper">
-                            <div class="swiper-wrapper pb-30 pt-12">
-                                <div class="swiper-slide ml-2">
-                                    <div class="tf-box-column lg">
-                                        <a href="product-details-1.html" class="img-box">
-                                            <img src="images/food/coffea-lg-2.jpg" alt="تصویر">
-                                        </a>
-                                        <div class="content-box">
-                                            <h3><a href="product-details-1.html"> قهوه دالگونا</a></h3>
-                                            <ul class="review">
-                                                <li>
-                                                    <i class="icon-star"></i>
-                                                    <span>4.8</span>&nbsp;
-                                                    (125)
-                                                </li>
-                                                <li class="dot-icon">
-                                                </li>
-                                                <li>16 دقیقه</li>
-                                            </ul>
-                                            <div class="box-price">
-                                                <span class="price">10.48 تومان</span>
-                                                <a href="cart.html" class="btn-add">+</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="swiper-slide">
-                                    <div class="tf-box-column lg">
-                                        <a href="product-details-2.html" class="img-box">
-                                            <img src="images/food/coffea-lg-1.jpg" alt="تصویر">
-                                        </a>
-                                        <div class="content-box">
-                                            <h3><a href="product-details-2.html"> کاپوچینو</a></h3>
-                                            <ul class="review">
-                                                <li>
-                                                    <i class="icon-star"></i>
-                                                    <span>4.8</span>&nbsp;
-                                                    (125)
-                                                </li>
-                                                <li class="dot-icon">
-                                                </li>
-                                                <li>16 دقیقه</li>
-                                            </ul>
-                                            <div class="box-price">
-                                                <span class="price">10.48 تومان</span>
-                                                <a href="cart.html" class="btn-add">+</a>
-                                            </div>
+                                            <span class="price">{{ item.price }} تومان</span>
                                         </div>
                                     </div>
                                 </div>
                             </div>
+                            {% endfor %}
                         </div>
-                    </div>
-                </div>
-            </div>
-        </div>       
-    </div>
-
-    <div class="modal fade action-sheet" id="addCardActionSheet2">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content app filter-content">
-                <div class="title-bar st1">
-                    <h2>فیلتر</h2>
-                    <a href="#" class="clear-checkbox btn-reset">بازنشانی</a>
-                </div>
-                <h4 class="mt-20">دسته‌بندی</h4>
-                <div class="wrap-swiper">
-                    <div class="swiper cate-swiper">
-                        <div class="swiper-wrapper pt-12 pb-30">
-                            <div class="swiper-slide ml-1">
-                                <a href="nearby.html" class="box-categories">
-                                    <div class="images">
-                                        <img src="images/food/coffea-sm-1.png" alt="images">
-                                    </div>
-                                    <span>همه</span>
-                                </a>
-                            </div>
-                            <div class="swiper-slide">
-                                <a href="nearby.html" class="box-categories">
-                                    <div class="images">
-                                        <img src="images/food/coffea-sm-1.png" alt="images">
-                                    </div>
-                                    <span>محبوب</span>
-                                </a>
-                            </div>
-                            <div class="swiper-slide">
-                                <a href="nearby.html" class="box-categories">
-                                    <div class="images">
-                                        <img src="images/food/coffea-sm-1.png" alt="images">
-                                    </div>
-                                    <span>چای شیری</span>
-                                </a>
-                            </div>
-                            <div class="swiper-slide">
-                                <a href="nearby.html" class="box-categories">
-                                    <div class="images">
-                                        <img src="images/food/coffea-sm-1.png" alt="images">
-                                    </div>
-                                    <span>محبوب</span>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <h4 class="mb-12">مرتب‌سازی بر اساس</h4>
-                <div class="grid-2-cb">
-                    <div class="group-checkbox">
-                        <input class="form-check-input" type="checkbox" id="cb1" checked>
-                        <label class="form-check-label cus-checkbox cb-filter" for="cb1">
-                            <span>بالاترین امتیاز</span>
-                        </label>
-                    </div>
-                    <div class="group-checkbox">
-                        <input class="form-check-input" type="checkbox" id="cb2">
-                        <label class="form-check-label cus-checkbox cb-filter" for="cb2">
-                            <span>جدیدترین</span>
-                        </label>
-                    </div>
-                    <div class="group-checkbox">
-                        <input class="form-check-input" type="checkbox" id="cb3">
-                        <label class="form-check-label cus-checkbox cb-filter" for="cb3">
-                            <span>کمترین قیمت</span>
-                        </label>
-                    </div>
-                    <div class="group-checkbox">
-                        <input class="form-check-input" type="checkbox" id="cb4">
-                        <label class="form-check-label cus-checkbox cb-filter" for="cb4">
-                            <span>بیشترین قیمت</span>
-                        </label>
-                    </div>
-                    <div class="group-checkbox">
-                        <input class="form-check-input" type="checkbox" id="cb5" checked>
-                        <label class="form-check-label cus-checkbox cb-filter" for="cb5">
-                            <span>نزدیکترین</span>
-                        </label>
-                    </div>
-                </div>
-                <h4 class="mb-12 mt-30">فیلتر</h4>
-                <div class="grid-2-cb">
-                    <div class="group-checkbox">
-                        <input class="form-check-input" type="checkbox" id="cb6">
-                        <label class="form-check-label cus-checkbox cb-filter" for="cb6">
-                            <span>پیشنهادی</span>
-                        </label>
-                    </div>
-                    <div class="group-checkbox">
-                        <input class="form-check-input" type="checkbox" id="cb7" checked>
-                        <label class="form-check-label cus-checkbox cb-filter" for="cb7">
-                            <span>سریعترین ارسال</span>
-                        </label>
-                    </div>
-                    <div class="group-checkbox">
-                        <input class="form-check-input" type="checkbox" id="cb8">
-                        <label class="form-check-label cus-checkbox cb-filter" for="cb8">
-                            <span>کارت اعتباری</span>
-                        </label>
-                    </div>
-                    <div class="group-checkbox">
-                        <input class="form-check-input" type="checkbox" id="cb9">
-                        <label class="form-check-label cus-checkbox cb-filter" for="cb9">
-                            <span>فیلترهای اضافی</span>
-                        </label>
-                    </div>
-                </div>
-                <h4 class="mt-30">بازه قیمتی</h4>
-                <div class="mt-40">
-                    <div id="range-two-val"></div>
-                </div>
-                <div class="wrap-swiper mt-23 mb-30">
-                    <div class="swiper drink-swiper result-swiper">
-                        <div class="swiper-wrapper">
-                            <div class="swiper-slide ml-1">
-                                <a href="#" class="suggest-item-sw">
-                                    5 - 10 تومان
-                                </a>
-                            </div>
-                            <div class="swiper-slide">
-                                <a href="#" class="suggest-item-sw">
-                                    10 - 15 تومان
-                                </a>
-                            </div>
-                            <div class="swiper-slide">
-                                <a href="#" class="suggest-item-sw">
-                                    15 - 20 تومان
-                                </a>
-                            </div>
-                            <div class="swiper-slide">
-                                <a href="#" class="suggest-item-sw">
-                                    25 - 30 تومان
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <a href="search-result.html" class="tf-btn large primary">اعمال</a>
-            </div>
-        </div>
-    </div>
-    
-
-    <div class="modal fade modalRight" id="modalRightFull">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                
-                <div class="header">
-                    <div class="tf-container">
-                        <div class="title-header-bar pt-20 pb-20">
-                            <a href="#" class="btn-close-modal" data-bs-dismiss="modal"><i class="icon-right"></i></a>
-                            <h1>Coffee</h1>
-                        </div>
-                    </div>
-                    
-                </div>
-                <div class="modal-body pb-30">
-                    <div class="tf-container">
-                        <ul class="wrap-box-sm">
-                            <li class="tf-box-column sm">
-                                <div class="img-box">
-                                    <img src="images/food/coffea-11.jpg" alt="img">
-                                </div>
-                                <div class="content-box">
-                                    <h3><a href="product-details-1.html"> کاپوچینو</a></h3>
-                                    <ul class="review">
-                                        <li>
-                                            <i class="icon-star"></i>
-                                            <span>4.8</span>&nbsp;
-                                            (125)
-                                        </li>
-                                        <li class="dot-icon">
-                                        </li>
-                                        <li>16 دقیقه</li>
-                                    </ul>
-                                    <div class="box-price">
-                                        <ul class="price">
-                                            <li class="accent">10.48 تومان</li>
-                                            <li class="del">12.48 تومان</li>
-                                        </ul>
-                                        <a href="cart.html" class="btn-add">+</a>
-                                    </div>
-                                  
-                    
-                                </div>
-                    
-                            </li>
-                            <li class="tf-box-column sm">
-                                <div class="img-box">
-                                    <img src="images/food/coffea-12.jpg" alt="img">
-                                </div>
-                                <div class="content-box">
-                                    <h3><a href="product-details-1.html"> کاپوچینو</a></h3>
-                                    <ul class="review">
-                                        <li>
-                                            <i class="icon-star"></i>
-                                            <span>4.8</span>&nbsp;
-                                            (125)
-                                        </li>
-                                        <li class="dot-icon">
-                                        </li>
-                                        <li>16 دقیقه</li>
-                                    </ul>
-                                    <div class="box-price">
-                                        <ul class="price">
-                                            <li class="accent">10.48 تومان</li>
-                                            <li class="del">12.48 تومان</li>
-                                        </ul>
-                                        <a href="cart.html" class="btn-add">+</a>
-                                    </div>
-                                  
-                    
-                                </div>
-                    
-                            </li>
-                            <li class="tf-box-column sm">
-                                <div class="img-box">
-                                    <img src="images/food/coffea-13.jpg" alt="img">
-                                </div>
-                                <div class="content-box">
-                                    <h3><a href="product-details-1.html"> کاپوچینو</a></h3>
-                                    <ul class="review">
-                                        <li>
-                                            <i class="icon-star"></i>
-                                            <span>4.8</span>&nbsp;
-                                            (125)
-                                        </li>
-                                        <li class="dot-icon">
-                                        </li>
-                                        <li>16 دقیقه</li>
-                                    </ul>
-                                    <div class="box-price">
-                                        <ul class="price">
-                                            <li class="accent">10.48 تومان</li>
-                                            <li class="del">12.48 تومان</li>
-                                        </ul>
-                                        <a href="cart.html" class="btn-add">+</a>
-                                    </div>
-                                  
-                    
-                                </div>
-                    
-                            </li>
-                            <li class="tf-box-column sm">
-                                <div class="img-box">
-                                    <img src="images/food/coffea-14.jpg" alt="img">
-                                </div>
-                                <div class="content-box">
-                                    <h3><a href="product-details-1.html"> کاپوچینو</a></h3>
-                                    <ul class="review">
-                                        <li>
-                                            <i class="icon-star"></i>
-                                            <span>4.8</span>&nbsp;
-                                            (125)
-                                        </li>
-                                        <li class="dot-icon">
-                                        </li>
-                                        <li>16 دقیقه</li>
-                                    </ul>
-                                    <div class="box-price">
-                                        <ul class="price">
-                                            <li class="accent">10.48 تومان</li>
-                                            <li class="del">12.48 تومان</li>
-                                        </ul>
-                                        <a href="cart.html" class="btn-add">+</a>
-                                    </div>
-                                  
-                    
-                                </div>
-                    
-                            </li>
-                            <li class="tf-box-column sm">
-                                <div class="img-box">
-                                    <img src="images/food/coffea-1.jpg" alt="img">
-                                </div>
-                                <div class="content-box">
-                                    <h3><a href="product-details-1.html"> کاپوچینو</a></h3>
-                                    <ul class="review">
-                                        <li>
-                                            <i class="icon-star"></i>
-                                            <span>4.8</span>&nbsp;
-                                            (125)
-                                        </li>
-                                        <li class="dot-icon">
-                                        </li>
-                                        <li>16 دقیقه</li>
-                                    </ul>
-                                    <div class="box-price">
-                                        <ul class="price">
-                                            <li class="accent">10.48 تومان</li>
-                                            <li class="del">12.48 تومان</li>
-                                        </ul>
-                                        <a href="cart.html" class="btn-add">+</a>
-                                    </div>
-                                  
-                    
-                                </div>
-                    
-                            </li>
-                            <li class="tf-box-column sm">
-                                <div class="img-box">
-                                    <img src="images/food/coffea-2.jpg" alt="img">
-                                </div>
-                                <div class="content-box">
-                                    <h3><a href="#">کاپوچینو</a></h3>
-                                    <ul class="review">
-                                        <li>
-                                            <i class="icon-star"></i>
-                                            <span>4.8</span>&nbsp;
-                                            (125)
-                                        </li>
-                                        <li class="dot-icon">
-                                        </li>
-                                        <li>16 دقیقه</li>
-                                    </ul>
-                                    <div class="box-price">
-                                        <ul class="price">
-                                            <li class="accent">10.48 تومان</li>
-                                            <li class="del">12.48 تومان</li>
-                                        </ul>
-                                        <a href="cart.html" class="btn-add">+</a>
-                                    </div>
-                                  
-                    
-                                </div>
-                    
-                            </li>
-                        </ul>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 {% endblock %}

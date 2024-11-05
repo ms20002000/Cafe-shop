@@ -1,66 +1,66 @@
 {% extends "base.html" %}
-{% block title %}سبد خرید{% endblock %}
+{% block title %}پرداخت{% endblock %}
 {% load static %}
 {% block content %}
 <div class="header">
     <div class="title-header-bar fixed-top bg-white">
         <a href="#" class="back-btn"><i class="icon-right"></i></a>
-        <h1>سبد خرید</h1>
+        <h1>پرداخت</h1>
     </div>
 </div>
-<div class="app pt-80 pb-70">
+<div class="app pt-80">
     <div class="tf-container">
-        {% if cart_items %}
-            <ul>
-                {% for item in cart_items %}
-                <li class="tf-box-row style-2 qty mb-12">
-                    <a href="" class="img-box">
-                        <img src="{{ item.product.product_photo.url }}" alt="{{ item.product.name }}">
-                    </a>
-                    <div class="content-box">
-                        <h5><a href="">{{ item.product.name }}</a></h5>
-                        <ul class="review">
-                            <li>
-                                <i class="icon-star"></i>
-                                <span>{{ item.product.rating }}</span>&nbsp;
-                                ({{ item.product.review_count }})
-                            </li>
-                            <li class="dot-icon"></li>
-                            <li>{{ item.product.delivery_time }} دقیقه</li>
-                        </ul>
-                        <div class="total-qty">
-                            <span class="price">{{ item.product.price }} تومان</span>
-                            <div class="sec-qty">
-                                <span class="btn-quantity minus-btn"><i class="icon-minus"></i></span>
-                                <input type="number" name="number" value="{{ item.quantity }}">
-                                <span class="btn-quantity active plus-btn"><i class="icon-plus"></i></span>
-                            </div>
-                            <form action="{% url 'cart_remove' item.product.id %}" method="post" style="display:inline;">
-                                {% csrf_token %}
-                                <button type="submit" class="btn btn-danger">حذف</button>
-                            </form>
-                        </div>
-                    </div>
-                </li>
-                {% endfor %}
-            </ul>
-            <div class="mt-30 mb-30">
-                <p class="list-order line">
-                    جمع موقت: <span>{{ cart.get_subtotal_price }} تومان</span>
-                </p>
-                <p class="mt-15 list-order-total mb-26">
-                    کل: <span>{{ cart.get_total_price }} تومان</span>
-                </p>
-                <form action="{% url 'finalize_cart' %}" method="post">
-                    {% csrf_token %}
-                    {{ order_form.as_p }}
-                    <button type="submit" class="tf-btn large primary">ثبت سفارش </button>
-                </form> 
+        <form action="{% url 'finalize_cart' %}" method="post">
+            {% csrf_token %}
+            <div class="title-bar st1">
+                <h3>میز</h3>
             </div>
-        {% else %}
-            <p>سبد خرید شما خالی است.</p>
-        {% endif %}
+            <div class="list-view-card mt-17">
+                <a class="map">
+                    <img src="images/cards/pay1.png" alt="تصویر">
+                </a>
+                <div class="content">
+                    <p style="margin-bottom: 10px">یک میز را از منوی زیر انتخاب کنید:</p>
+                    {{order_form.table}}
+                </div>
+            </div>
+
+            <h3 class="mt-25 fw-7">روش پرداخت</h3>
+            <div class="list-view-card mt-12">
+                <div class="img bg-card">
+                    <img src="images/cards/card-1.jpg" alt="تصویر">
+                </div>
+                <div class="content">
+                    <p style="margin-bottom: 10px">یک میز را از منوی زیر انتخاب کنید:</p>
+                    {{order_form.payment_method}}
+                </div>
+            </div>
+
+            <h3 class="mt-25 fw-7">شماره همراه</h3>
+            <div class="list-view-card mt-12">
+                <div class="img bg-card">
+                    <img src="images/cards/card-1.jpg" alt="تصویر">
+                </div>
+                <div class="content">
+                    <p style="margin-bottom: 10px">شماره تلفن خود را وارد کنید (اختیاری):</p>
+                    {{order_form.phone_number}}
+                </div>
+            </div>
+
+            <div class="box-total-order st1 pt-70">
+                <ul>
+                    <li class="list-order line">
+                        مجموع آیتم‌ها: <span>{{ cart.get_total_price }} تومان</span>
+                    </li>
+                </ul>
+                <p class="mt-15 list-order-total mb-30">
+                    مجموع: <span>{{ cart.get_total_price }} تومان</span>
+                </p>
+
+                <div>
+                    <button type="submit" class="tf-btn large primary mb-20" style="margin-bottom:100px;">ثبت سفارش</button>
+                </div>
+            </div>
     </div>
 </div>
-
 {% endblock %} 

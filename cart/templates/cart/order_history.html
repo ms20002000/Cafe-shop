@@ -1,6 +1,46 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
+{% block title %}سفارش های من{% endblock %}
+{% load static %}
 
 {% block content %}
+<div class="header">
+    <div class="title-header-bar fixed-top bg-white">
+        <a href="#" class="back-btn"><i class="icon-right"></i></a>
+        <h1>سفارش های من</h1>
+    </div>
+</div>
+{% if orders %}
+<div class="pt-80">
+    <div class="tf-container">
+        <ul class="mt-12">
+            {% for order in orders %}
+            <li class="mb-15">
+                <div class="list-view-card">
+                    <div class="img bg-card">
+                        <img class="img" src="{% static 'main/images/avt/order_history.png' %}" alt="{{order.id}}">
+                    </div>
+                    <div class="content">
+                        <h5>سفارش #{{order.id}}</h5>
+                        <p>
+                            {% for item in order.items.all %}
+                                {{ item.product.name }} - {{ item.quantity }}{% if not forloop.last %} و {% endif %}
+                            {% endfor %}
+                        </p>
+                        <p>مبلغ سفارش: {{ order.total_price }} </p>
+                        <hr>
+                        <p>وضعیت: {{ order.get_status_display }}</p>
+                        
+                    </div>
+                </div>
+            </li>
+            {% endfor %}
+       </ul>
+    </div>
+</div>
+{% else %}
+    <p>سفارشی وجود ندارد.</p>
+{% endif %}
+{% endblock %}
 <h2>تاریخچه سفارشات</h2>
 {% if orders %}
     <ul>
@@ -24,4 +64,3 @@
 {% else %}
     <p>No order history available.</p>
 {% endif %}
-{% endblock %}

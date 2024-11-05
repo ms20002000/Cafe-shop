@@ -1,24 +1,75 @@
 {% extends "base.html" %}
-
+{% block title %}خلاصه سفارش{% endblock %}
+{% load static %}
 {% block content %}
-<h2>وضعیت سفارش آخر</h2>
-
+<div class="header"> 
+    <div class="title-header-bar fixed-top bg-white">
+        <a href="{% url 'order_history' %}" class="back-btn"><i class="icon-right"></i></a>
+        <h1>خلاصه سفارش</h1>
+    </div>
+</div>
 {% if order %}
-    <p>شماره سفارش: {{ order.id }}</p>
-    <p>تاریخ ثبت سفارش: {{ order.created_at }}</p>
-    <p>وضعیت: {{ order.get_status_display }}</p>
-    <p>جزئیات:</p>
-    <ul>
-    {% for item in order.items.all %}
-        <li>{{ item.product.name }} - {{ item.quantity }} عدد - قیمت کل: {{ item.total_price }}</li>
-    {% endfor %}
-    </ul>
-    <p>جمع کل سفارش: {{ order.total_price }}</p>
+<div class="app pt-80">
+    <div class="tf-container">
+        <div class="box-driver line">
+            <div class="inner-update">
+                <div class="img" style="border-radius:0px; !important">
+                    <img src="{% static 'main/images/avt/order_summary.png' %}" alt="{{ order.id }}">
+                </div>
+                <div class="info">
+                    <h3>سفارش #{{ order.id }}</h3>
+                    <p>تاریخ ثبت: {{ order.created_at }}</p>
+                </div>
+            </div>
+        </div>
+        <h3 class="mt-30 fw-7 lh-26" style="margin-bottom: 15px;">وضعیت سفارش</h3>
+        <div class="list-status status-order">
+            <div class="status-item 
+                {% if order.get_status_display == 'Pending' %}active-status
+                {% elif order.get_status_display == 'Approved' or order.get_status_display == 'Cooking' or order.get_status_display == 'Completed' %}completed-status{% endif %}">
+                در حال انتظار
+            </div>
+            
+            <div class="status-item 
+                {% if order.get_status_display == 'Approved' %}active-status
+                {% elif order.get_status_display == 'Cooking' or order.get_status_display == 'Completed' %}completed-status{% endif %}">
+                تأیید شده
+            </div>
+            
+            <div class="status-item 
+                {% if order.get_status_display == 'Cooking' %}active-status
+                {% elif order.get_status_display == 'Completed' %}completed-status{% endif %}">
+                در حال پخت
+            </div>
+            
+            <div class="status-item 
+                {% if order.get_status_display == 'Completed' %}active-status{% endif %}">
+                تکمیل شده
+            </div>
+            
+            <div class="status-item 
+                {% if order.get_status_display == 'Cancelled' %}canceled{% endif %}">
+                لغو شده
+            </div>
+        </div>
+
+        <div class="box-total-order st1 pt-70">
+            <ul>
+                {% for item in order.items.all %}
+                <li class="list-order">
+                    {{ item.product.name }} - {{ item.quantity }} عدد: <span>{{ item.total_price }} تومان</span>
+                </li>
+                {% endfor %}
+            </ul>
+            <p class="mt-15 list-order-total mb-30">
+                مجموع: <span>12.18 تومان</span>
+            </p>
+        </div>
+
+    </div>
+</div>
 {% else %}
     <p>سفارشی برای نمایش وجود ندارد.</p>
 {% endif %}
 
-<a href="{% url 'home' %}" class="btn btn-primary">بازگشت به صفحه اصلی</a>
-<hr>
-<a href="{% url 'order_history' %}" class="btn btn-primary">تاریخچه سفارشات</a> 
 {% endblock %}

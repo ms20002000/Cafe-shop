@@ -1,150 +1,179 @@
 {% extends 'staff-base.html' %}
-{% block title %}مدیریت سفارشات{% endblock %}
+{% block title %}داشبورد مدیریت{% endblock %}
 {% load static %}
 {% block content %}
 <div class="page-content">
-
-    <div class="d-flex justify-content-between align-items-center flex-wrap grid-margin">
-        <div>
+  <div class="d-flex justify-content-between align-items-center flex-wrap grid-margin">
+      <div>
           <h4 class="mb-3 mb-md-0">به داشبورد خوش آمدید</h4>
-        </div>
-        <div class="d-flex align-items-center flex-wrap text-nowrap">
-          {% comment %} <div class="input-group flatpickr wd-200 me-2 mb-2 mb-md-0">
-            <span class="input-group-text input-group-addon bg-transparent border-primary" data-toggle><i
-                data-feather="calendar" class="text-primary"></i></span>
-            <input type="text" class="form-control bg-transparent border-primary tarikh" placeholder="انتخاب تاریخ">
-          </div> {% endcomment %}
-          {% comment %} <a href="{% url 'export_sales_report' %}" class="btn btn-primary btn-icon-text mb-2 mb-md-0">
-            <i class="btn-icon-prepend" data-feather="download-cloud"></i>
-            دانلود گزارش
-          </a> {% endcomment %}
-        </div>
+      </div>
+      <div class="d-flex align-items-center flex-wrap text-nowrap">
+          {% comment %} 
+          <div class="input-group flatpickr wd-200 me-2 mb-2 mb-md-0">
+              <span class="input-group-text input-group-addon bg-transparent border-primary" data-toggle>
+                  <i data-feather="calendar" class="text-primary"></i>
+              </span>
+              <input type="text" class="form-control bg-transparent border-primary tarikh" placeholder="انتخاب تاریخ">
+          </div> 
+          {% endcomment %}
+          {% comment %} 
+          <a href="{% url 'export_sales_report' %}" class="btn btn-primary btn-icon-text mb-2 mb-md-0">
+              <i class="btn-icon-prepend" data-feather="download-cloud"></i> دانلود گزارش
+          </a> 
+          {% endcomment %}
+      </div>
+  </div>
+
+  <div class="row">
+      <div class="col-12 col-xl-12 stretch-card">
+          <div class="row flex-grow-1">
+              <div class="col-md-4 grid-margin stretch-card">
+                  <div class="card">
+                      <div class="card-body">
+                          <div class="d-flex justify-content-between align-items-baseline">
+                              <h6 class="card-title mb-0">فروش روزانه</h6>
+                          </div>
+                          <div class="row">
+                              <div class="col-6 col-md-12 col-xl-5">
+                                  <h3 class="mb-2" style="margin-top:10px">{{ daily_sales }}</h3>
+                                  <div class="d-flex align-items-baseline">
+                                      <p class="text-success">
+                                          <span>+3.3%</span>
+                                          <i data-feather="arrow-up" class="icon-sm mb-1"></i>
+                                      </p>
+                                  </div>
+                              </div>
+                              <div class="col-6 col-md-12 col-xl-7">
+                                  <div id="customersChart" class="mt-md-3 mt-xl-0"></div>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+              
+              <div class="col-md-4 grid-margin stretch-card">
+                  <div class="card">
+                      <div class="card-body">
+                          <div class="d-flex justify-content-between align-items-baseline">
+                              <h6 class="card-title mb-0">فروش ماهانه</h6>
+                          </div>
+                          <div class="row">
+                              <div class="col-6 col-md-12 col-xl-5">
+                                  <h3 class="mb-2" style="margin-top:10px">{{ monthly_sales }}</h3>
+                                  <div class="d-flex align-items-baseline">
+                                      <p class="text-danger">
+                                          <span>-2.8%</span>
+                                          <i data-feather="arrow-down" class="icon-sm mb-1"></i>
+                                      </p>
+                                  </div>
+                              </div>
+                              <div class="col-6 col-md-12 col-xl-7">
+                                  <div id="ordersChart" class="mt-md-3 mt-xl-0"></div>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+
+              <div class="col-md-4 grid-margin stretch-card">
+                  <div class="card">
+                      <div class="card-body">
+                          <div class="d-flex justify-content-between align-items-baseline">
+                              <h6 class="card-title mb-0">فروش سالانه</h6>
+                          </div>
+                          <div class="row">
+                              <div class="col-6 col-md-12 col-xl-5">
+                                  <h3 class="mb-2" style="margin-top:10px">{{ yearly_sales }}</h3>
+                                  <div class="d-flex align-items-baseline">
+                                      <p class="text-success">
+                                          <span>+2.8%</span>
+                                          <i data-feather="arrow-up" class="icon-sm mb-1"></i>
+                                      </p>
+                                  </div>
+                              </div>
+                              <div class="col-6 col-md-12 col-xl-7">
+                                  <div id="growthChart" class="mt-md-3 mt-xl-0"></div>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div> 
+
+  <div class="row">
+      <div class="col-lg-5 col-xl-4 grid-margin grid-margin-xl-0 stretch-card">
+          <div class="card">
+              <div class="card-body">
+                  <div class="d-flex justify-content-between align-items-baseline mb-2">
+                      <h6 class="card-title mb-0">فروش بر اساس زمان از روز</h6>
+                  </div>
+                  <div class="sales-data">
+                      <div class="sales-item">فروش صبح: {{ morning_sales }}</div>
+                      <hr>
+                      <div class="sales-item">فروش بعد از ظهر: {{ afternoon_sales }}</div>
+                      <hr>
+                      <div class="sales-item">فروش شب: {{ evening_sales }}</div>
+                      <hr>
+                      <div class="sales-item">
+                          {% if peak_business_hour %}
+                              <p>ساعت اوج فروش: {{ peak_business_hour }}:۰۰ با مجموع فروش {{ peak_business_hour_sales }}</p>
+                          {% else %}
+                              <p>داده‌ای برای ساعت اوج فروش موجود نیست.</p>
+                          {% endif %}
+                      </div>
+                  </div>
+              </div>
+          </div>
       </div>
 
-
-    <div class="row">
-        <div class="col-12 col-xl-12 stretch-card">
-        <div class="row flex-grow-1">
-            <div class="col-md-4 grid-margin stretch-card">
-            <div class="card">
-                <div class="card-body">
-                <div class="d-flex justify-content-between align-items-baseline">
-                    <h6 class="card-title mb-0">فروش روزانه</h6>
-                </div>
-                <div class="row">
-                    <div class="col-6 col-md-12 col-xl-5">
-                    <h3 class="mb-2" style="margin-top:10px">{{ daily_sales }}</h3>
-                    <div class="d-flex align-items-baseline">
-                        <p class="text-success">
-                        <span>+3.3%</span>
-                        <i data-feather="arrow-up" class="icon-sm mb-1"></i>
-                        </p>
-                    </div>
-                    </div>
-                    <div class="col-6 col-md-12 col-xl-7">
-                    <div id="customersChart" class="mt-md-3 mt-xl-0"></div>
-                    </div>
-                </div>
-                </div>
-            </div>
-            </div>
-            <div class="col-md-4 grid-margin stretch-card">
-            <div class="card">
-                <div class="card-body">
-                <div class="d-flex justify-content-between align-items-baseline">
-                    <h6 class="card-title mb-0">فروش ماهانه</h6>
-                </div>
-                <div class="row">
-                    <div class="col-6 col-md-12 col-xl-5">
-                    <h3 class="mb-2" style="margin-top:10px">{{ monthly_sales }}</h3>
-                    <div class="d-flex align-items-baseline">
-                        <p class="text-danger">
-                        <span>-2.8%</span>
-                        <i data-feather="arrow-down" class="icon-sm mb-1"></i>
-                        </p>
-                    </div>
-                    </div>
-                    <div class="col-6 col-md-12 col-xl-7">
-                    <div id="ordersChart" class="mt-md-3 mt-xl-0"></div>
-                    </div>
-                </div>
-                </div>
-            </div>
-            </div>
-            <div class="col-md-4 grid-margin stretch-card">
-            <div class="card">
-                <div class="card-body">
-                <div class="d-flex justify-content-between align-items-baseline">
-                    <h6 class="card-title mb-0">فروش سالانه</h6>
-                </div>
-                <div class="row">
-                    <div class="col-6 col-md-12 col-xl-5">
-                    <h3 class="mb-2" style="margin-top:10px">{{ yearly_sales }}</h3>
-                    <div class="d-flex align-items-baseline">
-                        <p class="text-success">
-                        <span>+2.8%</span>
-                        <i data-feather="arrow-up" class="icon-sm mb-1"></i>
-                        </p>
-                    </div>
-                    </div>
-                    <div class="col-6 col-md-12 col-xl-7">
-                    <div id="growthChart" class="mt-md-3 mt-xl-0"></div>
-                    </div>
-                </div>
-                </div>
-            </div>
-            </div>
-        </div>
-        </div>
-    </div> 
-
-
-    <div class="row">
-        <div class="col-lg-5 col-xl-4 grid-margin grid-margin-xl-0 stretch-card">
+      <div class="col-lg-7 col-xl-8 stretch-card">
           <div class="card">
-            <div class="card-body">
-              <div class="d-flex justify-content-between align-items-baseline mb-2">
-                <h6 class="card-title mb-0">جدول تست</h6>
+              <div class="card-body">
+                  <div class="d-flex justify-content-between align-items-baseline mb-2">
+                      <h6 class="card-title mb-0">فروش بر اساس دسته بندی</h6>
+                  </div>
+                  <div class="table-responsive" style="margin-top:10px">
+                      <table class="table table-hover mb-0">
+                          <thead>
+                              <tr>
+                                  <th class="pt-0"></th>
+                                  <th class="pt-0">نام دسته بندی</th>
+                                  <th class="pt-0">تعداد فروش</th>
+                                  <th class="pt-0">عملیات</th>
+                              </tr>
+                          </thead>
+                          <tbody>
+                              {% for category in sales_by_category %}
+                              <tr>
+                                  <td class="py-1">
+                                      <img src="{{ category.category_photo.url }}" alt="{{ category.name }}">
+                                  </td>
+                                  <td>{{ category.name }}</td>
+                                  <td>{{ category.total_sales }}</td>
+                                  <td>
+                                      <a href="{% url 'product_list' category.name %}">
+                                          <button type="button" class="btn btn-primary btn-icon" data-bs-toggle="tooltip" data-bs-placement="top" title="مشاهده">
+                                              <i data-feather="eye"></i>
+                                          </button>
+                                      </a>
+                                  </td>
+                              </tr>
+                              {% endfor %}
+                          </tbody>
+                      </table>
+                  </div>
               </div>
-            </div>
           </div>
-        </div>
-        <div class="col-lg-7 col-xl-8 stretch-card">
-          <div class="card">
-            <div class="card-body">
-              <div class="d-flex justify-content-between align-items-baseline mb-2">
-                <h6 class="card-title mb-0">فروش بر اساس دسته بندی</h6>
-              </div>
-              <div class="table-responsive" style="margin-top:10px">
-                <table class="table table-hover mb-0">
-                  <thead>
-                    <tr>
-                      <th class="pt-0"></th>
-                      <th class="pt-0">نام دسته بندی</th>
-                      <th class="pt-0">تعداد فروش</th>
-                      <th class="pt-0">عملیات</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {% for category in sales_by_category %}
-                    <tr>
-                      <td class="py-1">
-                        <img src="{{ category.category_photo.url }}" alt="{{ category.name }}">
-                      </td>
-                      <td>{{ category.name }}</td>
-                      <td>{{ category.total_sales }}</td>
-                      <td>
-                        <a href="{% url 'update_category' category.id %}"><button type="button" class="btn btn-primary btn-icon" data-bs-toggle="tooltip" data-bs-placement="top" title="مشاهده"><i data-feather="eye"></i></button></a>
-                      </td>
-                    </tr>
-                    {% endfor %}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        </div>
       </div>
+  </div>
+  
+</div>
+
+
+
+
 
 
 <h1>Manager Panel</h1>
@@ -196,13 +225,6 @@
     {% endfor %}
 </table> {% endcomment %}
 
-<h2>Sales by Time of Day</h2>
-<ul>
-    <li><strong>Morning Sales:</strong> {{ morning_sales }}</li>
-    <li><strong>Afternoon Sales:</strong> {{ afternoon_sales }}</li>
-    <li><strong>Evening Sales:</strong> {{ evening_sales }}</li>
-</ul>
-
 <h2>Customer Demographics</h2>
 <p><strong>Total Customers:</strong> {{ total_customers }}</p>
 
@@ -253,13 +275,6 @@
     </tr>
     {% endfor %}
 </table>
-
-<h2>Peak Business Hour</h2>
-{% if peak_business_hour %}
-<p>The peak business hour is: {{ peak_business_hour }}:00 with total sales of {{ peak_business_hour_sales }}</p>
-{% else %}
-<p>No peak business hour data available.</p>
-{% endif %}
 {% comment %} <h2>Download Sales Report</h2>
 <p><a href="{% url 'export_sales_report' %}" class="btn btn-primary">Download Sales Report (CSV)</a></p {% endcomment %}
 

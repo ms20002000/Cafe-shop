@@ -10,19 +10,13 @@
     <link rel="stylesheet" href="{% static 'main/css/swiper-bundle.min.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'main/css/styles.css' %}">
     <link rel="stylesheet" href="{% static 'main/fonts/font-icons.css' %}">
+    <link rel="stylesheet" href="{% static 'main/css/nouislider.min.css' %}">
     <link rel="shortcut icon" href="{% static 'main/images/logo/48.png' %}">
     <link rel="apple-touch-icon-precomposed" href="{% static 'main/images/logo/48.png' %}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
 
     <title>{% block title %}{% endblock %}</title>
 </head>
-
-<body class="{% block body_class %}{% endblock %}">
-        {% comment %} <div class="preload preload-container">
-            <div class="preload-logo">
-              <div class="spinner"></div>
-            </div>
-          </div> {% endcomment %}
 
     <div class="header absolute">
         <div class="tf-container">
@@ -43,10 +37,12 @@
             <li><a href="{% url 'cart_detail' %}"><span class="icon-buy"></span> سبد خرید</a></li>
             <li><a href="{% url 'order_history' %}"><span class="icon-card-num"></span>سفارشات</a></li>
     
-            {% if user.is_authenticated and user.is_admin %}
+            {% if user.is_staff and not user.is_admin %}
                 <li><a href="{% url 'staff_dashboard' %}"><span class="icon-setting"></span>مدیریت سفارشات</a></li>
             {% endif %}
-    
+            {% if user.is_admin %}
+                <li><a href="{% url 'staff_dashboard' %}"><span class="icon-setting"></span>مدیریت سایت</a></li>
+            {% endif %}
             {% if user.is_authenticated %}
                 <li><a href="{% url 'logout' %}"><span class="icon-logout"></span>خروج</a></li>
             {% else %}
@@ -56,11 +52,13 @@
     
     
 
-    <script type="text/javascript" src="{% static 'main/js/footer.js' %}"></script>
-    <script type="text/javascript" src="{% static 'main/js/bootstrap.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'main/js/jquery.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'main/js/swiper-bundle.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'main/js/main.js' %}"></script>
 </body>
+<script type="text/javascript" src="{% static 'main/js/footer.js' %}"></script>
+<script type="text/javascript" src="{% static 'main/js/nouislider.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'main/js/bootstrap.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'main/js/jquery.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'main/js/swiper-bundle.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'main/js/carousel.js' %}"></script>
+<script type="text/javascript" src="{% static 'main/js/main.js' %}"></script>
 
 </html>

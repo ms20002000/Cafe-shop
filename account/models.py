@@ -38,7 +38,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     first_name = models.CharField(max_length=30, blank=True)
     last_name = models.CharField(max_length=30, blank=True)
     email = models.EmailField(blank=True)
-    profile_picture = models.ImageField(upload_to='profile_pictures/', blank=True, null=True)  
+    profile_picture = models.ImageField(upload_to='profile_pictures/', blank=True, null=True, default="dummy.png")  
     loyalty_points = models.PositiveIntegerField(default=0, blank=True, null=True)  
     specialty = models.CharField(max_length=100, blank=True, null=True, choices=JobSpecialty)
 
