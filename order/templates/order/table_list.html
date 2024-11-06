@@ -1,3 +1,94 @@
+{% extends 'staff-base.html' %}
+{% block title %}لیست میزها{% endblock %}
+{% load static %}
+{% block content %}
+<div class="page-content">
+
+    <nav class="page-breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'table_list' %}">مدیریت میزها</a></li>
+        <li class="breadcrumb-item active" aria-current="page">لیست میزها</li>
+      </ol>
+    </nav>
+
+    <div class="row">
+      <div class="col-md-12 grid-margin stretch-card">
+        <div class="card">
+          <div class="card-body">
+            <div class="table-responsive">
+              <table id="dataTableExample" class="table">
+                <thead>
+                  <tr>
+                    <th>شماره میز</th>
+                    <th>عملیات</th>
+                  </tr>
+                </thead>
+                <tbody>
+                    {% for table in tables %}
+                    <tr>
+                        <td>{{ table.number }}</td>
+                        <td>
+                            <a href="{% url 'table_update' table.id %}">
+                                <button type="button" class="btn btn-primary btn-icon" data-bs-toggle="tooltip" data-bs-placement="top" title="ویرایش">
+                                    <i data-feather="edit"></i>
+                                </button>
+                            </a>
+                            <button type="button" class="btn btn-primary btn-icon" data-bs-toggle="modal" data-bs-target="#exampleModal"
+                                    data-qrcode="{{ table.qr_code }}">
+                                <i data-feather="command"></i>
+                            </button>
+                        </td>                                                                       
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6">میزی یافت نشد.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">مشاهده QRcode</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="btn-close"></button>
+        </div>
+        <div class="modal-body">
+            <pre id="modalQrCodeText"></pre>
+        </div>                       
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">بستن</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var exampleModal = document.getElementById('exampleModal');
+    
+    exampleModal.addEventListener('show.bs.modal', function (event) {
+        var button = event.relatedTarget;
+        
+        var qrCodeText = button.getAttribute('data-qrcode');
+        
+        if (qrCodeText) {
+            var modalQrCodeText = document.getElementById('modalQrCodeText');
+            modalQrCodeText.textContent = qrCodeText;
+        }
+    });
+});
+</script>
+
+         
+{% endblock %}
 <!DOCTYPE html>
 <html lang="en">
 <head>

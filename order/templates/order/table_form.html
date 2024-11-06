@@ -1,3 +1,71 @@
+{% extends 'staff-base.html' %}
+{% block title %}{% if form.instance.pk %}ویرایش میز{% else %}ایجاد میز{% endif %}{% endblock %}
+{% load static %}
+{% block content %}
+
+<div class="page-content">
+
+    <nav class="page-breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="{% url 'table_list' %}">مدیریت میزها</a></li>
+          {% if form.instance.pk %}
+          <li class="breadcrumb-item active" aria-current="page">ویرایش میز</li>
+          {% else %}
+          <li class="breadcrumb-item active" aria-current="page">ایجاد میز</li>
+          {% endif %}
+        </ol>
+    </nav>
+
+    <div class="row">
+        <div class="col-md-12 stretch-card">
+            <div class="card">
+                <div class="card-body">
+                    <form method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="mb-3">
+                                    <label class="form-label">شماره میز</label>
+                                    <input type="text" name="number" class="form-control" placeholder="شماره میز را وارد کنید" 
+                                           value="{% if form.number.value %}{{ form.number.value }}{% else %}‌{% endif %}">
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="mb-3">
+                                    <label class="form-label">QRcode</label>
+                                    <input type="text" name="qr_code" class="form-control" placeholder="QRcode میز را وارد کنید" 
+                                           value="{% if form.qr_code.value %}{{ form.qr_code.value }}{% else %}‌{% endif %}">
+                                </div>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            {% if form.instance.pk %}
+                                به‌روزرسانی
+                            {% else %}
+                                ایجاد
+                            {% endif %}
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+</div>
+
+{% endblock %}
+<body>
+    <h1>{% if form.instance.pk %}Update Table{% else %}Create Table{% endif %}</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">{% if form.instance.pk %}Update{% else %}Create{% endif %}</button>
+    </form>
+    <a href="{% url 'table_list' %}">Back to Table List</a>
+</body>
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>

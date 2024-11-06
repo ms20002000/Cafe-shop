@@ -68,8 +68,7 @@
               </ul>
             </div>
           </li>
-          {% endif %}
-          {% comment %} <li class="nav-item">
+          <li class="nav-item">
             <a class="nav-link" data-bs-toggle="collapse" role="button" href="#table" aria-expanded="false"
               aria-controls="table">
               <i class="link-icon" data-feather="grid"></i>
@@ -79,14 +78,15 @@
             <div class="collapse" id="table">
               <ul class="nav sub-menu">
                 <li class="nav-item">
-                  <a href="pages/email/inbox.html" class="nav-link">افزودن میز</a>
+                  <a href="{% url 'table_create' %}" class="nav-link">افزودن میز</a>
                 </li>
                 <li class="nav-item">
-                  <a href="pages/email/read.html" class="nav-link">لیست میزها</a>
+                  <a href="{% url 'table_list' %}" class="nav-link">لیست میزها</a>
                 </li>
               </ul>
             </div>
-          </li> {% endcomment %}
+          </li>
+          {% endif %}
           <li class="nav-item nav-category">سفارشات</li>
           <li class="nav-item">
             <a class="nav-link" data-bs-toggle="collapse"role="button" href="#order" aria-expanded="false"
