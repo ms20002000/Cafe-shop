@@ -14,10 +14,3 @@ class SiteInfo(models.Model):
     class Meta:
         verbose_name = "Site Information"
         verbose_name_plural = "Site Information"
-
-    # Singleton pattern to ensure only one instance exists
-    def save(self, *args, **kwargs):
-        if not SiteInfo.objects.exists():
-            super().save(*args, **kwargs)
-        else:
-            raise Exception("Only one instance of SiteInfo is allowed.")

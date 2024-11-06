@@ -132,7 +132,7 @@
                         <td>{{ order.id }}</td>
                         <td>{{ order.modify_by.phone_number }}</td>
                         <td>{{ order.table.number }}</td>
-                        <td>{{ order.status }}</td>
+                        <td>{{ order.get_status_display }}</td>
                         <td>{{ order.created_at|date:"Y-m-d" }}</td>
                         <td>
                             <a href="{% url 'order_update' order.id %}"><button type="button" class="btn btn-primary btn-icon" data-bs-toggle="tooltip" data-bs-placement="top" title="ویرایش سفارش"><i data-feather="edit"></i></button></a>

@@ -33,7 +33,7 @@ class ProductView(View):
             'query': query,
             'is_empty': is_empty, 
         }
-        return render(request, self.template_name, context)
+        return render(request, 'product/product_list.html', context)
 
     
 def product_list(request, name):
@@ -65,7 +65,7 @@ class AddCategoryView(LoginRequiredMixin, UserPassesTestMixin, View):
         form = CategoryAddForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
-            return redirect('manager_dashboard')
+            return redirect('home')
         return render(request, self.template_name, {'form': form})
 
 
@@ -93,7 +93,7 @@ class AddProductView(LoginRequiredMixin, UserPassesTestMixin, View):
         form = ProductAddForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
-            return redirect('manager_dashboard')
+            return redirect('home')
         return render(request, self.template_name, {'form': form})
     
 

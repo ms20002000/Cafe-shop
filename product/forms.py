@@ -11,6 +11,12 @@ class ProductAddForm(forms.ModelForm):
         model = Product
         fields = ['name', 'price', 'description', 'category', 'product_photo']
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["category"].queryset = Category.objects.filter(
+            is_available=True).exclude(name="All Products")
+
+
 class CategoryUpdateForm(forms.ModelForm):
     class Meta:
         model = Category

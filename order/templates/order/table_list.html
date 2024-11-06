@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Table List</title>
+</head>
+<body>
+    <h1>Table List</h1>
+    <a href="{% url 'table_create' %}">Add New Table</a>
+    <ul>
+        {% for table in tables %}
+            <li>
+                Table {{ table.number }} - QR Code: {{ table.qr_code }}
+                <a href="{% url 'table_update' table.id %}">Edit</a>
+            </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

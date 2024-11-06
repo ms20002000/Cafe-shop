@@ -23,10 +23,10 @@ class LoginForm(AuthenticationForm):
 class StaffAddForm(UserCreationForm):
     class Meta:
         model = CustomUser
-        fields = ['phone_number', 'first_name', 'last_name', 'specialty', 'is_staff','email', 'profile_picture']
+        fields = ['phone_number', 'first_name', 'last_name', 'specialty', 'email', 'profile_picture']
 
 
 class StaffUpdateForm(forms.ModelForm):
     class Meta:
         model = CustomUser
-        fields = ['first_name', 'last_name', 'phone_number', 'email', 'specialty', 'is_staff', 'is_active', 'profile_picture']
+        fields = ['first_name', 'last_name', 'phone_number', 'email', 'specialty', 'is_active', 'profile_picture']

@@ -15,3 +15,8 @@ class OrderForm(forms.ModelForm):
 
 OrderItemFormSet = inlineformset_factory(Order, OrderItem, fields=('product', 'quantity'),
                                           extra=1, can_delete=True)
+
+class TableForm(forms.ModelForm):
+    class Meta:
+        model = Table
+        fields = ['number', 'qr_code']

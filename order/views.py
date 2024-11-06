@@ -1,15 +1,11 @@
-from django.shortcuts import render, redirect
-from .models import Order, OrderItem
+from django.shortcuts import render, redirect, get_object_or_404
+from .models import Order, OrderItem, Table
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from .forms import OrderForm, OrderItemFormSet 
-from django.http import JsonResponse
-from django.conf import settings
-import string
-import random
+from .forms import OrderForm, OrderItemFormSet, TableForm 
 from django.views import View
-
+from django.db.models import Max, F, Subquery, OuterRef
 
 class OrderCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     model = Order
@@ -85,6 +81,55 @@ class OrderUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         else:
             return self.form_invalid(form)
         
+
+class TableListView(LoginRequiredMixin, UserPassesTestMixin,View):
+    template_name = 'order/table_list.html'
+
+    def test_func(self):
+        return self.request.user.is_admin
+
+    def get(self, request):
+        tables = Table.objects.all()       
+        return render(request, self.template_name, {'tables': tables})
+
+
+class TableCreateView(LoginRequiredMixin, UserPassesTestMixin,View):
+    template_name = 'order/table_form.html'
+
+    def test_func(self):
+        return self.request.user.is_admin
+
+    def get(self, request):
+        form = TableForm()
+        return render(request, self.template_name, {'form': form})
+
+    def post(self, request):
+        form = TableForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('table_list') 
+        return render(request, self.template_name, {'form': form})
+
+
+class TableUpdateView(LoginRequiredMixin, UserPassesTestMixin,View):
+    template_name = 'order/table_form.html'
+
+    def test_func(self):
+        return self.request.user.is_admin
+
+    def get(self, request, pk):
+        table = get_object_or_404(Table, pk=pk)
+        form = TableForm(instance=table)
+        return render(request, self.template_name, {'form': form})
+
+    def post(self, request, pk):
+        table = get_object_or_404(Table, pk=pk)
+        form = TableForm(request.POST, instance=table)
+        if form.is_valid():
+            form.save()
+            return redirect('table_list')
+        return render(request, self.template_name, {'form': form})
+
 # from django.views import View
 # from django.http import JsonResponse
 # import string

@@ -1,4 +1,4 @@
-# import xlsxwriter
+import xlsxwriter
 from order.models import Order, OrderItem
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate, logout
@@ -19,6 +19,8 @@ import csv
 from django.http import HttpResponse
 from django.db.models.functions import ExtractHour
 from datetime import datetime, timedelta
+from dateutil.relativedelta import relativedelta
+from django.contrib.sessions.models import Session
 
 class StaffLogin(View):
     def get(self, request):
@@ -129,30 +131,58 @@ class ManagerPanelView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
         context['top_items'] = products_queryset[:10]
 
         # Total Sales
-        context['total_sales'] = Order.objects.aggregate(
-                            total_sales=Sum('total_price'))['total_sales'] or 0
+        today = timezone.localtime(timezone.now()).date()
+        one_day_ago = today - timedelta(days=1)
+        one_month_ago = today - relativedelta(months=1)
+        one_year_ago = today - relativedelta(years=1)
 
-        # Daily, Monthly, and Yearly Sales
-        today = timezone.localtime(timezone.now()).date() 
-        one_month_ago = today - timedelta(days=30)  
-        one_year_ago = today - timedelta(days=365)  
-
+        # sales of today and yesterday
         daily_sales = Order.objects.filter(created_at__date=today).aggregate(
             daily_sales=Sum('total_price')
         )['daily_sales'] or 0
 
+        yesterday_sales = Order.objects.filter(created_at__date=one_day_ago).aggregate(
+            yesterday_sales=Sum('total_price')
+        )['yesterday_sales'] or 0
+
+        # sales of this month and last month
         monthly_sales = Order.objects.filter(
             created_at__date__gte=one_month_ago, created_at__date__lte=today
         ).aggregate(monthly_sales=Sum('total_price'))['monthly_sales'] or 0
 
+        last_month_sales = Order.objects.filter(
+            created_at__date__gte=(one_month_ago - relativedelta(months=1)), 
+            created_at__date__lt=one_month_ago
+        ).aggregate(last_month_sales=Sum('total_price'))['last_month_sales'] or 0
+
+        # sales of this year and last year
         yearly_sales = Order.objects.filter(
             created_at__date__gte=one_year_ago, created_at__date__lte=today
         ).aggregate(yearly_sales=Sum('total_price'))['yearly_sales'] or 0
+
+        last_year_sales = Order.objects.filter(
+            created_at__date__gte=(one_year_ago - relativedelta(years=1)),
+            created_at__date__lt=one_year_ago
+        ).aggregate(last_year_sales=Sum('total_price'))['last_year_sales'] or 0
+
+        # percentage change
+        def calculate_percentage_change(current, previous):
+            if previous == 0:
+                return 100 if current > 0 else 0  
+            return ((current - previous) / previous) * 100
+
+        # percentage change
+        daily_sales_change = calculate_percentage_change(daily_sales, yesterday_sales)
+        monthly_sales_change = calculate_percentage_change(monthly_sales, last_month_sales)
+        yearly_sales_change = calculate_percentage_change(yearly_sales, last_year_sales)
 
         context = {
             'daily_sales': daily_sales,
             'monthly_sales': monthly_sales,
             'yearly_sales': yearly_sales,
+            'daily_sales_change': daily_sales_change,
+            'monthly_sales_change': monthly_sales_change,
+            'yearly_sales_change': yearly_sales_change,
         }
 
         # Sales by Category
@@ -181,9 +211,16 @@ class ManagerPanelView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
         # Customer Demographics
         context['total_customers'] = CustomUser.objects.filter(is_customer=True).count()
 
-        # Sales by Customer (phone)
-        # context['sales_by_customer'] = CustomUser.objects.filter(is_customer=True).annotate(
-        #     total_spent=Sum('customer_orders__total_price')).order_by('-total_spent')
+        # Sales by Customer
+        sessions = Session.objects.all()
+        sales_data = []
+        for session in sessions:
+            session_data = session.get_decoded()
+            if session_data.get('order_id'):
+                data = Order.objects.get(id=session_data.get('order_id'))
+                sales_data.append(data)
+
+        context['sales_by_customer'] = sales_data
 
         # Sales by Employee Report
         context['sales_by_employee'] = CustomUser.objects.filter(is_staff=True).annotate(
@@ -205,81 +242,81 @@ class ManagerPanelView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
         return context
 
 
-# class ExportSalesReportView(LoginRequiredMixin, UserPassesTestMixin, View):
+class ExportSalesReportView(LoginRequiredMixin, UserPassesTestMixin, View):
 
-#     def test_func(self):
-#         return self.request.user.is_admin
+    def test_func(self):
+        return self.request.user.is_admin
 
-#     def get(self, request, *args, **kwargs):
-#         response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-#         response['Content-Disposition'] = 'attachment; filename="sales_report.xlsx"'
+    def get(self, request, *args, **kwargs):
+        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        response['Content-Disposition'] = 'attachment; filename="sales_report.xlsx"'
 
-#         workbook = xlsxwriter.Workbook(response, {'in_memory': True})
+        workbook = xlsxwriter.Workbook(response, {'in_memory': True})
 
-#         orders = Order.objects.all().order_by('created_at')  
-#         order_items = OrderItem.objects.all().order_by('order__created_at')  
+        orders = Order.objects.all().order_by('created_at')  
+        order_items = OrderItem.objects.all().order_by('order__created_at')  
 
-#         # sheet 1
-#         orders_sheet = workbook.add_worksheet('Orders')
-#         orders_headers = ['Order ID', 'Customer', 'Employee', 'Total Price', 'Status', 'Created At']
-#         for col_num, header in enumerate(orders_headers):
-#             orders_sheet.write(0, col_num, header)
+        # sheet 1
+        orders_sheet = workbook.add_worksheet('Orders')
+        orders_headers = ['Order ID', 'Customer', 'Employee', 'Total Price', 'Status', 'Created At']
+        for col_num, header in enumerate(orders_headers):
+            orders_sheet.write(0, col_num, header)
 
-#         for row_num, order in enumerate(orders, start=1):
-#             orders_sheet.write(row_num, 0, order.id)
-#             orders_sheet.write(row_num, 1, order.modify_by.phone_number if order.modify_by else '')
-#             orders_sheet.write(row_num, 2, order.modify_by.first_name if order.modify_by else '')
-#             orders_sheet.write(row_num, 3, order.total_price)
-#             orders_sheet.write(row_num, 4, order.status)
-#             orders_sheet.write(row_num, 5, order.created_at.strftime('%Y-%m-%d %H:%M'))
+        for row_num, order in enumerate(orders, start=1):
+            orders_sheet.write(row_num, 0, order.id)
+            orders_sheet.write(row_num, 1, order.modify_by.phone_number if order.modify_by else '')
+            orders_sheet.write(row_num, 2, order.modify_by.first_name if order.modify_by else '')
+            orders_sheet.write(row_num, 3, order.total_price)
+            orders_sheet.write(row_num, 4, order.status)
+            orders_sheet.write(row_num, 5, order.created_at.strftime('%Y-%m-%d %H:%M'))
 
-#         # sheet 2
-#         order_items_sheet = workbook.add_worksheet('Order Items')
-#         order_items_headers = ['Order ID', 'Product', 'Quantity', 'Unit Price', 'Total Price', 'Order Created At']
-#         for col_num, header in enumerate(order_items_headers):
-#             order_items_sheet.write(0, col_num, header)
+        # sheet 2
+        order_items_sheet = workbook.add_worksheet('Order Items')
+        order_items_headers = ['Order ID', 'Product', 'Quantity', 'Unit Price', 'Total Price', 'Order Created At']
+        for col_num, header in enumerate(order_items_headers):
+            order_items_sheet.write(0, col_num, header)
 
-#         for row_num, item in enumerate(order_items, start=1):
-#             order_items_sheet.write(row_num, 0, item.order.id)
-#             order_items_sheet.write(row_num, 1, item.product.name if item.product else '')
-#             order_items_sheet.write(row_num, 2, item.quantity)
-#             order_items_sheet.write(row_num, 3, item.product.price)
-#             order_items_sheet.write(row_num, 4, item.quantity * item.product.price)
-#             order_items_sheet.write(row_num, 5, item.order.created_at.strftime('%Y-%m-%d %H:%M'))
+        for row_num, item in enumerate(order_items, start=1):
+            order_items_sheet.write(row_num, 0, item.order.id)
+            order_items_sheet.write(row_num, 1, item.product.name if item.product else '')
+            order_items_sheet.write(row_num, 2, item.quantity)
+            order_items_sheet.write(row_num, 3, item.product.price)
+            order_items_sheet.write(row_num, 4, item.quantity * item.product.price)
+            order_items_sheet.write(row_num, 5, item.order.created_at.strftime('%Y-%m-%d %H:%M'))
 
-#         # sheet 3
-#         summary_sheet = workbook.add_worksheet('Sales Summary')
+        # sheet 3
+        summary_sheet = workbook.add_worksheet('Sales Summary')
 
-#         today = timezone.localtime(timezone.now()).date()
-#         one_month_ago = today - timedelta(days=30)  
-#         one_year_ago = today - timedelta(days=365)  
+        today = timezone.localtime(timezone.now()).date()
+        one_month_ago = today - timedelta(days=30)  
+        one_year_ago = today - timedelta(days=365)  
 
-#         summary_data = {
-#             'Total Sales': Order.objects.aggregate(total_sales=Sum('total_price'))['total_sales'] or 0,
+        summary_data = {
+            'Total Sales': Order.objects.aggregate(total_sales=Sum('total_price'))['total_sales'] or 0,
             
-#             'Daily Sales': Order.objects.filter(
-#                 created_at__date=today
-#             ).aggregate(daily_sales=Sum('total_price'))['daily_sales'] or 0,
+            'Daily Sales': Order.objects.filter(
+                created_at__date=today
+            ).aggregate(daily_sales=Sum('total_price'))['daily_sales'] or 0,
 
-#             'Monthly Sales': Order.objects.filter(
-#                 created_at__date__gte=one_month_ago, created_at__date__lte=today
-#             ).aggregate(monthly_sales=Sum('total_price'))['monthly_sales'] or 0,
+            'Monthly Sales': Order.objects.filter(
+                created_at__date__gte=one_month_ago, created_at__date__lte=today
+            ).aggregate(monthly_sales=Sum('total_price'))['monthly_sales'] or 0,
 
-#             'Yearly Sales': Order.objects.filter(
-#                 created_at__date__gte=one_year_ago, created_at__date__lte=today
-#             ).aggregate(yearly_sales=Sum('total_price'))['yearly_sales'] or 0,
-#         }
+            'Yearly Sales': Order.objects.filter(
+                created_at__date__gte=one_year_ago, created_at__date__lte=today
+            ).aggregate(yearly_sales=Sum('total_price'))['yearly_sales'] or 0,
+        }
 
-#         summary_headers = ['Metric', 'Amount']
-#         for col_num, header in enumerate(summary_headers):
-#             summary_sheet.write(0, col_num, header)
+        summary_headers = ['Metric', 'Amount']
+        for col_num, header in enumerate(summary_headers):
+            summary_sheet.write(0, col_num, header)
 
-#         for row_num, (metric, amount) in enumerate(summary_data.items(), start=1):
-#             summary_sheet.write(row_num, 0, metric)
-#             summary_sheet.write(row_num, 1, amount)
+        for row_num, (metric, amount) in enumerate(summary_data.items(), start=1):
+            summary_sheet.write(row_num, 0, metric)
+            summary_sheet.write(row_num, 1, amount)
 
-#         workbook.close()
-#         return response
+        workbook.close()
+        return response
 
 
 class AddStaffView(LoginRequiredMixin, UserPassesTestMixin, View):

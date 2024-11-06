@@ -228,16 +228,16 @@
 <h2>Customer Demographics</h2>
 <p><strong>Total Customers:</strong> {{ total_customers }}</p>
 
-<h2>Sales by Customer (Phone)</h2>
+<h2>Sales by Customer</h2>
 <table>
     <tr>
-        <th>Customer Phone</th>
-        <th>Total Spent</th>
+        <th>Customer Payment Method</th>
+        <th>Total Price</th>
     </tr>
-    {% for customer in sales_by_customer %}
+    {% for order in sales_by_customer %}
     <tr>
-        <td>{{ customer.phone_number }}</td>
-        <td>{{ customer.total_spent }}</td>
+        <td>{{ order.get_payment_method_display }}</td>
+        <td>{{ order.total_price }}</td>
     </tr>
     {% endfor %}
 </table>
@@ -275,7 +275,7 @@
     </tr>
     {% endfor %}
 </table>
-{% comment %} <h2>Download Sales Report</h2>
-<p><a href="{% url 'export_sales_report' %}" class="btn btn-primary">Download Sales Report (CSV)</a></p {% endcomment %}
+<h2>Download Sales Report</h2>
+<p><a href="{% url 'export_sales_report' %}" class="btn btn-primary">Download Sales Report (EXEL)</a></p 
 
 {% endblock %}
