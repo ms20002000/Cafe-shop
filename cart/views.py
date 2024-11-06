@@ -37,6 +37,7 @@ def cart_remove(request, product_id):
 def cart_update_quantity(request, product_id):
     cart = Cart(request)
     quantity = int(request.POST.get('quantity', 1)) 
+    print(quantity)
     if quantity > 0:
         cart.remove(get_object_or_404(Product, id=product_id))  
         cart.add(product_id) 

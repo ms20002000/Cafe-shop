@@ -27,12 +27,11 @@
                             <span class="price">{{ item.product.price }} تومان</span>
                             <div class="sec-qty">
                                 <span class="btn-quantity minus-btn"><i class="icon-minus"></i></span>
-                                <!-- فرم برای دکمه کاهش مقدار -->
                                 {% comment %} <form action="{% url 'cart_update_quantity' item.product.id %}" method="post" style="display:inline;">
                                     {% csrf_token %}
-                                    <input name="quantity" value="{{ item.quantity|add:"-1" }}">
+                                    <input type="number" name="quantity" value="{{ item.quantity|add:"-1" }}">
                                     <button type="submit" class="btn-quantity minus-btn"><i class="icon-minus"></i></button>
-                                </form> {% endcomment %}
+                                </form>   {% endcomment %}
                                 <input type="number" name="number" value="{{ item.quantity }}">
                                 <span class="btn-quantity active plus-btn"><i class="icon-plus"></i></span>
                                 {% comment %} <form action="{% url 'cart_update_quantity' item.product.id %}" method="post" style="display:inline;">
