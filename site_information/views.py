@@ -1,8 +1,9 @@
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, redirect
 from django.views import View
 from .models import SiteInfo
 from .forms import SiteInfoForm
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.contrib import messages
 from django.urls import reverse_lazy
 
 class SiteInfoView(LoginRequiredMixin, UserPassesTestMixin, View):
@@ -22,6 +23,7 @@ class SiteInfoView(LoginRequiredMixin, UserPassesTestMixin, View):
 
         if form.is_valid():
             form.save()
-            return redirect('home') 
+            messages.success(request, "اطلاعات با موفقیت به روز شد.")
+            return render(request, self.template_name, {'form': form, 'site_info': site_info})
 
         return render(request, self.template_name, {'form': form, 'site_info': site_info})

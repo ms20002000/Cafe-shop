@@ -22,11 +22,22 @@
   <link rel="stylesheet" href="{% static 'staff/css/demo1/style-rtl.min.css' %}">
 
 </head>
-<link rel="shortcut icon" href="../assets/images/favicon.png" />
+<link rel="shortcut icon" href="{% static 'main/images/logo/48.png' %}"/>
 
 <body>
   <div class="main-wrapper">
 
+    
+    {% url 'manager_dashboard' as manager_dashboard_url %}
+    {% url 'add_product' as add_product_url %}
+    {% url 'add_category' as add_category_url %}
+    {% url 'table_create' as table_create_url %}
+    {% url 'table_list' as table_list_url %}
+    {% url 'staff_dashboard' as staff_dashboard_url %}
+    {% url 'order_create' as order_create_url %}
+    {% url 'staff_list' as staff_list_url %}
+    {% url 'add_staff' as add_staff_url %}
+    {% url 'site_info' as site_info_url %}
     
     <nav class="sidebar">
       <div class="sidebar-header">
@@ -43,104 +54,106 @@
         <ul class="nav">
           {% if user.is_admin %}
           <li class="nav-item nav-category">اصلی</li>
-          <li class="nav-item">
-            <a href="{% url 'manager_dashboard' %}" class="nav-link">
+          <li class="nav-item {% if request.path == manager_dashboard_url %}active{% endif %}">
+            <a href="{{ manager_dashboard_url }}" class="nav-link">
               <i class="link-icon" data-feather="box"></i>
               <span class="link-title">داشبورد</span>
             </a>
           </li>
+          
           <li class="nav-item nav-category">محصولات</li>
-          <li class="nav-item">
-            <a class="nav-link" data-bs-toggle="collapse"role="button" href="#food" aria-expanded="false"
+          <li class="nav-item {% if request.path == add_product_url or request.path == add_category_url %}active{% endif %}">
+            <a class="nav-link" data-bs-toggle="collapse" role="button" href="#food" aria-expanded="false"
               aria-controls="food">
               <i class="link-icon" data-feather="coffee"></i>
               <span class="link-title">غذا</span>
               <i class="link-arrow" data-feather="chevron-down"></i>
             </a>
-            <div class="collapse" id="food">
+            <div class="collapse {% if request.path == add_product_url or request.path == add_category_url %}show{% endif %}" id="food">
               <ul class="nav sub-menu">
                 <li class="nav-item">
-                  <a href="{% url 'add_product' %}" class="nav-link">افزودن محصول</a>
+                  <a href="{{ add_product_url }}" class="nav-link {% if request.path == add_product_url %}active{% endif %}">افزودن محصول</a>
                 </li>
                 <li class="nav-item">
-                  <a href="{% url 'add_category' %}" class="nav-link">افزودن دسته بندی</a>
+                  <a href="{{ add_category_url }}" class="nav-link {% if request.path == add_category_url %}active{% endif %}">افزودن دسته بندی</a>
                 </li>
               </ul>
             </div>
           </li>
-          <li class="nav-item">
+  
+          <li class="nav-item {% if request.path == table_create_url or request.path == table_list_url %}active{% endif %}">
             <a class="nav-link" data-bs-toggle="collapse" role="button" href="#table" aria-expanded="false"
               aria-controls="table">
               <i class="link-icon" data-feather="grid"></i>
               <span class="link-title">میز</span>
               <i class="link-arrow" data-feather="chevron-down"></i>
             </a>
-            <div class="collapse" id="table">
+            <div class="collapse {% if request.path == table_create_url or request.path == table_list_url %}show{% endif %}" id="table">
               <ul class="nav sub-menu">
                 <li class="nav-item">
-                  <a href="{% url 'table_create' %}" class="nav-link">افزودن میز</a>
+                  <a href="{{ table_create_url }}" class="nav-link {% if request.path == table_create_url %}active{% endif %}">افزودن میز</a>
                 </li>
                 <li class="nav-item">
-                  <a href="{% url 'table_list' %}" class="nav-link">لیست میزها</a>
+                  <a href="{{ table_list_url }}" class="nav-link {% if request.path == table_list_url %}active{% endif %}">لیست میزها</a>
                 </li>
               </ul>
             </div>
           </li>
           {% endif %}
+    
           <li class="nav-item nav-category">سفارشات</li>
-          <li class="nav-item">
-            <a class="nav-link" data-bs-toggle="collapse"role="button" href="#order" aria-expanded="false"
+          <li class="nav-item {% if request.path == staff_dashboard_url or request.path == order_create_url %}active{% endif %}">
+            <a class="nav-link" data-bs-toggle="collapse" role="button" href="#order" aria-expanded="false"
               aria-controls="order">
               <i class="link-icon" data-feather="shopping-cart"></i>
               <span class="link-title">مدیریت سفارشات</span>
               <i class="link-arrow" data-feather="chevron-down"></i>
             </a>
-            <div class="collapse" id="order">
+            <div class="collapse {% if request.path == staff_dashboard_url or request.path == order_create_url %}show{% endif %}" id="order">
               <ul class="nav sub-menu">
                 <li class="nav-item">
-                  <a href="{% url 'staff_dashboard' %}" class="nav-link">لیست سفارشات</a>
+                  <a href="{{ staff_dashboard_url }}" class="nav-link {% if request.path == staff_dashboard_url %}active{% endif %}">لیست سفارشات</a>
                 </li>
                 <li class="nav-item">
-                  <a href="{% url 'order_create' %}" class="nav-link">افزودن سفارش</a>
+                  <a href="{{ order_create_url }}" class="nav-link {% if request.path == order_create_url %}active{% endif %}">افزودن سفارش</a>
                 </li>
               </ul>
             </div>
           </li>
+    
           {% if user.is_admin %}
           <li class="nav-item nav-category">مدیریت</li>
-          <li class="nav-item">
-            <a class="nav-link" data-bs-toggle="collapse" role="button" href="#table" aria-expanded="false"
-              aria-controls="table">
+          <li class="nav-item {% if request.path == staff_list_url or request.path == add_staff_url %}active{% endif %}">
+            <a class="nav-link" data-bs-toggle="collapse" role="button" href="#management" aria-expanded="false"
+              aria-controls="management">
               <i class="link-icon" data-feather="users"></i>
               <span class="link-title">کارکنان</span>
               <i class="link-arrow" data-feather="chevron-down"></i>
             </a>
-            <div class="collapse" id="table">
+            <div class="collapse {% if request.path == staff_list_url or request.path == add_staff_url %}show{% endif %}" id="management">
               <ul class="nav sub-menu">
                 <li class="nav-item">
-                  <a href="{% url 'staff_list' %}" class="nav-link">لیست کارکنان</a>
+                  <a href="{{ staff_list_url }}" class="nav-link {% if request.path == staff_list_url %}active{% endif %}">لیست کارکنان</a>
                 </li>
                 <li class="nav-item">
-                  <a href="{% url 'add_staff' %}" class="nav-link">افزودن کارکنان</a>
+                  <a href="{{ add_staff_url }}" class="nav-link {% if request.path == add_staff_url %}active{% endif %}">افزودن کارکنان</a>
                 </li>
               </ul>
             </div>
           </li>
-          {% endif %}
-          {% comment %} <li class="nav-item">
-            <a href="pages/apps/chat.html" class="nav-link">
+          
+          <li class="nav-item {% if request.path == site_info_url %}active{% endif %}">
+            <a href="{{ site_info_url }}" class="nav-link">
               <i class="link-icon" data-feather="settings"></i>
               <span class="link-title">مدیریت سایت</span>
             </a>
-          </li> {% endcomment %}
+          </li>
+          {% endif %}
         </ul>
       </div>
     </nav>
     
-
     <div class="page-wrapper">
-
-      
       <nav class="navbar">
         <a href="#" class="sidebar-toggler">
           <i data-feather="menu"></i>
@@ -182,8 +195,6 @@
           </ul>
         </div>
       </nav>
-      
-
     {% block content %}
     {% endblock %}
 

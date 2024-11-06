@@ -1,3 +1,95 @@
+{% extends 'staff-base.html' %}
+{% block title %}اطلاعات کافه{% endblock %}
+{% load static %}
+{% block content %}
+
+<div class="page-content">
+
+    <nav class="page-breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="{% url 'site_info' %}">مدیریت کافه</a></li>
+          <li class="breadcrumb-item active" aria-current="page">ویرایش اطلاعات کافه</li>
+        </ol>
+    </nav>
+
+    {% if messages %}
+    <div>
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    
+    <div class="row">
+        <div class="col-md-12 stretch-card">
+            <div class="card">
+                <div class="card-body">
+                    <form method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="mb-3">
+                                    <label class="form-label">نام کافه</label>
+                                    <input type="text" name="site_name" class="form-control" placeholder="نام کافه خود را وارد کنید" value="{{ form.site_name.value }}">
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="mb-3">
+                                    <label class="form-label">شماره تلفن</label>
+                                    <input type="number" name="phone_number" class="form-control" placeholder="شماره تلفن کافه خود را وارد کنید" value="{{ form.phone_number.value }}">
+                                </div>
+                            </div>
+                        </div>
+    
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="mb-3">
+                                    <label class="form-label">آدرس ایمیل</label>
+                                    <input type="email" name="email" class="form-control" placeholder="ایمیل خود را وارد کنید" value="{{ form.email.value }}">
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="mb-3">
+                                    <label class="form-label">لوگو کافه</label>
+                                    <input type="file" name="logo" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="mb-3">
+                                    <label class="form-label">توضیحات کافه</label>
+                                    <textarea name="description" class="form-control" id="description" rows="5">{{ form.description.value }}</textarea>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="mb-3">
+                                    <label class="form-label">آدرس کافه</label>
+                                    <textarea name="address" class="form-control" id="address" rows="5">{{ form.address.value }}</textarea>
+                                </div>
+                            </div>
+                        </div>
+    
+                        <button type="submit" class="btn btn-primary">به روزرسانی</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">{% if site_info %}Update{% else %}Create{% endif %}</button>
+</form>
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>

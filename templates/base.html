@@ -31,24 +31,52 @@
 
         {% endblock %}
     </div>
-    <div class="menubar-footer footer-fixed">
-        <ul class="inner">
-            <li><a href="{% url 'home' %}"><span class="icon-home"></span>خانه</a></li>
-            <li><a href="{% url 'cart_detail' %}"><span class="icon-buy"></span> سبد خرید</a></li>
-            <li><a href="{% url 'order_history' %}"><span class="icon-card-num"></span>سفارشات</a></li>
+    {% url 'home' as home_url %}
+    {% url 'cart_detail' as cart_detail_url %}
+    {% url 'order_history' as order_history_url %}
+    {% url 'staff_dashboard' as staff_dashboard_url %}
+    {% url 'logout' as logout_url %}
     
-            {% if user.is_staff and not user.is_admin %}
-                <li><a href="{% url 'staff_dashboard' %}"><span class="icon-setting"></span>مدیریت سفارشات</a></li>
-            {% endif %}
-            {% if user.is_admin %}
-                <li><a href="{% url 'staff_dashboard' %}"><span class="icon-setting"></span>مدیریت سایت</a></li>
-            {% endif %}
-            {% if user.is_authenticated %}
-                <li><a href="{% url 'logout' %}"><span class="icon-logout"></span>خروج</a></li>
-            {% else %}
-            {% endif %}
-        </ul>
-    </div>
+    {% url 'home' as home_url %}
+{% url 'cart_detail' as cart_detail_url %}
+{% url 'order_history' as order_history_url %}
+{% url 'staff_dashboard' as staff_dashboard_url %}
+{% url 'logout' as logout_url %}
+
+{% url 'home' as home_url %}
+{% url 'cart_detail' as cart_detail_url %}
+{% url 'order_history' as order_history_url %}
+{% url 'staff_dashboard' as staff_dashboard_url %}
+{% url 'logout' as logout_url %}
+
+<div class="menubar-footer footer-fixed">
+    <ul class="inner">
+        <li><a href="{{ home_url }}" style="color: {% if request.path == home_url %}#033f38{% endif %};">
+            <span class="icon-home" style="color: {% if request.path == home_url %}#033f38{% endif %};"></span>خانه</a></li>
+        <li><a href="{{ cart_detail_url }}" style="color: {% if request.path == cart_detail_url %}#033f38{% endif %};">
+            <span class="icon-buy" style="color: {% if request.path == cart_detail_url %}#033f38{% endif %};"></span> سبد خرید</a></li>
+        <li><a href="{{ order_history_url }}" style="color: {% if request.path == order_history_url %}#033f38{% endif %};">
+            <span class="icon-card-num" style="color: {% if request.path == order_history_url %}#033f38{% endif %};"></span>سفارشات</a></li>
+
+        {% if user.is_staff and not user.is_admin %}
+            <li><a href="{{ staff_dashboard_url }}" style="color: {% if request.path == staff_dashboard_url %}#033f38{% endif %};">
+                <span class="icon-setting" style="color: {% if request.path == staff_dashboard_url %}#033f38{% endif %};"></span>مدیریت سفارشات</a></li>
+        {% endif %}
+
+        {% if user.is_admin %}
+            <li><a href="{{ staff_dashboard_url }}" style="color: {% if request.path == staff_dashboard_url %}#033f38{% endif %};">
+                <span class="icon-setting" style="color: {% if request.path == staff_dashboard_url %}#033f38{% endif %};"></span>مدیریت سایت</a></li>
+        {% endif %}
+
+        {% if user.is_authenticated %}
+            <li><a href="{{ logout_url }}" style="color: {% if request.path == logout_url %}#033f38{% endif %};">
+                <span class="icon-logout" style="color: {% if request.path == logout_url %}#033f38{% endif %};"></span>خروج</a></li>
+        {% endif %}
+    </ul>
+</div>
+
+
+    
     
     
 
