@@ -13,7 +13,12 @@ from order.models import Order
 def cart_add(request, product_id):
     cart = Cart(request)
     product = get_object_or_404(Product, id=product_id)
-    cart.add(product_id)    
+    number = int(request.POST.get('quantity'))
+    if number:
+        for _ in range(number):
+            cart.add(product_id)
+    else:
+        cart.add(product_id)    
     response = redirect('cart_detail')
     response.set_cookie(settings.CART_COOKIE_NAME, cart.save(), max_age=3600)  
     return response
@@ -24,6 +29,19 @@ def cart_remove(request, product_id):
     cart = Cart(request)
     product = get_object_or_404(Product, id=product_id)
     cart.remove(product)
+    response = redirect('cart_detail')
+    response.set_cookie(settings.CART_COOKIE_NAME, cart.save(), max_age=3600)
+    return response
+
+@require_POST
+def cart_update_quantity(request, product_id):
+    cart = Cart(request)
+    quantity = int(request.POST.get('quantity', 1)) 
+    if quantity > 0:
+        cart.remove(get_object_or_404(Product, id=product_id))  
+        cart.add(product_id) 
+    else:
+        cart.remove(get_object_or_404(Product, id=product_id))  
     response = redirect('cart_detail')
     response.set_cookie(settings.CART_COOKIE_NAME, cart.save(), max_age=3600)
     return response
@@ -120,4 +138,8 @@ def order_summary(request):
     else:
         order = None 
 
+    return render(request, 'cart/order_summary.html', {'order': order})
+
+def order_detail(request, order_id):
+    order = get_object_or_404(Order, id=order_id)
     return render(request, 'cart/order_summary.html', {'order': order})

@@ -136,7 +136,12 @@
                         <td>{{ order.created_at|date:"Y-m-d" }}</td>
                         <td>
                             <a href="{% url 'order_update' order.id %}"><button type="button" class="btn btn-primary btn-icon" data-bs-toggle="tooltip" data-bs-placement="top" title="ویرایش سفارش"><i data-feather="edit"></i></button></a>
-                            <a href="{% url 'order_delete' order.id %}"><button type="button" class="btn btn-danger btn-icon" data-bs-toggle="tooltip" data-bs-placement="top" title="حذف"><i data-feather="trash-2"></i></button></a>
+                            <form method="post" action="{% url 'order_delete' order.id %}" style="display:inline;">
+                              {% csrf_token %}
+                              <button type="submit" class="btn btn-danger btn-icon" data-bs-toggle="tooltip" data-bs-placement="top" title="حذف" onclick="return confirm('آیا مطمئن هستید که می‌خواهید این سفارش را حذف کنید؟')">
+                                  <i data-feather="trash-2"></i>
+                              </button>
+                          </form>
                         </td>
                     </tr>
                     {% empty %}

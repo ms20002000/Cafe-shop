@@ -44,7 +44,10 @@ def product_list(request, name):
         products = Product.objects.filter(category=category, is_available=True)
     return render(request, 'product/product_list.html', {'products': products})
     
-
+def popular_products(request):
+    products = Product.objects.annotate(total_sold=Sum('order_items__quantity')
+                                    ).order_by('-total_sold')
+    return render(request, 'product/product_list.html', {'products': products})
 
 def product_detail(request, name, product_name):
     product = get_object_or_404(Product, name=product_name)

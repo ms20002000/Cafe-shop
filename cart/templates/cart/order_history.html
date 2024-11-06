@@ -20,7 +20,9 @@
                         <img class="img" src="{% static 'main/images/avt/order_history.png' %}" alt="{{order.id}}">
                     </div>
                     <div class="content">
-                        <h5>سفارش #{{order.id}}</h5>
+                        <a href="{% url 'order_detail' order.id %}">
+                            <h5 >سفارش #{{order.id}}</h5>
+                        </a>
                         <p>
                             {% for item in order.items.all %}
                                 {{ item.product.name }} - {{ item.quantity }}{% if not forloop.last %} و {% endif %}

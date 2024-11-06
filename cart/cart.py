@@ -14,7 +14,7 @@ class Cart:
         else:
             self.cart = {}
 
-    def add(self, product_identifier):
+    def add(self, product_identifier, quantity=1):
         try:
             product_id = int(product_identifier)  
             product = Product.objects.get(id=product_id)
@@ -23,9 +23,9 @@ class Cart:
 
         product_id_str = str(product.id)
         if product_id_str in self.cart:
-            self.cart[product_id_str]['quantity'] += 1  
+            self.cart[product_id_str]['quantity'] += quantity
         else:
-            self.cart[product_id_str] = {'quantity': 1, 'price': str(product.price)}
+            self.cart[product_id_str] = {'quantity': quantity, 'price': str(product.price)}
         
         self.save()  
 

@@ -169,7 +169,7 @@ class ManagerPanelView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
         def calculate_percentage_change(current, previous):
             if previous == 0:
                 return 100 if current > 0 else 0  
-            return ((current - previous) / previous) * 100
+            return round(((current - previous) / previous) * 100, 2) 
 
         # percentage change
         daily_sales_change = calculate_percentage_change(daily_sales, yesterday_sales)
