@@ -127,30 +127,54 @@
                   </tr>
                 </thead>
                 <tbody>
-                    {% for order in orders %}
-                    <tr>
-                        <td>{{ order.id }}</td>
-                        <td>{{ order.modify_by.phone_number }}</td>
-                        <td>{{ order.table.number }}</td>
-                        <td>{{ order.get_status_display }}</td>
-                        <td>{{ order.created_at|date:"Y-m-d" }}</td>
-                        <td>
-                            <a href="{% url 'order_update' order.id %}"><button type="button" class="btn btn-primary btn-icon" data-bs-toggle="tooltip" data-bs-placement="top" title="ویرایش سفارش"><i data-feather="edit"></i></button></a>
-                            <form method="post" action="{% url 'order_delete' order.id %}" style="display:inline;">
-                              {% csrf_token %}
-                              <button type="submit" class="btn btn-danger btn-icon" data-bs-toggle="tooltip" data-bs-placement="top" title="حذف" onclick="return confirm('آیا مطمئن هستید که می‌خواهید این سفارش را حذف کنید؟')">
-                                  <i data-feather="trash-2"></i>
-                              </button>
-                          </form>
-                        </td>
-                    </tr>
-                    {% empty %}
-                    <tr>
-                        <td colspan="6">سفارشی وجود ندارد.</td>
-                    </tr>
-                    {% endfor %}
+                  {% for order in orders %}
+                  <tr>
+                    <td>{{ order.id }}</td>
+                    <td>{{ order.modify_by.phone_number }}</td>
+                    <td>{{ order.table.number }}</td>
+                    <td>{{ order.get_status_display }}</td>
+                    <td>{{ order.created_at|date:"Y-m-d" }}</td>
+                    <td>
+                      <a href="{% url 'order_update' order.id %}">
+                        <button type="button" class="btn btn-primary btn-icon" data-bs-toggle="tooltip" data-bs-placement="top" title="ویرایش سفارش">
+                          <i data-feather="edit"></i>
+                        </button>
+                      </a>
+                      <button type="button" class="btn btn-danger btn-icon" data-bs-toggle="modal" data-bs-target="#deletemodal{{ order.id }}" data-order-id="{{ order.id }}">
+                        <i data-feather="trash-2"></i>
+                      </button>
+                    </td>
+                  </tr>
+                  {% empty %}
+                  <tr>
+                    <td colspan="6">سفارشی وجود ندارد.</td>
+                  </tr>
+                  {% endfor %}
                 </tbody>
               </table>
+              
+              {% for order in orders %}
+              <div class="modal fade" id="deletemodal{{ order.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="exampleModalLabel">حذف سفارش</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="btn-close"></button>
+                    </div>
+                    <div class="modal-body">
+                      آیا میخواهید سفارش با شماره {{ order.id }} را پاک کنید؟
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">بستن</button>
+                      <form method="post" action="{% url 'order_delete' order.id %}" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger">حذف</button>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              {% endfor %}
             </div>
           </div>
         </div>
