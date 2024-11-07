@@ -52,8 +52,21 @@
                             </div>
                             <div class="col-sm-6">
                                 <div class="mb-3">
+                                    <label class="form-label">شعار سایت</label>
+                                    <input type="text" name="slogan" class="form-control" placeholder="شعار کافه خود را وارد کنید" value="{{ form.slogan.value }}">
+
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="mb-3">
                                     <label class="form-label">لوگو کافه</label>
                                     <input type="file" name="logo" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Favicon کافه</label>
+                                    <input type="file" name="fav_icon" class="form-control">
                                 </div>
                             </div>
                         </div>
@@ -81,27 +94,3 @@
     </div>
 </div>
 {% endblock %}
-
-
-<form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">{% if site_info %}Update{% else %}Create{% endif %}</button>
-</form>
-
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Site Information</title>
-</head>
-<body>
-    <h1>Site Information</h1>
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">{% if site_info %}Update{% else %}Create{% endif %}</button>
-    </form>
-</body>
-</html>

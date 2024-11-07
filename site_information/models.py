@@ -8,7 +8,7 @@ class SiteInfo(models.Model):
     address = models.TextField(verbose_name="Address")
     description = models.TextField(verbose_name="Site Description", blank=True, null=True)
     fav_icon = models.ImageField(upload_to="site_logo/", verbose_name="Fav Icon", blank=True, null=True)
-    slogan = models.CharField(max_length=50, verbose_name="Slogan", blank=True, null=True)
+    slogan = models.CharField(max_length=20, verbose_name="Slogan", blank=True, null=True)
 
     def __str__(self):
         return self.site_name

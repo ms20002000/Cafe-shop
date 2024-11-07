@@ -142,7 +142,7 @@
                       {% elif order.status == 'CK' %}
                           <span class="badge bg-primary">در حال پخت</span>
                       {% elif order.status == 'C' %}
-                          <span class="badge bg-success">منتشر شده</span>
+                          <span class="badge bg-success">تکمیل شده</span>
                       {% else %}
                           {{ order.get_status_display }}
                       {% endif %}

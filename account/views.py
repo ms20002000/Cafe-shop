@@ -198,18 +198,17 @@ class ManagerPanelView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
             for i in range(9, -1, -1)
         ]
 
-        # 10-year sales list with "Jan 01 2022" format
-        last_10_years = [
-            (today - relativedelta(years=i)).replace(month=1, day=1).strftime("%b %d %Y") for i in range(9, -1, -1)
-        ]
-        sales_last_10_years = [float(
-            Order.objects.filter(
-                created_at__date__gte=(today - relativedelta(years=i)).replace(month=1, day=1),
-                created_at__date__lt=(today - relativedelta(years=i-1)).replace(month=1, day=1)
-            ).aggregate(sales=Sum('total_price'))['sales'] or 0)
-            for i in range(9, -1, -1)
-        ]
-
+        sales_per_two_hour_intervals = []
+        for hour in range(0, 24, 2):
+            today = datetime.now()
+            start_time = today.replace(hour=hour, minute=0, second=0, microsecond=0)
+            end_time = start_time + timedelta(hours=2)
+            total_sales = Order.objects.filter(
+                created_at__gte=start_time,
+                created_at__lt=end_time
+            ).aggregate(sales=Sum('total_price'))['sales'] or 0
+            sales_per_two_hour_intervals.append(float(total_sales))
+            
         context.update({
             'daily_sales': daily_sales,
             'monthly_sales': monthly_sales,
@@ -221,8 +220,7 @@ class ManagerPanelView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
             'sales_last_10_days': json.dumps(sales_last_10_days),
             'last_10_months': json.dumps(last_10_months),
             'sales_last_10_months': json.dumps(sales_last_10_months),
-            'last_10_years': json.dumps(last_10_years),
-            'sales_last_10_years': json.dumps(sales_last_10_years),
+            'sales_per_two_hour_intervals':json.dumps(sales_per_two_hour_intervals)
         })
 
 

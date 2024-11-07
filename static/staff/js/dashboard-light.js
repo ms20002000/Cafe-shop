@@ -620,7 +620,7 @@ if ($('#customersChart').length) {
       },
       series: [{
         name: 'فروش',
-        data: [152, 109, 93, 113, 126, 161, 188, 143, 102, 113, 116, 124]
+        data: sales_per_two_hour_intervals
       }],
       xaxis: {
         categories: [

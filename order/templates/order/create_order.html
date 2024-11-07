@@ -65,27 +65,24 @@
                                         <h6 class="card-title">آیتم های سفارش</h6>
                                         <div class="table-responsive pt-3">
                                             <table class="table table-bordered">
-                                                <thead>
-                                                    <tr>
-                                                        <th>نام</th>
-                                                        <th>تعداد</th>
-                                                        <th>عملیات</th>
-                                                    </tr>
-                                                </thead>
                                                 <tbody id="tableBody">
-                                                    {% for form_item in formset %}
-                                                        <tr>
-                                                            <td>{{ form_item.product }}</td>
-                                                            <td>{{ form_item.quantity }}</td>
-                                                            <td>
-                                                                <button type="button" class="btn btn-danger btn-icon" onclick="removeRow(this)" data-bs-toggle="tooltip" data-bs-placement="top" title="حذف">
-                                                                    <i data-feather="trash-2"></i>
-                                                                </button>
-                                                            </td>
-                                                        </tr>
+                                                    {{ formset.management_form }}
+                                                    {% for form in formset %}
+                                                    <tr>
+                                                        <td>
+                                                            {{ form.as_p }}
+                                                        </td>
+                                                    </tr>
                                                     {% endfor %}
                                                 </tbody>
                                             </table>
+                                            <div id="form-template" style="display: none;">
+                                                <tr>
+                                                    <td>
+                                                        {{ formset.empty_form.as_p }}
+                                                    </td>
+                                                </tr>
+                                            </div>
                                             <div class="text-center">
                                                 <button type="button" class="btn btn-primary" style="margin-top:15px" onclick="addRow()">افزودن سطر</button>
                                             </div>
@@ -104,62 +101,30 @@
 </div>
 
 <script>
-    // جاوااسکریپت برای اضافه کردن سطر جدید
-    let rowCount = {{ formset.management_form.instance.forms|length }};  // تعداد سطرهای فعلی برای اضافه کردن سطر جدید
-    
     function addRow() {
-        let tableBody = document.getElementById('tableBody');
-        let firstRow = tableBody.querySelector('tr');
+        // انتخاب محتوای قالب و کلون کردن آن
+        var template = document.getElementById('form-template').innerHTML;
+        var tableBody = document.getElementById('tableBody');
         
-        // اگر سطر اول وجود دارد، کپی‌برداری از آن
-        if (firstRow) {
-            let clonedRow = firstRow.cloneNode(true);  // کلون کردن سطر اول
-            
-            // تغییر نام فیلدهای ورودی (input و select) برای سطر جدید
-            clonedRow.querySelectorAll('input, select').forEach((input) => {
-                let name = input.name;
-                // تغییر نام فیلدهای input بر اساس تعداد سطرهای جدید
-                input.name = name.replace(/\d+/, rowCount);
-                input.value = '';  // مقداردهی به فیلدها به صورت خالی
-            });
-            
-            // اضافه کردن دکمه حذف به سطر جدید
-            let removeButton = clonedRow.querySelector('button');
-            removeButton.setAttribute('onclick', 'removeRow(this)');
-            
-            // اضافه کردن سطر جدید به جدول
-            tableBody.appendChild(clonedRow);
-            
-            // افزایش شمارش سطرها برای سطر بعدی
-            rowCount++;
-            updateManagementForm();
-        }
-    }
-    
-    function removeRow(button) {
-        let row = button.closest('tr');
-        let rowCount = document.querySelectorAll('#tableBody tr').length;
-    
-        // اطمینان از اینکه حداقل یک سطر باقی می‌ماند
-        if (rowCount > 1) {
-            row.remove();
-            updateManagementForm();
-        }
-    }
-    
-    function updateManagementForm() {
-        let rows = document.querySelectorAll('#tableBody tr');
-        document.querySelector('#id_form-TOTAL_FORMS').value = rows.length;  // به روز رسانی تعداد فرم‌ها
-    
-        rows.forEach((row, index) => {
-            row.querySelectorAll('input, select').forEach(input => {
-                let name = input.name;
-                // به روز رسانی نام‌ها بر اساس شماره سطر
-                input.name = name.replace(/\d+/, index);  // به روز رسانی فیلدهای نام‌گذاری شده
-            });
-        });
+        // افزودن فرم جدید به انتهای جدول
+        tableBody.insertAdjacentHTML('beforeend', template);
     }
 </script>
 
+<form method="POST">
+    {% csrf_token %}
+    
+    {{ form.as_p }}
+    
+    <h3>Order Items</h3>
+    {{ formset.management_form }}
+    {% for form in formset %}
+    <div>
 
+        {{ form.as_p }}
+    </div>
+    {% endfor %}
+    
+    <button type="submit">Save Changes</button>
+</form>
 {% endblock %}

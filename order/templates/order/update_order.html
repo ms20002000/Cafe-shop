@@ -68,19 +68,13 @@
                                         <h6 class="card-title">آیتم های سفارش</h6>
                                         <div class="table-responsive pt-3">
                                             <table class="table table-bordered">
-                                                <thead>
-                                                    <tr>
-                                                        <th>نام</th>
-                                                    </tr>
-                                                </thead>
                                                 <tbody id="tableBody">
-                                                    {{ formset.management_form }}
+                                                {{ formset.management_form }}
                                                     {% for form in formset %}
                                                     <tr>
                                                         <td>                    
                                                             {{ form.as_p }}
                                                         </td>
-                                                    
                                                     </tr>
                                                 {% endfor %}                                                
                                                 </tbody>
