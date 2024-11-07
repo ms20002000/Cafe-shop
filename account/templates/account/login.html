@@ -1,73 +1,68 @@
 <!DOCTYPE html>
-<html lang="fa">
+<html lang="fa" dir="rtl">
 
 <head>
     {% load static %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <link rel="stylesheet" href="{% static 'main/css/swiper-bundle.min.css' %}">
-    <link rel="stylesheet" href="{% static 'main/css/bootstrap-select.min.css' %}">
-    <link rel="stylesheet" href="{% static 'main/css/boostrap.min.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'main/css/styles.css' %}">
-    <link rel="stylesheet" href="{% static 'main/fonts/font-icons.css' %}">
-    <link rel="shortcut icon" href="{% static 'main/images/logo/48.png' %}">
-    <link rel="apple-touch-icon-precomposed" href="{% static 'main/images/logo/48.png' %}">
-    
     <title>ورود</title>
+
+	<link rel="stylesheet" href="{% static 'staff/vendors/core/core.css' %}">
+	<link rel="stylesheet" href="{% static 'staff/fonts/feather-font/css/iconfont.css' %}">
+	<link rel="stylesheet" href="{% static 'staff/vendors/flag-icon-css/css/flag-icon.min.css' %}">
+	<link rel="stylesheet" href="{% static 'staff/css/demo1/style-rtl.min.css' %}">
+	<link rel="shortcut icon" href="{% static 'main/images/logo/48.png' %}" />
 </head>
 
 <body>
-    <div class="preload preload-container">
-        <div class="preload-logo">
-            <div class="spinner"></div>
-        </div>
-    </div>
-    
-    <div class="account-area" style="background-image: url('{% static 'main/images/background/bg-1.png' %}')">
-        <div class="tf-container">
-            <div class="logo-app pt-20">
-                <img src="{% static 'main/images/logo/logo-1.png' %}" alt="تصویر لوگو">
-            </div>
-            <div class="tf-title pt-16">
-                <h1>ورود</h1>
-                <p>لطفا برای ادامه، وارد حساب کاربری خود شوید.</p>
-            </div>
-            <div class="acount-box">
-                <div class="tab-content">
-                    <div class="tab-pane show active" id="signin" role="tabpanel">
-                        <form method="post" class="tf-form">
-                            {% csrf_token %}
-                        
-                            <div class="group-input mb-15">
-                                <i class="icon icon-phone"></i>
-                                {{ form.username }}
-                            </div>
-                        
-                            <div class="group-input mb-15 group-ip-password">
-                                <i class="icon icon-lock"></i>
-                                {{ form.password }}
-                                <div class="box-auth-show">
-                                    <span class="show-pass">
-                                        <i class="icon-eye-hide"></i>
-                                        <i class="icon-eye-show"></i>
-                                    </span>
+    <div class="main-wrapper">
+        <div class="page-wrapper full-page">
+            <div class="page-content d-flex align-items-center justify-content-center">
+
+                <div class="row w-100 mx-0 auth-page">
+                    <div class="col-md-8 col-xl-6 mx-auto">
+                        <div class="card">
+                            <div class="row">
+                                <div class="col-md-4 pe-md-0">
+                                    <div class="auth-side-wrapper">
+                                    </div>
+                                </div>
+                                <div class="col-md-8 ps-md-0">
+                                    <div class="auth-form-wrapper px-4 py-5">
+                                        <a href="#" class="noble-ui-logo d-block mb-2">کافه<span>&nbsp;{{ site_info.site_name }}</span></a>
+                                        <h5 class="text-muted fw-normal mb-4">برای ورود به حساب کاربری خود، اطلاعات زیر را تکمیل کنید
+                                        </h5>
+                                        <form class="forms-sample" method="post">
+                                            {% csrf_token %}
+                                            
+                                            <div class="mb-3">
+                                                <label for="username" class="form-label">شماره تلفن</label>
+                                                    {{ form.username }}
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="password" class="form-label">رمز عبور</label>
+                                                    {{ form.password }}
+                                            </div>
+                                            <div>
+												<button type="submit"
+                                                class="btn btn-primary me-2 mb-2 mb-md-0 text-white">
+                                                ورود
+												</button>
+											</div>
+                                        </form>
+                                    </div>
                                 </div>
                             </div>
-                        
-                            <input type="submit" value="ورود">
-                        </form>                        
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <script type="text/javascript" src="{% static 'main/js/jquery.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'main/js/bootstrap.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'main/js/bootstrap-select.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'main/js/main.js' %}"></script>
-
+	<script src="{% static 'staff/vendors/core/core.js' %}"></script>
+	<script src="{% static 'staff/vendors/feather-icons/feather.min.js' %}"></script>
+	<script src="{% static 'staff/js/template.js' %}"></script>
 </body>
 
 </html>
