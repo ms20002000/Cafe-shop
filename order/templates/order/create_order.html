@@ -13,8 +13,9 @@
 
     <div class="row">
         <div class="col-12">
-            <form method="post" action="{% url 'order_create' %}">
+            <form method="post" action="{% url 'order_create' %}" enctype="multipart/form-data">
                 {% csrf_token %}
+                {{ formset.management_form }}
                 <div class="card" style="width: 100%;">
                     <div class="card-body">
                         <h6 class="card-title">ایجاد سفارش</h6>
@@ -72,7 +73,6 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody id="tableBody">
-                                                    {{ formset.management_form }}
                                                     {% for form_item in formset %}
                                                         <tr>
                                                             <td>{{ form_item.product }}</td>
@@ -104,94 +104,61 @@
 </div>
 
 <script>
-    const productChoices = [
-        {% for choice in formset.forms.0.product.field.choices %}
-            { value: "{{ choice.0 }}", text: "{{ choice.1 }}" },
-        {% endfor %}
-    ];
-
+    // جاوااسکریپت برای اضافه کردن سطر جدید
+    let rowCount = {{ formset.management_form.instance.forms|length }};  // تعداد سطرهای فعلی برای اضافه کردن سطر جدید
+    
     function addRow() {
-        const tableBody = document.getElementById('tableBody');
-
-        const newRow = document.createElement('tr');
-
-        const productCell = document.createElement('td');
-        const productSelect = document.createElement('select');
-        productSelect.classList.add('form-select');
-        productSelect.name = "product";
-        productChoices.forEach(choice => {
-            const option = document.createElement('option');
-            option.value = choice.value;
-            option.text = choice.text;
-            productSelect.appendChild(option);
-        });
-        productCell.appendChild(productSelect);
-        newRow.appendChild(productCell);
-
-        // ایجاد سلول برای تعداد
-        const quantityCell = document.createElement('td');
-        const quantityInput = document.createElement('input');
-        quantityInput.type = "number";
-        quantityInput.name = "quantity";
-        quantityInput.min = "1";
-        quantityInput.value = "1";
-        quantityInput.classList.add('form-control');
-        quantityCell.appendChild(quantityInput);
-        newRow.appendChild(quantityCell);
-
-        // ایجاد سلول برای دکمه حذف
-        const actionCell = document.createElement('td');
-        const deleteButton = document.createElement('button');
-        deleteButton.type = "button";
-        deleteButton.classList.add('btn', 'btn-danger', 'btn-icon');
-        deleteButton.setAttribute("onclick", "removeRow(this)");
-        deleteButton.setAttribute("data-bs-toggle", "tooltip");
-        deleteButton.setAttribute("data-bs-placement", "top");
-        deleteButton.setAttribute("title", "حذف");
-        deleteButton.innerHTML = '<i data-feather="trash-2"></i>';
-        actionCell.appendChild(deleteButton);
-        newRow.appendChild(actionCell);
-
-        tableBody.appendChild(newRow);
+        let tableBody = document.getElementById('tableBody');
+        let firstRow = tableBody.querySelector('tr');
         
-        feather.replace();
-
-        checkFormCompletion();
-    }
-
-    function removeRow(button) {
-        const tableBody = document.getElementById('tableBody');
-        if (tableBody.rows.length > 1) {
-            const row = button.closest('tr');
-            row.remove();
-            checkFormCompletion();
-        } else {
-            alert("حداقل یک سطر باید باقی بماند.");
+        // اگر سطر اول وجود دارد، کپی‌برداری از آن
+        if (firstRow) {
+            let clonedRow = firstRow.cloneNode(true);  // کلون کردن سطر اول
+            
+            // تغییر نام فیلدهای ورودی (input و select) برای سطر جدید
+            clonedRow.querySelectorAll('input, select').forEach((input) => {
+                let name = input.name;
+                // تغییر نام فیلدهای input بر اساس تعداد سطرهای جدید
+                input.name = name.replace(/\d+/, rowCount);
+                input.value = '';  // مقداردهی به فیلدها به صورت خالی
+            });
+            
+            // اضافه کردن دکمه حذف به سطر جدید
+            let removeButton = clonedRow.querySelector('button');
+            removeButton.setAttribute('onclick', 'removeRow(this)');
+            
+            // اضافه کردن سطر جدید به جدول
+            tableBody.appendChild(clonedRow);
+            
+            // افزایش شمارش سطرها برای سطر بعدی
+            rowCount++;
+            updateManagementForm();
         }
     }
-
-    function checkFormCompletion() {
-        const rows = document.querySelectorAll('#tableBody tr');
-        let isValid = true;
-
-        rows.forEach(row => {
-            const select = row.querySelector('select');
-            const input = row.querySelector('input');
-
-            if (!select.value || !input.value || input.value <= 0) {
-                isValid = false;
-                select.classList.add('is-invalid');
-                input.classList.add('is-invalid');
-            } else {
-                select.classList.remove('is-invalid');
-                input.classList.remove('is-invalid');
-            }
-        });
-
-        document.getElementById('submitBtn').disabled = !isValid;
+    
+    function removeRow(button) {
+        let row = button.closest('tr');
+        let rowCount = document.querySelectorAll('#tableBody tr').length;
+    
+        // اطمینان از اینکه حداقل یک سطر باقی می‌ماند
+        if (rowCount > 1) {
+            row.remove();
+            updateManagementForm();
+        }
     }
-
-    document.addEventListener('input', checkFormCompletion);
+    
+    function updateManagementForm() {
+        let rows = document.querySelectorAll('#tableBody tr');
+        document.querySelector('#id_form-TOTAL_FORMS').value = rows.length;  // به روز رسانی تعداد فرم‌ها
+    
+        rows.forEach((row, index) => {
+            row.querySelectorAll('input, select').forEach(input => {
+                let name = input.name;
+                // به روز رسانی نام‌ها بر اساس شماره سطر
+                input.name = name.replace(/\d+/, index);  // به روز رسانی فیلدهای نام‌گذاری شده
+            });
+        });
+    }
 </script>
 
 

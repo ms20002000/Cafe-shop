@@ -199,36 +199,42 @@ $(function() {
 
 
 
-  // New Customers Chart
-  if($('#customersChart').length) {
-    var options1 = {
-      chart: {
-        type: "line",
-        height: 60,
-        sparkline: {
-          enabled: !0
-        }
-      },
-      series: [{
-        name: '',
-        data: [3844, 3855, 3841, 3867, 3822, 3843, 3821, 3841, 3856, 3827, 3843]
-      }],
-      xaxis: {
-        type: 'datetime',
-        categories: ["Jan 01 2022", "Jan 02 2022", "Jan 03 2022", "Jan 04 2022", "Jan 05 2022", "Jan 06 2022", "Jan 07 2022", "Jan 08 2022", "Jan 09 2022", "Jan 10 2022", "Jan 11 2022",],
-      },
-      stroke: {
-        width: 2,
-        curve: "smooth"
-      },
-      markers: {
-        size: 0
-      },
-      colors: [colors.primary],
-    };
-    new ApexCharts(document.querySelector("#customersChart"),options1).render();
-  }
-  // New Customers Chart - END
+// New Customers Chart
+if ($('#customersChart').length) {
+  // دریافت داده‌ها از متغیر monthlySales که در قالب HTML قرار داده شده
+  var monthlySalesData = monthlySales;  // همان طور که مقدار آن به صورت عدد است
+
+  var options1 = {
+    chart: {
+      type: "line",
+      height: 60,
+      sparkline: {
+        enabled: true
+      }
+    },
+    series: [{
+      name: '',
+      // استفاده از monthlySalesData (عدد) در اینجا
+      data: [3844, 3855, 3841, 3867, 3822, 3843, 3821, 3841, 3856, 3827, monthlySalesData]
+    }],
+    xaxis: {
+      type: 'datetime',
+      categories: ["Jan 01 2022", "Jan 02 2022", "Jan 03 2022", "Jan 04 2022", "Jan 05 2022", "Jan 06 2022", "Jan 07 2022", "Jan 08 2022", "Jan 09 2022", "Jan 10 2022", "Jan 11 2022"]
+    },
+    stroke: {
+      width: 2,
+      curve: "smooth"
+    },
+    markers: {
+      size: 0
+    },
+    colors: [colors.primary],
+  };
+
+  new ApexCharts(document.querySelector("#customersChart"), options1).render();
+}
+// New Customers Chart - END
+
 
 
 
