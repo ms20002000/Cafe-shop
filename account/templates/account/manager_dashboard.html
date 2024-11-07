@@ -81,6 +81,7 @@
             <script>
                 var monthlySales = parseFloat("{{ monthly_sales }}");
             </script>
+
               
 
             <div class="col-md-4 grid-margin stretch-card">
@@ -284,7 +285,4 @@
     </tr>
     {% endfor %}
 </table>
-{% for item in last_10_days %}
-{{item}}
-{% endfor %}
 {% endblock %}
