@@ -43,13 +43,7 @@
                                     <li>{{ product.description }}</li>
                                 </ul>
                                 <span class="price">{{ product.price }} تومان</span>
-                                <a href="{% url 'product_detail' product.category.name product.name %}" class="btn-add">+</a>
                             </div>
-                            {% comment %} {% if request.user.is_admin %}
-                            <button>
-                                <a href="{% url 'update_product' product.id %}">Edit</a>
-                            </button>
-                            {% endif %} {% endcomment %}
                         </li>
                     {% endfor %}
             </ul>

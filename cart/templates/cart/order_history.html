@@ -14,55 +14,86 @@
     <div class="tf-container">
         <ul class="mt-12">
             {% for order in orders %}
-            <li class="mb-15">
-                <div class="list-view-card">
-                    <div class="img bg-card">
-                        <img class="img" src="{% static 'main/images/avt/order_history.png' %}" alt="{{order.id}}">
-                    </div>
-                    <div class="content">
-                        <a href="{% url 'order_detail' order.id %}">
-                            <h5 >سفارش #{{order.id}}</h5>
-                        </a>
-                        <p>
-                            {% for item in order.items.all %}
-                                {{ item.product.name }} - {{ item.quantity }}{% if not forloop.last %} و {% endif %}
-                            {% endfor %}
-                        </p>
-                        <p>مبلغ سفارش: {{ order.total_price }} </p>
-                        <hr>
-                        <p>وضعیت: {{ order.get_status_display }}</p>
-                        
-                    </div>
-                </div>
-            </li>
+                {% if order.get_status_display == "Completed" or order.get_status_display == "Canceled" %}
+                <a href="{% url 'order_detail' order.id %}">
+                    <li class="mb-15">
+                        <div class="list-view-card">
+                            <div class="img bg-card">
+                                <img class="img" src="{% static 'main/images/avt/order_history.png' %}" alt="{{ order.id }}">
+                            </div>
+                            <div class="content">
+                                    <h5>سفارش #{{ order.id }}</h5>
+                                <p>
+                                {% for item in order.items.all %}
+                                    {{ item.product.name }} - {{ item.quantity }} عدد{% if not forloop.last %}<br>{% endif %}
+                                {% endfor %}
+                                </p>
+                                <p>مبلغ سفارش: {{ order.total_price }} تومان</p>
+                                <hr>
+                                <p>وضعیت: {{ order.get_status_display }}</p>
+                            </div>
+                        </div>
+                    </li>
+                </a>
+                {% else %}
+                <a href="{% url 'order_detail' order.id %}">
+                    <li class="mb-15">
+                        <div class="list-view-card" style="background-color: rgba(18, 25, 93, 0.1);">
+                            <div class="img bg-card-2">
+                                <img class="img" src="{% static 'main/images/avt/order_history.png' %}" alt="{{ order.id }}">
+                            </div>
+                            <div class="content">
+                                    <h5>سفارش #{{ order.id }}</h5>
+                                <p>
+                                {% for item in order.items.all %}
+                                    {{ item.product.name }} - {{ item.quantity }} عدد{% if not forloop.last %}<br>{% endif %}
+                                {% endfor %}
+                                </p>
+                                <p>مبلغ سفارش: {{ order.total_price }} تومان</p>
+                                <hr>
+                                <div class="list-status status-order" style="background-color: rgba(18, 25, 93, 0.1); !important">
+                                    <div class="status-item 
+                                        {% if order.get_status_display == 'Pending' %}active-status
+                                        {% elif order.get_status_display == 'Approved' or order.get_status_display == 'Cooking' or order.get_status_display == 'Completed' %}completed-status{% endif %}">
+                                        در حال انتظار
+                                    </div>
+                                    
+                                    <div class="status-item 
+                                        {% if order.get_status_display == 'Approved' %}active-status
+                                        {% elif order.get_status_display == 'Cooking' or order.get_status_display == 'Completed' %}completed-status{% endif %}">
+                                        تأیید شده
+                                    </div>
+                                    
+                                    <div class="status-item 
+                                        {% if order.get_status_display == 'Cooking' %}active-status
+                                        {% elif order.get_status_display == 'Completed' %}completed-status{% endif %}">
+                                        در حال پخت
+                                    </div>
+                                    
+                                    <div class="status-item 
+                                        {% if order.get_status_display == 'Completed' %}active-status{% endif %}">
+                                        تکمیل شده
+                                    </div>
+                                    
+                                    <div class="status-item 
+                                        {% if order.get_status_display == 'Cancelled' %}canceled{% endif %}">
+                                        لغو شده
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                </a>
+                {% endif %}
             {% endfor %}
-       </ul>
+        </ul>            
     </div>
 </div>
 {% else %}
-    <p>سفارشی وجود ندارد.</p>
+<div class="pt-80">
+    <div class="tf-container">
+        <p>سفارشی وجود ندارد.</p>
+    </div>
+</div>
 {% endif %}
 {% endblock %}
-<h2>تاریخچه سفارشات</h2>
-{% if orders %}
-    <ul>
-    {% for order in orders %}
-        <li>
-            Table: {{ order.table }} 
-        </li>
-        <li>
-            Order Items: {% for item in order.items.all %}{{ item.product.name }} - {{ item.quantity }}{% endfor %}
-            {% comment %} <a href="{% url 'order_detail' order.id %}">View Details</a> {% endcomment %}
-        </li>
-        <li>
-            Status: {{ order.get_status_display }} 
-        </li>
-        <li>
-            Total: {{ order.total_price }} 
-        </li>
-        <hr>
-    {% endfor %}
-    </ul>
-{% else %}
-    <p>No order history available.</p>
-{% endif %}
