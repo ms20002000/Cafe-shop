@@ -175,16 +175,47 @@ class ManagerPanelView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
         daily_sales_change = calculate_percentage_change(daily_sales, yesterday_sales)
         monthly_sales_change = calculate_percentage_change(monthly_sales, last_month_sales)
         yearly_sales_change = calculate_percentage_change(yearly_sales, last_year_sales)
+        
+        # 10-day sales list
+        last_10_days = [(today - timedelta(days=i)).strftime("%b %d %Y") for i in range(10)]
+        sales_last_10_days = [
+            Order.objects.filter(created_at__date=today - timedelta(days=i)).aggregate(
+                sales=Sum('total_price')
+            )['sales'] or 0
+            for i in range(10)
+        ]
+        # 10-month sales list with "Jan 01 2022" format
+        last_10_months = [
+            (today - relativedelta(months=i)).replace(day=1).strftime("%b %d %Y") for i in range(10)
+        ]
+        sales_last_10_months = [
+            Order.objects.filter(
+                created_at__date__gte=(today - relativedelta(months=i)).replace(day=1),
+                created_at__date__lt=(today - relativedelta(months=i-1)).replace(day=1)
+            ).aggregate(sales=Sum('total_price'))['sales'] or 0
+            for i in range(10)
+        ]
+        # 10-year sales list with "Jan 01 2022" format
+        last_10_years = [
+            (today - relativedelta(years=i)).replace(month=1, day=1).strftime("%b %d %Y") for i in range(10)
+        ]
+        sales_last_10_years = [
+            Order.objects.filter(
+                created_at__date__gte=(today - relativedelta(years=i)).replace(month=1, day=1),
+                created_at__date__lt=(today - relativedelta(years=i-1)).replace(month=1, day=1)
+            ).aggregate(sales=Sum('total_price'))['sales'] or 0
+            for i in range(10)
+        ]
 
-        context = {
+        context.update({
             'daily_sales': daily_sales,
             'monthly_sales': monthly_sales,
             'yearly_sales': yearly_sales,
             'daily_sales_change': daily_sales_change,
             'monthly_sales_change': monthly_sales_change,
             'yearly_sales_change': yearly_sales_change,
-        }
-
+        })
+        
         # Sales by Category
         context['sales_by_category'] = Category.objects.annotate(
             total_sales=Sum('products__order_items__quantity')).order_by('-total_sales')
@@ -225,9 +256,6 @@ class ManagerPanelView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
         # Sales by Employee Report
         context['sales_by_employee'] = CustomUser.objects.filter(is_staff=True).annotate(
             total_orders_handled=Count('order'))
-
-        # Customer Order History
-        # context['customer_order_history'] = Order.objects.select_related('customer').all()
 
         # Peak Business Hour
         peak_hour_data = Order.objects.annotate(hour=ExtractHour('created_at')).values('hour').annotate(
