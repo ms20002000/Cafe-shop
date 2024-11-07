@@ -26,12 +26,12 @@
                         <form method="GET">
                             <label for="exampleFormControlSelect1" class="form-label">انتخاب وضعیت</label>
                             <select class="form-select" name="status" id="status">
-                            <option value="" selected>All</option>
-                            <option value="P">Pending</option>
-                            <option value="R">Registered</option>
-                            <option value="A">Approved</option>
-                            <option value="CA">Cancelled</option>
-                            <option value="C">Completed</option>
+                            <option value="" selected>همه</option>
+                            <option value="P">در حال انتظار</option>
+                            <option value="CK">در حال پخت</option>
+                            <option value="A">تایید شده</option>
+                            <option value="CA">لغو شده</option>
+                            <option value="C">تکمیل شده</option>
                             </select>
                             <button type="submit" class="btn btn-primary" style="margin-top:15px">فیلتر</button>
                         </form>
@@ -92,12 +92,12 @@
                         <form method="GET">
 
                             <div class="input-group flatpickr" id="flatpickr-date" for="start_date">
-                                <label class="d-block w-100 text-muted">شروع</label>
+                                <label class="d-block w-100">شروع</label>
                                 <input type="text" class="form-control" name="start_date" id="start_date" placeholder=" انتخاب تاریخ شروع" data-input>
                                 <span class="input-group-text input-group-addon" data-toggle><i data-feather="calendar"></i></span>
                             </div>
                             <div class="input-group flatpickr" id="flatpickr-date" for="end_date">
-                                <label class="d-block w-100 text-muted">پایان</label>
+                                <label class="d-block w-100">پایان</label>
                                 <input type="text" class="form-control" name="end_date" id="end_date" placeholder=" انتخاب تاریخ شروع" data-input>
                                 <span class="input-group-text input-group-addon" data-toggle><i data-feather="calendar"></i></span>
                             </div>
@@ -132,7 +132,22 @@
                     <td>{{ order.id }}</td>
                     <td>{{ order.modify_by.phone_number }}</td>
                     <td>{{ order.table.number }}</td>
-                    <td>{{ order.get_status_display }}</td>
+                    <td>
+                      {% if order.status == 'P' %}
+                          <span class="badge bg-warning">در حال انتظار</span>
+                      {% elif order.status == 'A' %}
+                          <span class="badge bg-info">تایید شده</span>
+                      {% elif order.status == 'CA' %}
+                          <span class="badge bg-danger">لغو شده</span>
+                      {% elif order.status == 'CK' %}
+                          <span class="badge bg-primary">در حال پخت</span>
+                      {% elif order.status == 'C' %}
+                          <span class="badge bg-success">منتشر شده</span>
+                      {% else %}
+                          {{ order.get_status_display }}
+                      {% endif %}
+                  </td>
+                  
                     <td>{{ order.created_at|date:"Y-m-d" }}</td>
                     <td>
                       <a href="{% url 'order_update' order.id %}">

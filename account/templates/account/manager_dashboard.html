@@ -32,7 +32,7 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-baseline">
-                            <h6 class="card-title mb-0">فروش روزانه</h6>
+                            <h6 class="card-title mb-0">مبلغ فروش روزانه (تومان)</h6>
                         </div>
                         <div class="row">
                             <div class="col-6 col-md-12 col-xl-5">
@@ -51,15 +51,16 @@
                     </div>
                 </div>
             </div>
-            <script>
-                
+            <script type="text/javascript">
+                const salesLast10Days = JSON.parse('{{ sales_last_10_days|safe }}');
+                const Last10Days = JSON.parse('{{ last_10_days|safe }}');
             </script>
             
             <div class="col-md-4 grid-margin stretch-card">
                 <div class="card">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-baseline">
-                            <h6 class="card-title mb-0">فروش ماهانه</h6>
+                            <h6 class="card-title mb-0">مبلغ فروش ماهانه (تومان)</h6>
                         </div>
                         <div class="row">
                             <div class="col-6 col-md-12 col-xl-5">
@@ -78,87 +79,55 @@
                     </div>
                 </div>
             </div>
-            <script>
-                var monthlySales = parseFloat("{{ monthly_sales }}");
-            </script>
-
-              
-
             <div class="col-md-4 grid-margin stretch-card">
                 <div class="card">
                     <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-baseline">
-                            <h6 class="card-title mb-0">فروش سالانه</h6>
+                        <div class="d-flex justify-content-center align-items-baseline">
+                            <h6 class="card-title mb-0 text-center">مبلغ فروش سالانه (تومان)</h6>
                         </div>
-                        <div class="row">
-                            <div class="col-6 col-md-12 col-xl-5">
+                        <div class="row justify-content-center">
+                            <div class="col-6 col-md-12 col-xl-5 text-center">
                                 <h3 class="mb-2" style="margin-top:10px">{{ yearly_sales }}</h3>
-                                <div class="d-flex align-items-baseline">
+                                <div class="d-flex align-items-baseline justify-content-center">
                                     <p class="{% if yearly_sales_change > 0 %}text-success{% else %}text-danger{% endif %}">
                                         <span>{{ yearly_sales_change }}%</span>
                                         <i data-feather="arrow-{% if yearly_sales_change > 0 %}up{% else %}down{% endif %}" class="icon-sm mb-1"></i>
                                     </p>
                                 </div>
                             </div>
-                            <div class="col-6 col-md-12 col-xl-7">
-                                <div id="ordersChart" class="mt-md-3 mt-xl-0"></div>
-                            </div>
                         </div>
                     </div>
-                </div>
+                </div>                
             </div>
         </div>
     </div>
 </div>
+    <script type="text/javascript">
+        const salesLast10Months = JSON.parse('{{ sales_last_10_months|safe }}');
+        const Last10Months = JSON.parse('{{ last_10_months|safe }}');
+    </script>
 
+
+    
   <div class="row">
-    <div class="col-lg-7 col-xl-8 grid-margin stretch-card">
-      <div class="card">
-        <div class="card-body">
-          <div class="d-flex justify-content-between align-items-baseline mb-2">
-            <h6 class="card-title mb-0">فروش بر اساس مشتری</h6>
-          </div>
-          <p class="text-muted">تعداد کل مشتری: {{ total_customers }}</p>
-          <div class="table-responsive">
-            <table class="table table-hover">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>روش پرداخت مشتری</th>
-                        <th>مبلغ کل سفارش</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for order in sales_by_customer|slice:":5" %}
-                    <tr>
-                        <th>{{ forloop.counter }}</th>
-                        <td>{{ order.get_payment_method_display }}</td>
-                        <td>{{ order.total_price }} تومان</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>            
-        </div>
-        </div>
-      </div>
-    </div>
+    
     <div class="col-lg-5 col-xl-4 grid-margin stretch-card">
-      <div class="card">
-        <div class="card-body">
-          <div class="d-flex justify-content-between align-items-baseline">
-            <h6 class="card-title mb-0">فروش بر اساس کارکنان</h6>
-          </div>
-          
-          <div class="table-responsive">
-            <table class="table table-hover">
-                <thead>
-                    <tr>
-                        <th>کارمند</th>
-                        <th class="text-center">تعداد سفارش پردازش شده</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for employee in sales_by_employee %}
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-baseline">
+                  <h6 class="card-title mb-0">فروش بر اساس کارکنان</h6>
+                </div>
+                
+                <div class="table-responsive">
+                  <table class="table table-hover">
+                      <thead>
+                          <tr>
+                              <th>کارمند</th>
+                              <th class="text-center">تعداد سفارش پردازش شده</th>
+                          </tr>
+                      </thead>
+                      <tbody>
+                        {% for employee in sales_by_employee %}
                         {% if employee.total_orders_handled > 0 %}
                             <tr>
                                 <td>{{ employee.first_name }} {{ employee.last_name }}</td>
@@ -166,42 +135,43 @@
                             </tr>
                         {% endif %}
                     {% endfor %}
-                </tbody>
-            </table>            
-        </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-
-  <div class="row">
-      <div class="col-lg-5 col-xl-4 grid-margin grid-margin-xl-0 stretch-card">
-          <div class="card">
-              <div class="card-body">
-                  <div class="d-flex justify-content-between align-items-baseline mb-2">
-                      <h6 class="card-title mb-0">فروش بر اساس زمان از روز</h6>
-                  </div>
-                  <div class="sales-data">
-                      <div class="sales-item">فروش صبح: {{ morning_sales }}</div>
-                      <hr>
-                      <div class="sales-item">فروش بعد از ظهر: {{ afternoon_sales }}</div>
-                      <hr>
-                      <div class="sales-item">فروش شب: {{ evening_sales }}</div>
-                      <hr>
-                      <div class="sales-item">
-                          {% if peak_business_hour %}
-                              <p>ساعت اوج فروش: {{ peak_business_hour }}:۰۰ با مجموع فروش {{ peak_business_hour_sales }}</p>
-                          {% else %}
-                              <p>داده‌ای برای ساعت اوج فروش موجود نیست.</p>
-                          {% endif %}
-                      </div>
-                  </div>
+                      </tbody>
+                  </table>            
               </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-5 col-xl-4 grid-margin stretch-card">
+      <div class="card">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-baseline mb-2">
+              <h6 class="card-title mb-0">فروش بر اساس مشتری</h6>
+            </div>
+            <p class="text-muted">تعداد کل مشتری: {{ total_customers }}</p>
+            <div class="table-responsive">
+              <table class="table table-hover">
+                  <thead>
+                      <tr>
+                          <th>#</th>
+                          <th>روش پرداخت مشتری</th>
+                          <th>مبلغ کل سفارش</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                      {% for order in sales_by_customer|slice:":5" %}
+                      <tr>
+                          <th>{{ forloop.counter }}</th>
+                          <td>{{ order.get_payment_method_display }}</td>
+                          <td>{{ order.total_price }} تومان</td>
+                      </tr>
+                      {% endfor %}
+                  </tbody>
+              </table>            
+          </div>
           </div>
       </div>
-
-      <div class="col-lg-7 col-xl-8 stretch-card">
+    </div>
+    <div class="col-lg-5 col-xl-4 grid-margin stretch-card">
         <div class="card">
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-baseline mb-2">
@@ -211,7 +181,6 @@
                     <table class="table table-hover mb-0">
                         <thead>
                             <tr>
-                                <th class="pt-0"></th>
                                 <th class="pt-0">نام دسته بندی</th>
                                 <th class="pt-0">تعداد فروش</th>
                                 <th class="pt-0">عملیات</th>
@@ -220,9 +189,6 @@
                         <tbody id="category-table-body">
                             {% for category in sales_by_category|slice:":5" %}
                             <tr>
-                                <td class="py-1">
-                                    <img src="{{ category.category_photo.url }}" alt="{{ category.name }}">
-                                </td>
                                 <td>{{ category.name }}</td>
                                 <td>{{ category.total_sales }}</td>
                                 <td>
@@ -241,12 +207,91 @@
         </div>
     </div>
     
-    
   </div>
-  
+
+
+  <div class="row">
+      <div class="col-lg-7 col-xl-8 stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <h6 class="card-title">تایم لاین امروز</h6>
+                <div id="content">
+                    {% if evening_sales != 0 or afternoon_sales != 0 or morning_sales != 0 %}
+                        <ul class="timeline">
+                            {% if evening_sales != 0 %}
+                            <li class="event" data-date="5:00 - 8:00 عصر">
+                                <h3 class="title">فروش عصر:</h3>
+                                <p>{{ evening_sales }} تومان</p>
+                            </li>
+                            {% endif %}
+                            
+                            {% if afternoon_sales != 0 %}
+                            <li class="event" data-date="2:30 - 4:00 عصر">
+                                <h3 class="title">فروش بعد از ظهر:</h3>
+                                <p>{{ afternoon_sales }} تومان</p>
+                            </li>
+                            {% endif %}
+                            
+                            {% if morning_sales != 0 %}
+                            <li class="event" data-date="10:00 - 12:30 صبح">
+                                <h3 class="title">فروش صبح:</h3>
+                                <p>{{ morning_sales }} تومان</p>
+                            </li>
+                            {% endif %}
+                        </ul>
+                    {% else %}
+                        <p>هیچ فروشی برای امروز ثبت نشده است.</p>
+                    {% endif %}            
+                </div>
+              </div>
+          </div>
+    </div>
+  </div>
 </div>
-
-
+{% comment %} 
+<div class="row">
+    <div class="col-12 col-xl-12 grid-margin stretch-card">
+      <div class="card overflow-hidden">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-baseline mb-4 mb-md-3">
+            <h6 class="card-title mb-0">درآمد</h6>
+            <div class="dropdown">
+              <a type="button" id="dropdownMenuButton3" data-bs-toggle="dropdown" aria-haspopup="true"
+                aria-expanded="false">
+                <i class="icon-lg text-muted pb-3px" data-feather="more-horizontal"></i>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="dropdownMenuButton3">
+                <a class="dropdown-item d-flex align-items-center" href="javascript:;"><i data-feather="eye"
+                    class="icon-sm me-2"></i> <span class="">مشاهده</span></a>
+                <a class="dropdown-item d-flex align-items-center" href="javascript:;"><i data-feather="edit-2"
+                    class="icon-sm me-2"></i> <span class="">ویرایش</span></a>
+                <a class="dropdown-item d-flex align-items-center" href="javascript:;"><i data-feather="trash"
+                    class="icon-sm me-2"></i> <span class="">حذف</span></a>
+                <a class="dropdown-item d-flex align-items-center" href="javascript:;"><i data-feather="printer"
+                    class="icon-sm me-2"></i> <span class="">چاپ</span></a>
+                <a class="dropdown-item d-flex align-items-center" href="javascript:;"><i data-feather="download"
+                    class="icon-sm me-2"></i> <span class="">دانلود</span></a>
+              </div>
+            </div>
+          </div>
+          <div class="row align-items-start">
+            <div class="col-md-7">
+              <p class="text-muted tx-13 mb-3 mb-md-0">نمودار فعالیت های تجاری</p>
+            </div>
+            <div class="col-md-5 d-flex justify-content-md-end">
+              <div class="btn-group mb-3 mb-md-0" role="group" aria-label="Basic example">
+                <button type="button" class="btn btn-outline-primary">امروز</button>
+                <button type="button" class="btn btn-outline-primary d-none d-md-block">هفته</button>
+                <button type="button" class="btn btn-primary">ماه</button>
+                <button type="button" class="btn btn-outline-primary">سال</button>
+              </div>
+            </div>
+          </div>
+          <div id="revenueChartRTL"></div>
+        </div>
+      </div>
+    </div>
+  </div> {% endcomment %}
 
 
 

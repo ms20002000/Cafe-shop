@@ -201,8 +201,7 @@ $(function() {
 
 // New Customers Chart
 if ($('#customersChart').length) {
-  // دریافت داده‌ها از متغیر monthlySales که در قالب HTML قرار داده شده
-  var monthlySalesData = monthlySales;  // همان طور که مقدار آن به صورت عدد است
+
 
   var options1 = {
     chart: {
@@ -214,12 +213,11 @@ if ($('#customersChart').length) {
     },
     series: [{
       name: '',
-      // استفاده از monthlySalesData (عدد) در اینجا
-      data: [3844, 3855, 3841, 3867, 3822, 3843, 3821, 3841, 3856, 3827, 3400]
+      data: salesLast10Days
     }],
     xaxis: {
       type: 'datetime',
-      categories: ["Jan 01 2022", "Jan 02 2022", "Jan 03 2022", "Jan 04 2022", "Jan 05 2022", "Jan 06 2022", "Jan 07 2022", "Jan 08 2022", "Jan 09 2022", "Jan 10 2022", "Jan 11 2022"]
+      categories: Last10Days
     },
     stroke: {
       width: 2,
@@ -258,18 +256,16 @@ if ($('#customersChart').length) {
       colors: [colors.primary],
       series: [{
         name: '',
-        data: [36, 77, 52, 90, 74, 35, 55, 23, 47, 10, 63]
+        data: salesLast10Years
       }],
       xaxis: {
         type: 'datetime',
-        categories: ["Jan 01 2022", "Jan 02 2022", "Jan 03 2022", "Jan 04 2022", "Jan 05 2022", "Jan 06 2022", "Jan 07 2022", "Jan 08 2022", "Jan 09 2022", "Jan 10 2022", "Jan 11 2022",],
+        categories: Last10Years,
       },
     };
     new ApexCharts(document.querySelector("#ordersChart"),options2).render();
   }
   // Orders Chart - END
-
-
 
 
   // Growth Chart
@@ -284,11 +280,11 @@ if ($('#customersChart').length) {
       },
       series: [{
         name: '',
-        data: [41, 45, 44, 46, 52, 54, 43, 74, 82, 82, 89]
+        data: salesLast10Months
       }],
       xaxis: {
         type: 'datetime',
-        categories: ["Jan 01 2022", "Jan 02 2022", "Jan 03 2022", "Jan 04 2022", "Jan 05 2022", "Jan 06 2022", "Jan 07 2022", "Jan 08 2022", "Jan 09 2022", "Jan 10 2022", "Jan 11 2022",],
+        categories: Last10Months,
       },
       stroke: {
         width: 2,
@@ -302,9 +298,6 @@ if ($('#customersChart').length) {
     new ApexCharts(document.querySelector("#growthChart"),options3).render();
   }
   // Growth Chart - END
-
-
-
 
 
   // Revenue Chart
@@ -592,7 +585,7 @@ if ($('#customersChart').length) {
 
 
   // Monthly Sales Chart - RTL
-  if($('#monthlySalesChartRTL').length) {
+  if ($('#monthlySalesChartRTL').length) {
     var options = {
       chart: {
         type: 'bar',
@@ -610,10 +603,10 @@ if ($('#customersChart').length) {
       tooltip: {
         theme: 'light'
       },
-      colors: [colors.primary],  
+      colors: [colors.primary],
       fill: {
         opacity: .9
-      } , 
+      },
       grid: {
         padding: {
           bottom: -4
@@ -627,11 +620,24 @@ if ($('#customersChart').length) {
       },
       series: [{
         name: 'فروش',
-        data: [152,109,93,113,126,161,188,143,102,113,116,124]
+        data: [152, 109, 93, 113, 126, 161, 188, 143, 102, 113, 116, 124]
       }],
       xaxis: {
-        type: 'datetime',
-        categories: ['01/01/2022','02/01/2022','03/01/2022','04/01/2022','05/01/2022','06/01/2022','07/01/2022', '08/01/2022','09/01/2022','10/01/2022', '11/01/2022', '12/01/2022'],
+        categories: [
+          '0-2', '2-4', '4-6', '6-8', '8-10', '10-12',
+          '12-14', '14-16', '16-18', '18-20', '20-22', '22-24'
+        ],
+        group: {
+          style: {
+            fontSize: '10px',
+            fontWeight: 700
+          },
+          groups: [
+            { title: 'صبح', cols: 6 },
+            { title: 'بعد از ظهر', cols: 3 },
+            { title: 'شب', cols: 3 }
+          ]
+        },
         axisBorder: {
           color: colors.gridBorder,
         },
@@ -642,9 +648,9 @@ if ($('#customersChart').length) {
       yaxis: {
         opposite: true,
         title: {
-          text: 'تعداد فروش',
+          text: 'مبلغ فروش',
           offsetX: -5,
-          style:{
+          style: {
             size: 9,
             color: colors.muted
           }
@@ -685,11 +691,11 @@ if ($('#customersChart').length) {
           }
         },
       },
-    }
-    
+    };
+  
     var apexBarChart = new ApexCharts(document.querySelector("#monthlySalesChartRTL"), options);
     apexBarChart.render();
-  }
+  }  
   // Monthly Sales Chart - RTL - END
 
 

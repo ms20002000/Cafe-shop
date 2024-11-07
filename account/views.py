@@ -1,3 +1,4 @@
+import json
 import xlsxwriter
 from order.models import Order, OrderItem
 from django.shortcuts import render, redirect, get_object_or_404
@@ -216,12 +217,12 @@ class ManagerPanelView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
             'daily_sales_change': daily_sales_change,
             'monthly_sales_change': monthly_sales_change,
             'yearly_sales_change': yearly_sales_change,
-            'last_10_days': last_10_days,
-            'sales_last_10_days': sales_last_10_days,
-            'last_10_months': last_10_months,
-            'sales_last_10_months': sales_last_10_months,
-            'last_10_years': last_10_years,
-            'sales_last_10_years': sales_last_10_years,
+            'last_10_days': json.dumps(last_10_days),
+            'sales_last_10_days': json.dumps(sales_last_10_days),
+            'last_10_months': json.dumps(last_10_months),
+            'sales_last_10_months': json.dumps(sales_last_10_months),
+            'last_10_years': json.dumps(last_10_years),
+            'sales_last_10_years': json.dumps(sales_last_10_years),
         })
 
 
