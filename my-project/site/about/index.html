@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        
+        <link rel="shortcut icon" href="../img/favicon.ico">
+        <title>About - CAFE-SHOP</title>
+        <link href="../css/bootstrap.min.css" rel="stylesheet">
+        <link href="../css/fontawesome.min.css" rel="stylesheet">
+        <link href="../css/brands.min.css" rel="stylesheet">
+        <link href="../css/solid.min.css" rel="stylesheet">
+        <link href="../css/v4-font-face.min.css" rel="stylesheet">
+        <link href="../css/base.css" rel="stylesheet">
+        <link id="hljs-light" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" >
+        <link id="hljs-dark" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css" disabled>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+        <script>hljs.highlightAll();</script> 
+    </head>
+
+    <body>
+        <div class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
+            <div class="container">
+                <a class="navbar-brand" href="..">CAFE-SHOP</a>
+                <!-- Expander button -->
+                <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar-collapse" aria-controls="navbar-collapse" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Expanded navigation -->
+                <div id="navbar-collapse" class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li class="nav-item">
+                                <a href=".." class="nav-link">Home</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="./" class="nav-link active" aria-current="page">About</a>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav ms-md-auto">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                            <li class="nav-item">
+                                <a rel="prev" href=".." class="nav-link">
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a rel="next" class="nav-link disabled">
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                    <div class="col-md-3"><div class="navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggler collapsed" data-bs-toggle="collapse" data-bs-target="#toc-collapse" title="Table of Contents">
+            <span class="fa fa-angle-down"></span>
+        </button>
+    </div>
+
+    
+    <div id="toc-collapse" class="navbar-collapse collapse card bg-body-tertiary">
+        <ul class="nav flex-column">
+        </ul>
+    </div>
+</div></div>
+                    <div class="col-md-9" role="main">
+
+<hr />
+<p>Project Name: Cafe Shop</p>
+<p>Overview</p>
+<p>The Cafe Shop project is a web application built with Django that allows users to browse and purchase products in an online cafe. The application has features such as user authentication, product management, order processing, and a shopping cart.</p>
+<p>Technologies Used</p>
+<p>•   Django</p>
+<p>•   Python 3.x</p>
+<p>•   PostgreSQL</p>
+<p>•   HTML/CSS</p>
+<hr />
+<p>Installation Instructions</p>
+<ol>
+<li>Clone the repository:</li>
+</ol>
+<p>git clone https://github.com/ms20002000/Cafe-shop.git</p>
+<ol>
+<li>Navigate to the project directory:</li>
+</ol>
+<p>cd cafe-shop</p>
+<ol>
+<li>Create a virtual environment:</li>
+</ol>
+<p>python3 -m venv venv</p>
+<ol>
+<li>Install the required dependencies:</li>
+</ol>
+<p>pip install -r requirements.txt</p>
+<ol>
+<li>Set up the PostgreSQL database:</li>
+</ol>
+<p>o   Ensure PostgreSQL is installed and running.</p>
+<p>o   Create a new database for the project.</p>
+<ol>
+<li>
+<p>Update settings.py with your database credentials.</p>
+</li>
+<li>
+<p>Run migrations:
+python manage.py migrate</p>
+</li>
+</ol>
+<hr />
+<p>Key Features</p>
+<p>•   User Authentication: Users can sign up, log in, 
+and log out.</p>
+<p>•   Product Management: Admins can add, update, and delete products.</p>
+<p>•   Shopping Cart: Users can add products to their cart and place orders.</p>
+<p>•   Order Tracking: Users can track their order status.</p>
+<hr />
+<p>Folder Structure</p>
+<p>CAFE-SHOP/
+│
+├── account/
+│   ├── <strong>init</strong>.py/
+│   ├── admin.py/
+│   ├── apps.py/
+│   ├── authentication.py/
+│   ├── forms.py/
+│   ├── middleware.py/
+│   ├── models.py/
+│   ├── tests.py/
+│   ├── urls.py/
+│   └── views.py/
+│
+├── cafe_shop/
+│   ├── <strong>init</strong>.py/
+│   ├── asgi.py/
+│   ├── settings.py/
+│   ├── urls.py/
+│   └── wsgi.py/
+│
+├── cart/
+│   ├── <strong>init</strong>.py/
+│   ├── admin.py/
+│   ├── apps.py/
+│   ├── cart.py/
+│   ├── forms.py/
+│   ├── models.py/
+│   ├── tests.py/
+│   ├── urls.py/
+│   └── views.py/
+│
+├── document/
+│
+├── erd/
+│
+├── media/
+│
+├── order/
+│   ├── <strong>init</strong>.py/
+│   ├── admin.py/
+│   ├── apps.py/
+│   ├── forms.py/
+│   ├── models.py/
+│   ├── signals.py/
+│   ├── tests.py/
+│   ├── urls.py/
+│   └── views.py/
+│
+│
+├── product/
+│   ├── <strong>init</strong>.py/
+│   ├── admin.py/
+│   ├── apps.py/
+│   ├── forms.py/
+│   ├── models.py/
+│   ├── tests.py/
+│   ├── urls.py/
+│   └── views.py/
+│
+│
+├── site_information/
+│   ├── <strong>init</strong>.py/
+│   ├── admin.py/
+│   ├── apps.py/
+│   ├── context_processors.py.py/
+│   ├── forms.py/
+│   ├── models.py/
+│   ├── tests.py/
+│   ├── urls.py/
+│   └── views.py/
+│
+│
+├── static/
+│   ├── main/
+│   └── staff/
+│
+├── templates/
+│   ├── base.html
+│   └── staff-base.html
+│
+├── manage.py
+│
+├── README.md
+│
+└── requirements.txt</p>
+<hr />
+<p>API Endpoints</p>
+<ol>
+<li>
+<p>POST /api/login - Login endpoint.</p>
+</li>
+<li>
+<p>POST /api/signup - Signup endpoint.</p>
+</li>
+<li>
+<p>GET /api/products - Fetch a list of products.</p>
+</li>
+<li>
+<p>POST /api/order - Place an order.</p>
+</li>
+</ol>
+<hr />
+<p>Future Enhancements</p>
+<p>•   Payment Integration: Add support for credit card payments.</p>
+<hr />
+<p>Contributors</p>
+<p>•   Amir - Project Manager</p>
+<p>•   Mohammad - Backend Developer</p>
+<p>•   Parsa - Backend Developer</p>
+<p>•   Faraz - Frontend Developer</p></div>
+            </div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script src="../js/bootstrap.bundle.min.js"></script>
+        <script>
+            var base_url = "..",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="../js/base.js"></script>
+        <script src="../search/main.js"></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="searchModalLabel">Search</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>From here you can search these documents. Enter your search terms below.</p>
+                <form>
+                    <div class="form-group">
+                        <input type="search" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results" data-no-results-text="No results found"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>
