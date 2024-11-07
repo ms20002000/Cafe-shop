@@ -7,46 +7,35 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
 from product.models import Product
 from django.conf import settings
-from order.models import Order
 
 @require_POST
 def cart_add(request, product_id):
     cart = Cart(request)
     product = get_object_or_404(Product, id=product_id)
-    number = int(request.POST.get('quantity'))
-    if number:
-        for _ in range(number):
-            cart.add(product_id)
-    else:
-        cart.add(product_id)    
-    response = redirect('cart_detail')
-    response.set_cookie(settings.CART_COOKIE_NAME, cart.save(), max_age=3600)  
-    return response
-
+    quantity = int(request.POST.get('quantity', 1))  # مقدار پیش‌فرض 1
+    for _ in range(quantity):
+        cart.add(product_id)
+    
+    return _set_cart_cookie_and_redirect(cart, 'cart_detail')
 
 @require_POST
 def cart_remove(request, product_id):
     cart = Cart(request)
-    product = get_object_or_404(Product, id=product_id)
-    cart.remove(product)
-    response = redirect('cart_detail')
-    response.set_cookie(settings.CART_COOKIE_NAME, cart.save(), max_age=3600)
-    return response
+    cart.remove(product_id)
+    return _set_cart_cookie_and_redirect(cart, 'cart_detail')
 
 @require_POST
 def cart_update_quantity(request, product_id):
     cart = Cart(request)
-    quantity = int(request.POST.get('quantity', 1)) 
-    print(quantity)
+    quantity = int(request.POST.get('quantity', 1))
+    
     if quantity > 0:
-        cart.remove(get_object_or_404(Product, id=product_id))  
-        cart.add(product_id) 
+        cart.remove(product_id)
+        cart.add(product_id)
     else:
-        cart.remove(get_object_or_404(Product, id=product_id))  
-    response = redirect('cart_detail')
-    response.set_cookie(settings.CART_COOKIE_NAME, cart.save(), max_age=3600)
-    return response
+        cart.remove(product_id)
 
+    return _set_cart_cookie_and_redirect(cart, 'cart_detail')
 
 def cart_detail(request):
     cart = Cart(request)
@@ -56,7 +45,7 @@ def cart_detail(request):
             'quantity': item['quantity'],
             'override': True
         })
-
+    
     return render(request, 'cart/cart_detail.html', {
         'cart_items': cart_items,
         'cart': cart,
@@ -64,15 +53,13 @@ def cart_detail(request):
 
 def checkout(request):
     cart = Cart(request)
-    cart_items = list(cart.iter())
     order_form = OrderCreateForm()
-
+    
     return render(request, 'cart/checkout.html', {
-        'cart_items': cart_items,
+        'cart_items': list(cart.iter()),
         'cart': cart,
         'order_form': order_form
     })
-
 
 @require_POST
 def finalize_cart(request):
@@ -88,33 +75,24 @@ def finalize_cart(request):
             return response
 
     if order_form.is_valid():
-        table = order_form.cleaned_data['table']
-        phone_number = order_form.cleaned_data['phone_number']
-        payment_method = order_form.cleaned_data['payment_method']
-
         order = Order.objects.create(
-            table=table,
+            table=order_form.cleaned_data['table'],
             total_price=cart.get_total_price(),
             status=Order.StatusOrder.PENDING,
-            payment_method=payment_method,
+            payment_method=order_form.cleaned_data['payment_method'],
         )
 
-
         for item in cart.iter():
-            product = item['product']
-            quantity = item['quantity']
-            total_price = Decimal(item['price']) * quantity
             OrderItem.objects.create(
                 order=order,
-                product=product,
-                quantity=quantity
+                product=item['product'],
+                quantity=item['quantity']
             )
 
         request.session['order_id'] = order.id
         order_history = request.session.get('order_history', [])
         order_history.append(order.id)
         request.session['order_history'] = order_history
-
         request.session.set_expiry(365 * 24 * 60 * 60)
 
         cart.clear()
@@ -124,23 +102,21 @@ def finalize_cart(request):
     else:
         return redirect('cart_detail')
 
-
-
 def order_history(request):
     order_history_ids = request.session.get('order_history', [])
     orders = Order.objects.filter(id__in=order_history_ids).order_by('-created_at')
     return render(request, 'cart/order_history.html', {'orders': orders})
 
-
 def order_summary(request):
     order_id = request.session.get('order_id')
-    if order_id:
-        order = get_object_or_404(Order, id=order_id)
-    else:
-        order = None 
-
+    order = get_object_or_404(Order, id=order_id) if order_id else None
     return render(request, 'cart/order_summary.html', {'order': order})
 
 def order_detail(request, order_id):
     order = get_object_or_404(Order, id=order_id)
     return render(request, 'cart/order_summary.html', {'order': order})
+
+def _set_cart_cookie_and_redirect(cart, redirect_url):
+    response = redirect(redirect_url)
+    response.set_cookie(settings.CART_COOKIE_NAME, cart.save(), max_age=3600)
+    return response
