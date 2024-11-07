@@ -215,7 +215,7 @@ if ($('#customersChart').length) {
     series: [{
       name: '',
       // استفاده از monthlySalesData (عدد) در اینجا
-      data: [3844, 3855, 3841, 3867, 3822, 3843, 3821, 3841, 3856, 3827, monthlySalesData]
+      data: [3844, 3855, 3841, 3867, 3822, 3843, 3821, 3841, 3856, 3827, 3400]
     }],
     xaxis: {
       type: 'datetime',
