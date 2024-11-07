@@ -14,7 +14,7 @@
     <div class="tf-container">
         <ul class="mt-12">
             {% for order in orders %}
-                {% if order.get_status_display == "Completed" or order.get_status_display == "Canceled" %}
+                {% if order.get_status_display == "Completed" or order.get_status_display == "Cancelled" %}
                 <a href="{% url 'order_detail' order.id %}">
                     <li class="mb-15">
                         <div class="list-view-card">

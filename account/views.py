@@ -177,36 +177,36 @@ class ManagerPanelView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
         yearly_sales_change = calculate_percentage_change(yearly_sales, last_year_sales)
 
         # 10-day sales list
-        last_10_days = [(today - timedelta(days=i)).strftime("%b %d %Y") for i in range(10)]
-        sales_last_10_days = [
+        last_10_days = [(today - timedelta(days=i)).strftime("%b %d %Y") for i in range(9, -1, -1)]
+        sales_last_10_days = [float(
             Order.objects.filter(created_at__date=today - timedelta(days=i)).aggregate(
                 sales=Sum('total_price')
-            )['sales'] or 0
-            for i in range(10)
+            )['sales'] or 0)
+            for i in range(9, -1, -1)
         ]
 
         # 10-month sales list with "Jan 01 2022" format
         last_10_months = [
-            (today - relativedelta(months=i)).replace(day=1).strftime("%b %d %Y") for i in range(10)
+            (today - relativedelta(months=i)).replace(day=1).strftime("%b %d %Y") for i in range(9, -1, -1)
         ]
-        sales_last_10_months = [
+        sales_last_10_months = [float(
             Order.objects.filter(
                 created_at__date__gte=(today - relativedelta(months=i)).replace(day=1),
                 created_at__date__lt=(today - relativedelta(months=i-1)).replace(day=1)
-            ).aggregate(sales=Sum('total_price'))['sales'] or 0
-            for i in range(10)
+            ).aggregate(sales=Sum('total_price'))['sales'] or 0)
+            for i in range(9, -1, -1)
         ]
 
         # 10-year sales list with "Jan 01 2022" format
         last_10_years = [
-            (today - relativedelta(years=i)).replace(month=1, day=1).strftime("%b %d %Y") for i in range(10)
+            (today - relativedelta(years=i)).replace(month=1, day=1).strftime("%b %d %Y") for i in range(9, -1, -1)
         ]
-        sales_last_10_years = [
+        sales_last_10_years = [float(
             Order.objects.filter(
                 created_at__date__gte=(today - relativedelta(years=i)).replace(month=1, day=1),
                 created_at__date__lt=(today - relativedelta(years=i-1)).replace(month=1, day=1)
-            ).aggregate(sales=Sum('total_price'))['sales'] or 0
-            for i in range(10)
+            ).aggregate(sales=Sum('total_price'))['sales'] or 0)
+            for i in range(9, -1, -1)
         ]
 
         context.update({
