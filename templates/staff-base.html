@@ -22,7 +22,7 @@
   <link rel="stylesheet" href="{% static 'staff/css/demo1/style-rtl.min.css' %}">
 
 </head>
-<link rel="shortcut icon" href="{% static 'main/images/logo/48.png' %}"/>
+<link rel="shortcut icon" href="{{ site_info.fav_icon.url }}"/>
 
 <body>
   <div class="main-wrapper">
@@ -42,7 +42,7 @@
     <nav class="sidebar">
       <div class="sidebar-header">
         <a href="{% url 'home' %}" class="sidebar-brand">
-          کافه<span>&nbsp;{{ site_info.site_name}}</span>
+          کافه<span>&nbsp;{{ site_info.site_name }}</span>
         </a>
         <div class="sidebar-toggler not-active">
           <span></span>

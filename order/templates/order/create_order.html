@@ -83,9 +83,9 @@
                                                     </td>
                                                 </tr>
                                             </div>
-                                            <div class="text-center">
+                                            {% comment %} <div class="text-center">
                                                 <button type="button" class="btn btn-primary" style="margin-top:15px" onclick="addRow()">افزودن سطر</button>
-                                            </div>
+                                            </div> {% endcomment %}
                                         </div>
                                         
                                     </div>
@@ -100,7 +100,7 @@
         </div>
     </div>
 </div>
-<script>
+{% comment %} <script>
     function addRow() {
         var tableBody = document.getElementById("tableBody");
         var formTemplate = document.getElementById("form-template").innerHTML;
@@ -115,59 +115,6 @@
     
     // مقدار اولیه برای فرم‌ست
     var formsetIndex = {{ formset.total_form_count }};    
-</script>
-
-
-<!-- create_order.html -->
-<h2>Create New Order</h2>
-
-<form method="POST">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <h3>Order Items</h3>
-    {{ formset.management_form }}
-    <div id="order-items">
-        {% for form in formset %}
-            <div class="order-item">
-                {{ form.as_p }}
-                <label for="{{ form.DELETE.id_for_label }}">Delete:</label>
-                <input type="checkbox" name="{{ form.DELETE.html_name }}" id="{{ form.DELETE.id_for_label }}" checked>
-                {% if form.instance.pk %}
-                    <button type="button" class="delete-item">Delete</button>
-                {% endif %}
-            </div>
-        {% endfor %}
-    </div>
-    
-    <button type="button" id="add-item">Add Another Product</button>
-    <button type="submit">Submit</button>
-</form>
-
-<a href="{% url 'staff_dashboard' %}">Back to Dashboard</a>
-
-<script>
-    document.getElementById('add-item').addEventListener('click', function() {
-        let formIdx = document.querySelectorAll('.order-item').length;
-        let formsetContainer = document.getElementById('order-items');
-        let newForm = document.createElement('div');
-        newForm.classList.add('order-item');
-        newForm.innerHTML = '{{ formset.empty_form.as_p|escapejs }}'.replace(/__prefix__/g, formIdx);
-        formsetContainer.appendChild(newForm);
-
-        // به‌روزرسانی تعداد فرم‌ها
-        let totalForms = document.getElementById('id_items-TOTAL_FORMS');
-        totalForms.value = formIdx + 1;
-    });
-
-    document.addEventListener('click', function(e) {
-        if (e.target.classList.contains('delete-item')) {
-            e.target.closest('.order-item').remove();
-            let totalForms = document.getElementById('id_items-TOTAL_FORMS');
-            totalForms.value = document.querySelectorAll('.order-item').length;
-        }
-    });
-</script>
-
-
+</script> {% endcomment %}
 
 {% endblock %}
