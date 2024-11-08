@@ -42,7 +42,9 @@ class StaffLogin(View):
                     return redirect('staff_dashboard')
             else:
                 messages.error(request, 'Invalid credentials or not a staff member')
-        
+        else:
+            messages.error(request, 'شماره همراه یا رمز عبور صحیح نمی‌باشد')
+            
         return render(request, 'account/login.html', {'form': form})
 
 
