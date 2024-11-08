@@ -55,6 +55,7 @@
                 const salesLast10Days = JSON.parse('{{ sales_last_10_days|safe }}');
                 const Last10Days = JSON.parse('{{ last_10_days|safe }}');
             </script>
+            {{ last_10_days|safe }}
             
             <div class="col-md-4 grid-margin stretch-card">
                 <div class="card">
@@ -206,8 +207,7 @@
             </div>
         </div>
     </div>
-  </div>
-
+  </div>{{ sales_per_two_hour_intervals|safe }}
 <script type="text/javascript">
     const sales_per_two_hour_intervals = JSON.parse('{{ sales_per_two_hour_intervals|safe }}');
 </script>
