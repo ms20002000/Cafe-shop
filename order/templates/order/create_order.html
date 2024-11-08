@@ -87,6 +87,7 @@
                                                 <button type="button" class="btn btn-primary" style="margin-top:15px" onclick="addRow()">افزودن سطر</button>
                                             </div>
                                         </div>
+                                        
                                     </div>
                                 </div>
                             </div>
@@ -99,32 +100,70 @@
         </div>
     </div>
 </div>
-
 <script>
     function addRow() {
-        // انتخاب محتوای قالب و کلون کردن آن
-        var template = document.getElementById('form-template').innerHTML;
-        var tableBody = document.getElementById('tableBody');
-        
-        // افزودن فرم جدید به انتهای جدول
-        tableBody.insertAdjacentHTML('beforeend', template);
+        var tableBody = document.getElementById("tableBody");
+        var formTemplate = document.getElementById("form-template").innerHTML;
+        var newRow = document.createElement("tr");
+        newRow.innerHTML = formTemplate.replace(/__prefix__/g, formsetIndex);
+        tableBody.appendChild(newRow);
+        formsetIndex++;
+    
+        // به‌روزرسانی تعداد فرم‌ها
+        document.querySelector('#id_orderitem_set-TOTAL_FORMS').value = formsetIndex;
     }
+    
+    // مقدار اولیه برای فرم‌ست
+    var formsetIndex = {{ formset.total_form_count }};    
 </script>
+
+
+
+​<h2>Create New Order</h2>
 
 <form method="POST">
     {% csrf_token %}
-    
     {{ form.as_p }}
-    
     <h3>Order Items</h3>
     {{ formset.management_form }}
-    {% for form in formset %}
-    <div>
-
-        {{ form.as_p }}
+    <div id="order-items">
+        {% for form in formset %}
+            <div class="order-item">
+                {{ form.as_p }}
+                {% if form.instance.pk %}
+                    <button type="button" class="delete-item">Delete</button>
+                {% endif %}
+            </div>
+        {% endfor %}
     </div>
-    {% endfor %}
     
-    <button type="submit">Save Changes</button>
+    <button type="button" id="add-item">Add Another Product</button>
+    <button type="submit">Submit</button>
 </form>
+
+<a href="{% url 'staff_dashboard' %}">Back to Dashboard</a>
+
+<script>
+    document.getElementById('add-item').addEventListener('click', function() {
+        let formIdx = document.querySelectorAll('.order-item').length;
+        let formsetContainer = document.getElementById('order-items');
+        let newForm = document.createElement('div');
+        newForm.classList.add('order-item');
+        newForm.innerHTML = '{{ formset.empty_form.as_p|escapejs }}'.replace(/__prefix__/g, formIdx);
+        formsetContainer.appendChild(newForm);
+        
+        // Update management form count
+        let totalForms = document.getElementById('id_items-TOTAL_FORMS');
+        totalForms.value = formIdx + 1;
+    });
+
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('delete-item')) {
+            e.target.closest('.order-item').remove();
+            let totalForms = document.getElementById('id_items-TOTAL_FORMS');
+            totalForms.value = document.querySelectorAll('.order-item').length;
+        }
+    });
+</script>
+
 {% endblock %}

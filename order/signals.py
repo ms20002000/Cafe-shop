@@ -18,14 +18,14 @@ def send_order_notification_to_managers(sender, instance, created, **kwargs):
     if created:  
         managers = CustomUser.objects.filter(is_admin=True)
         manager_emails = [manager.email for manager in managers if manager.email]
+        print(manager_emails)
 
         if manager_emails:
             send_mail(
-                subject='New Order Created',
-                message=f"A new order has been placed. Order ID: {instance.id}\n"
-                        f"Customer: {instance.customer}\n"
-                        f"Total Amount: {instance.total_price}",
-                from_email=settings.DEFAULT_FROM_EMAIL,
-                recipient_list=manager_emails,
-                fail_silently=False,
-            )
+                    subject='New Order Created',
+                    message=f"A new order has been placed. Order ID: {instance.id}\n"
+                            f"Total Amount: {instance.total_price}",
+                    from_email=settings.DEFAULT_FROM_EMAIL,
+                    recipient_list=manager_emails,
+                    fail_silently=False,
+                )

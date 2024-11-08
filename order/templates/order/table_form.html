@@ -26,7 +26,7 @@
                             <div class="col-sm-6">
                                 <div class="mb-3">
                                     <label class="form-label">شماره میز</label>
-                                    <input type="text" name="number" class="form-control" placeholder="شماره میز را وارد کنید" 
+                                    <input type="number" name="number" class="form-control" placeholder="شماره میز را وارد کنید" 
                                            value="{% if form.number.value %}{{ form.number.value }}{% else %}‌{% endif %}">
                                 </div>
                             </div>
@@ -34,7 +34,7 @@
                                 <div class="mb-3">
                                     <label class="form-label">QRcode</label>
                                     <input type="text" name="qr_code" class="form-control" placeholder="QRcode میز را وارد کنید" 
-                                           value="{% if form.qr_code.value %}{{ form.qr_code.value }}{% else %}‌{% endif %}">
+                                           value="{% if form.qr_code.value %}{{ form.qr_code.value }}{% else %}‌{% endif %}" step='1' min='1'>
                                 </div>
                             </div>
                         </div>
