@@ -15,10 +15,10 @@ class OrderForm(forms.ModelForm):
             reserved_table_by_user = Table.objects.filter(id=self.instance.table.id) if self.instance.table else Table.objects.none()
             self.fields['table'].queryset = (available_tables | reserved_table_by_user).distinct()
         else:
-            self.fields['table'].queryset = Table.objects.all()
+            self.fields['table'].queryset = Table.available_tables()
 
 OrderItemFormSet = inlineformset_factory(Order, OrderItem, fields=('product', 'quantity'),
-                                          extra=1, can_delete=True)
+                                          extra=0, can_delete=True)
 
 class TableForm(forms.ModelForm):
     class Meta:

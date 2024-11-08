@@ -11,6 +11,7 @@ $(function() {
         [10, 30, 50, "همه"]
       ],
       "iDisplayLength": 10,
+      "order": [[0, 'desc']],
       "language": {
         search: ""
       }
