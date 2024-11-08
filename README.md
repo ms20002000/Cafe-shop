@@ -1,14 +1,13 @@
 
-# 🌟 Cafe Shop Adventure: Django Full-Stack Project 🌟
+# 🌟 Cafe Shop: Django Project 🌟
 
-Welcome to the **Cafe Shop Adventure**, a Django full-stack web application designed to manage a cafe's online presence. This project aims to build a fully functional web application for a cafe that includes an online menu for customers, an administrative staff panel, sales analytics, and a rewards system. 
+Welcome to the **Cafe Shop**, a Django full-stack web application designed to manage a cafe's online presence. This project aims to build a fully functional web application for a cafe that includes an online menu for customers, an administrative staff panel, sales analytics, and much more. 
 
 ## Features
 
 ### Customer-Facing Features:
 - **Browse Menu**: Customers can explore cafe menu items by category.
 - **Order Placement**: Users can add items to the cart and place orders.
-- **Rewards System**: A loyalty program for returning customers.
 - **Mobile-Friendly**: Responsive design optimized for mobile devices.
 
 ### Staff and Manager Features:
@@ -19,7 +18,7 @@ Welcome to the **Cafe Shop Adventure**, a Django full-stack web application desi
 ## Tech Stack
 - **Backend**: Django (Python)
 - **Database**: PostgreSQL
-- **Frontend**: HTML, CSS, JavaScript (with animations and transitions)
+- **Frontend**: HTML, CSS, JavaScript and BS base (with animations and transitions)
 - **Version Control**: Git (GitHub repository)
 
 ## Setup Instructions
@@ -32,8 +31,8 @@ Welcome to the **Cafe Shop Adventure**, a Django full-stack web application desi
 ### Installation Steps:
 1. Clone the repository:
     ```bash
-    git clone https://github.com/yourusername/cafe-shop-adventure.git
-    cd cafe-shop-adventure
+    git clone https://github.com/ms20002000/cafe-shop.git
+    cd cafe-shop
     ```
 
 2. Create and activate a virtual environment:
