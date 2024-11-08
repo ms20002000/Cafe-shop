@@ -55,7 +55,6 @@
                 const salesLast10Days = JSON.parse('{{ sales_last_10_days|safe }}');
                 const Last10Days = JSON.parse('{{ last_10_days|safe }}');
             </script>
-            {{ last_10_days|safe }}
             
             <div class="col-md-4 grid-margin stretch-card">
                 <div class="card">
@@ -207,7 +206,9 @@
             </div>
         </div>
     </div>
-  </div>{{ sales_per_two_hour_intervals|safe }}
+  </div>
+
+
 <script type="text/javascript">
     const sales_per_two_hour_intervals = JSON.parse('{{ sales_per_two_hour_intervals|safe }}');
 </script>
@@ -260,43 +261,89 @@
         </div>
     </div>
   </div>
+  <div class="row" id="topsales">
+    <div class="col-12 col-xl-12 grid-margin stretch-card">
+      <div class="card overflow-hidden">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-baseline mb-4 mb-md-3">
+            <h6 class="card-title mb-0">پرفروش ترین</h6>
+          </div>
+          <div class="row align-items-start">
+            <div class="col-md-7">
+              <p class="text-muted tx-13 mb-3 mb-md-0">میتوانید بازه زمانی خود را برای مشاهده پرفروش ترین های بازه زمانی دلخواه انتخاب کنید.</p>
+            </div>
+            <div class="col-md-5 d-flex justify-content-md-end" style="margin-bottom:15px;">
+                <form method="GET" class="d-flex align-items-center">
+                    <div class="input-group flatpickr me-2" id="flatpickr-date" for="start_date">
+                        <input type="text" class="form-control" name="start_date" id="start_date" placeholder=" انتخاب تاریخ شروع" data-input>
+                        <span class="input-group-text input-group-addon" data-toggle><i data-feather="calendar"></i></span>
+                    </div>
+                    <div class="input-group flatpickr me-2" id="flatpickr-date" for="end_date">
+                        <input type="text" class="form-control" name="end_date" id="end_date" placeholder=" انتخاب تاریخ پایان" data-input>
+                        <span class="input-group-text input-group-addon" data-toggle><i data-feather="calendar"></i></span>
+                    </div>
+                    <button type="submit" class="btn btn-primary">فیلتر</button>
+                </form>
+            </div>
+          </div>
+          <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>تصویر محصول</th>
+                        <th>نام</th>
+                        <th>تعداد فروش</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if top_items %}
+                        {% for item in top_items %}
+                        <tr>
+                            <th>{{ forloop.counter }}</th>
+                            <td>
+                                <a href="{% url 'product_detail' item.category.name item.name %}">
+                                    <img src="{{ item.product_photo.url }}" alt="{{ product.name }}">
+                                </a>
+                            </td>
+                            <td>{{ item.name }}</td>
+                            <td>{{ item.total_sold }}</td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="4" class="text-center">در بازه انتخابی شما محصول پر فروشی یافت نشد.</td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>            
+        </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
+<script>
+    window.onload = function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const startDate = urlParams.get('start_date');
+        const endDate = urlParams.get('end_date');
 
+        if (startDate) {
+            document.querySelector('input[name="start_date"]').value = startDate;
+        }
 
+        if (endDate) {
+            document.querySelector('input[name="end_date"]').value = endDate;
+        }
 
-<h1>Manager Panel</h1>
-
-{% comment %} <h2>Total Sales</h2>
-<p>{{ total_sales }}</p>
-
-<h2>Daily, Monthly, and Yearly Sales</h2>
-<ul>
-    <li><strong>Daily Sales:</strong> {{ daily_sales }}</li>
-    <li><strong>Monthly Sales:</strong> {{ monthly_sales }}</li>
-    <li><strong>Yearly Sales:</strong> {{ yearly_sales }}</li>
-</ul> {% endcomment %}
-
-<h2>Top-Selling Items</h2>
-<form method="GET">
-    <label for="start_date">Start Date:</label>
-    <input type="date" name="start_date" id="start_date">
-
-    <label for="end_date">End Date:</label>
-    <input type="date" name="end_date" id="end_date">
-    
-    <button type="submit">Filter by Date</button>
-</form>
-<table>
-    <tr>
-        <th>Item</th>
-        <th>Total Sold</th>
-    </tr>
-    {% for item in top_items %}
-    <tr>
-        <td>{{ item.name }}</td>
-        <td>{{ item.total_sold }}</td>
-    </tr>
-    {% endfor %}
-</table>
+        if (startDate && endDate) {
+            const topsalesElement = document.querySelector("#topsales");
+            if (topsalesElement) {
+                topsalesElement.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+    };
+</script>
 {% endblock %}

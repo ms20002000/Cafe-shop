@@ -386,10 +386,7 @@ if ($('#customersChart').length) {
   }
   // Revenue Chart - END
 
-
-
-
-
+  
   // Revenue Chart - RTL
   if ($('#revenueChartRTL').length) {
     var lineChartOptions = {
