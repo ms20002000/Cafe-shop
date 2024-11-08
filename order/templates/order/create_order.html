@@ -118,8 +118,8 @@
 </script>
 
 
-
-​<h2>Create New Order</h2>
+<!-- create_order.html -->
+<h2>Create New Order</h2>
 
 <form method="POST">
     {% csrf_token %}
@@ -130,6 +130,8 @@
         {% for form in formset %}
             <div class="order-item">
                 {{ form.as_p }}
+                <label for="{{ form.DELETE.id_for_label }}">Delete:</label>
+                <input type="checkbox" name="{{ form.DELETE.html_name }}" id="{{ form.DELETE.id_for_label }}" checked>
                 {% if form.instance.pk %}
                     <button type="button" class="delete-item">Delete</button>
                 {% endif %}
@@ -151,8 +153,8 @@
         newForm.classList.add('order-item');
         newForm.innerHTML = '{{ formset.empty_form.as_p|escapejs }}'.replace(/__prefix__/g, formIdx);
         formsetContainer.appendChild(newForm);
-        
-        // Update management form count
+
+        // به‌روزرسانی تعداد فرم‌ها
         let totalForms = document.getElementById('id_items-TOTAL_FORMS');
         totalForms.value = formIdx + 1;
     });
@@ -165,5 +167,7 @@
         }
     });
 </script>
+
+
 
 {% endblock %}

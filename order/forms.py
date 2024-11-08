@@ -18,7 +18,10 @@ class OrderForm(forms.ModelForm):
             self.fields['table'].queryset = Table.available_tables()
 
 OrderItemFormSet = inlineformset_factory(Order, OrderItem, fields=('product', 'quantity'),
-                                          extra=0, can_delete=True)
+                                          extra=3, can_delete=True)
+
+UpdateOrderItemFormSet = inlineformset_factory(Order, OrderItem, fields=('product', 'quantity'),
+                                          extra=1, can_delete=True)
 
 class TableForm(forms.ModelForm):
     class Meta:

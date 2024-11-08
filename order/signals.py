@@ -18,7 +18,6 @@ def send_order_notification_to_managers(sender, instance, created, **kwargs):
     if created:  
         managers = CustomUser.objects.filter(is_admin=True)
         manager_emails = [manager.email for manager in managers if manager.email]
-        print(manager_emails)
 
         if manager_emails:
             send_mail(

@@ -1,11 +1,10 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Order, OrderItem, Table
+from .models import Order, Table
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from .forms import OrderForm, OrderItemFormSet, TableForm 
+from .forms import OrderForm, OrderItemFormSet, TableForm , UpdateOrderItemFormSet
 from django.views import View
-from django.db.models import Max, F, Subquery, OuterRef
 
 class OrderCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     model = Order
@@ -15,7 +14,7 @@ class OrderCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
 
     def test_func(self):
         return self.request.user.is_staff
-    
+
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs['is_update'] = False  
@@ -29,7 +28,9 @@ class OrderCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
         formset = OrderItemFormSet(self.request.POST, instance=order)
         if formset.is_valid():
             formset.save()
-        return redirect(self.success_url)
+            return redirect(self.success_url)
+        else:
+            return self.render_to_response(self.get_context_data(form=form, formset=formset))
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -65,9 +66,9 @@ class OrderUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         if self.request.POST:
-            context['formset'] = OrderItemFormSet(self.request.POST, instance=self.object)
+            context['formset'] = UpdateOrderItemFormSet(self.request.POST, instance=self.object)
         else:
-            context['formset'] = OrderItemFormSet(instance=self.object)
+            context['formset'] = UpdateOrderItemFormSet(instance=self.object)
         return context
 
     def form_valid(self, form):
