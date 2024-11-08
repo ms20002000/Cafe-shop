@@ -44,7 +44,8 @@ def cart_detail(request):
         item['update_quantity_form'] = CartAddProductForm(initial={
             'quantity': item['quantity'],
             'override': True
-        })
+        }) 
+        item['total_price'] = item['product'].price * item['quantity']
     
     return render(request, 'cart/cart_detail.html', {
         'cart_items': cart_items,

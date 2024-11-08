@@ -14,23 +14,18 @@
             <ul>
                 {% for item in cart_items %}
                 <li class="tf-box-row style-2 qty mb-12">
-                    <a href="" class="img-box">
+                    <a href="{% url 'product_detail' item.product.category.name item.product.name %}" class="img-box">
                         <img src="{{ item.product.product_photo.url }}" alt="{{ item.product.name }}">
                     </a>
                     <div class="content-box">
-                        <h5><a href="">{{ item.product.name }}</a></h5>
+                        <h5><a href="{% url 'product_detail' item.product.category.name item.product.name %}">{{ item.product.name }}</a></h5>
                         <ul class="review">
-                            <li>{{ item.product.description }}</li>
+                            <li>قیمت هر عدد: {{ item.product.price }}</li>
                         </ul>
                         
                         <div class="total-qty">
-                            <span class="price">{{ item.product.price }} تومان</span>
-                            <div class="sec-qty">
-                                <span class="btn-quantity minus-btn"><i class="icon-minus"></i></span>
-                                <input type="number" name="number" value="{{ item.quantity }}">
-                                <span class="btn-quantity active plus-btn"><i class="icon-plus"></i></span>
-
-                            </div>
+                            <span class="price">{{ item.quantity }} عدد</span>
+                            <span class="price">{{ item.total_price }} تومان</span>
                             <form action="{% url 'cart_remove' item.product.id %}" method="post" style="display:inline;">
                                 {% csrf_token %}
                                 <button type="submit" class="btn btn-danger">حذف</button>
