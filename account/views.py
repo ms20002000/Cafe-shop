@@ -94,19 +94,6 @@ def logout_user(request):
     return redirect('home')
 
 
-class PasswordChange(PasswordChangeView):
-    template_name = 'account/change_password.html'
-    def form_valid(self, form):
-        user = self.request.user
-        form.save()  
-
-        if user.is_admin:
-            return redirect('admin_dashboard')  
-        elif user.is_staff:
-            return redirect('staff_dashboard')  
-        else:
-            return redirect('home')
-
 
 class ManagerPanelView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
     template_name = 'account/manager_dashboard.html'
@@ -114,101 +101,65 @@ class ManagerPanelView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
     def test_func(self):
         return self.request.user.is_admin
 
+    
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        # Top-selling items (filter by date if provided)
-        start_date = self.request.GET.get('start_date')
-        end_date = self.request.GET.get('end_date')
-        if not start_date:
-            start_date = datetime.min  
-        if not end_date:
-            end_date = timezone.now() 
+        # Date filtering for top-selling items
+        start_date = self.request.GET.get('start_date', datetime(1970, 1, 1))
+        end_date = self.request.GET.get('end_date', timezone.now())
 
-        products_queryset = Product.objects.filter(
+        top_products = Product.objects.filter(
             order_items__order__created_at__range=[start_date, end_date]
-                    ).annotate(total_sold=Sum('order_items__quantity')
-                                    ).order_by('-total_sold')
-        context['top_items'] = products_queryset[:10]
+        ).annotate(total_sold=Sum('order_items__quantity')).order_by('-total_sold')
+        context['top_items'] = top_products[:10]
 
-        # Total Sales
+        # Date calculations
         today = timezone.localtime(timezone.now()).date()
         one_day_ago = today - timedelta(days=1)
         one_month_ago = today - relativedelta(months=1)
         one_year_ago = today - relativedelta(years=1)
 
-        # sales of today and yesterday
-        daily_sales = Order.objects.filter(created_at__date=today).aggregate(
-            daily_sales=Sum('total_price')
-        )['daily_sales'] or 0
+        # Daily, monthly, yearly sales calculations
+        daily_sales = self.get_sales_sum(today)
+        yesterday_sales = self.get_sales_sum(one_day_ago)
+        monthly_sales = self.get_sales_sum(one_month_ago, today)
+        last_month_sales = self.get_sales_sum(one_month_ago - relativedelta(months=1), one_month_ago)
+        yearly_sales = self.get_sales_sum(one_year_ago, today)
+        last_year_sales = self.get_sales_sum(one_year_ago - relativedelta(years=1), one_year_ago)
 
-        yesterday_sales = Order.objects.filter(created_at__date=one_day_ago).aggregate(
-            yesterday_sales=Sum('total_price')
-        )['yesterday_sales'] or 0
+        # Percentage changes
+        daily_sales_change = self.calculate_percentage_change(daily_sales, yesterday_sales)
+        monthly_sales_change = self.calculate_percentage_change(monthly_sales, last_month_sales)
+        yearly_sales_change = self.calculate_percentage_change(yearly_sales, last_year_sales)
 
-        # sales of this month and last month
-        monthly_sales = Order.objects.filter(
-            created_at__date__gte=one_month_ago, created_at__date__lte=today
-        ).aggregate(monthly_sales=Sum('total_price'))['monthly_sales'] or 0
+        # 10-day and 10-month sales lists
+        last_10_days, sales_last_10_days = self.get_sales_last_10_days(today)
+        last_10_months, sales_last_10_months = self.get_sales_last_10_months(today)
 
-        last_month_sales = Order.objects.filter(
-            created_at__date__gte=(one_month_ago - relativedelta(months=1)), 
-            created_at__date__lt=one_month_ago
-        ).aggregate(last_month_sales=Sum('total_price'))['last_month_sales'] or 0
+        # Two-hour interval sales
+        sales_per_two_hour_intervals = self.get_sales_per_two_hour_intervals()
 
-        # sales of this year and last year
-        yearly_sales = Order.objects.filter(
-            created_at__date__gte=one_year_ago, created_at__date__lte=today
-        ).aggregate(yearly_sales=Sum('total_price'))['yearly_sales'] or 0
+        # Sales by category
+        context['sales_by_category'] = Category.objects.annotate(
+            total_sales=Sum('products__order_items__quantity')
+        ).order_by('-total_sales')
 
-        last_year_sales = Order.objects.filter(
-            created_at__date__gte=(one_year_ago - relativedelta(years=1)),
-            created_at__date__lt=one_year_ago
-        ).aggregate(last_year_sales=Sum('total_price'))['last_year_sales'] or 0
+        # Sales by time of day
+        context.update(self.get_sales_by_time_of_day(today))
 
-        # percentage change
-        def calculate_percentage_change(current, previous):
-            if previous == 0:
-                return 100 if current > 0 else 0  
-            return round(((current - previous) / previous) * 100, 2) 
+        # Customer and employee sales data
+        context['total_customers'] = CustomUser.objects.filter(is_customer=True).count()
+        context['sales_by_customer'] = self.get_sales_by_customer()
+        context['sales_by_employee'] = CustomUser.objects.filter(is_staff=True).annotate(
+            total_orders_handled=Count('order')
+        )
 
-        # percentage change
-        daily_sales_change = calculate_percentage_change(daily_sales, yesterday_sales)
-        monthly_sales_change = calculate_percentage_change(monthly_sales, last_month_sales)
-        yearly_sales_change = calculate_percentage_change(yearly_sales, last_year_sales)
+        # Peak business hour
+        peak_hour_data = self.get_peak_business_hour()
+        context.update(peak_hour_data)
 
-        # 10-day sales list
-        last_10_days = [(today - timedelta(days=i)).strftime("%b %d %Y") for i in range(9, -1, -1)]
-        sales_last_10_days = [float(
-            Order.objects.filter(created_at__date=today - timedelta(days=i)).aggregate(
-                sales=Sum('total_price')
-            )['sales'] or 0)
-            for i in range(9, -1, -1)
-        ]
-
-        # 10-month sales list with "Jan 01 2022" format
-        last_10_months = [
-            (today - relativedelta(months=i)).replace(day=1).strftime("%b %d %Y") for i in range(9, -1, -1)
-        ]
-        sales_last_10_months = [float(
-            Order.objects.filter(
-                created_at__date__gte=(today - relativedelta(months=i)).replace(day=1),
-                created_at__date__lt=(today - relativedelta(months=i-1)).replace(day=1)
-            ).aggregate(sales=Sum('total_price'))['sales'] or 0)
-            for i in range(9, -1, -1)
-        ]
-
-        sales_per_two_hour_intervals = []
-        for hour in range(0, 24, 2):
-            today = datetime.now()
-            start_time = today.replace(hour=hour, minute=0, second=0, microsecond=0)
-            end_time = start_time + timedelta(hours=2)
-            total_sales = Order.objects.filter(
-                created_at__gte=start_time,
-                created_at__lt=end_time
-            ).aggregate(sales=Sum('total_price'))['sales'] or 0
-            sales_per_two_hour_intervals.append(float(total_sales))
-            
+        # Updating context with sales data and metrics
         context.update({
             'daily_sales': daily_sales,
             'monthly_sales': monthly_sales,
@@ -220,62 +171,99 @@ class ManagerPanelView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
             'sales_last_10_days': json.dumps(sales_last_10_days),
             'last_10_months': json.dumps(last_10_months),
             'sales_last_10_months': json.dumps(sales_last_10_months),
-            'sales_per_two_hour_intervals':json.dumps(sales_per_two_hour_intervals)
+            'sales_per_two_hour_intervals': json.dumps(sales_per_two_hour_intervals),
         })
 
+        return context
 
-        # Sales by Category
-        context['sales_by_category'] = Category.objects.annotate(
-            total_sales=Sum('products__order_items__quantity')).order_by('-total_sales')
+    def get_sales_sum(self, start_date, end_date=None):
+        if not end_date:
+            end_date = start_date
+        return Order.objects.filter(
+            created_at__date__range=[start_date, end_date], 
+            status=Order.StatusOrder.COMPLETED
+        ).aggregate(total_sales=Sum('total_price'))['total_sales'] or 0
 
-        # Sales by Time of Day (morning, afternoon, evening)
-        today = timezone.localtime(timezone.now())
-        morning_start = today.replace(hour=6, minute=0, second=0, microsecond=0)
-        morning_end = today.replace(hour=12, minute=0, second=0, microsecond=0)
-        afternoon_start = today.replace(hour=12, minute=0, second=0, microsecond=0)
-        afternoon_end = today.replace(hour=18, minute=0, second=0, microsecond=0)
-        evening_start = today.replace(hour=18, minute=0, second=0, microsecond=0)
-        evening_end = today.replace(hour=23, minute=59, second=59, microsecond=0)
+    def calculate_percentage_change(self, current, previous):
+        if previous == 0:
+            return 100 if current > 0 else 0
+        return round(((current - previous) / previous) * 100, 2)
 
-        context['morning_sales'] = Order.objects.filter(
-            created_at__range=[morning_start, morning_end]).aggregate(
-                total=Sum('total_price'))['total'] or 0
-        context['afternoon_sales'] = Order.objects.filter(
-            created_at__range=[afternoon_start, afternoon_end]).aggregate(
-                total=Sum('total_price'))['total'] or 0
-        context['evening_sales'] = Order.objects.filter(
-            created_at__range=[evening_start, evening_end]).aggregate(
-                total=Sum('total_price'))['total'] or 0
+    def get_sales_last_10_days(self, today):
+        last_10_days = [(today - timedelta(days=i)).strftime("%b %d %Y") for i in range(9, -1, -1)]
+        sales_last_10_days = [
+            float(self.get_sales_sum(today - timedelta(days=i))) for i in range(9, -1, -1)
+        ]
+        return last_10_days, sales_last_10_days
 
-        # Customer Demographics
-        context['total_customers'] = CustomUser.objects.filter(is_customer=True).count()
+    def get_sales_last_10_months(self, today):
+        last_10_months = [
+            (today - relativedelta(months=i)).replace(day=1).strftime("%b %d %Y") for i in range(9, -1, -1)
+        ]
+        sales_last_10_months = [
+            float(self.get_sales_sum(
+                (today - relativedelta(months=i)).replace(day=1),
+                (today - relativedelta(months=i - 1)).replace(day=1)
+            )) for i in range(9, -1, -1)
+        ]
+        return last_10_months, sales_last_10_months
 
-        # Sales by Customer
-        sessions = Session.objects.all()
+    def get_sales_per_two_hour_intervals(self):
+        sales_per_two_hour_intervals = []
+        start_of_day = timezone.localtime(timezone.now()).replace(hour=0, minute=0, second=0, microsecond=0)        
+        for hour in range(0, 24, 2):
+            start_time = start_of_day + timedelta(hours=hour)
+            end_time = start_time + timedelta(hours=2)            
+            total_sales = Order.objects.filter(
+                created_at__gte=start_time,
+                created_at__lt=end_time,
+                status=Order.StatusOrder.COMPLETED
+            ).aggregate(sales=Sum('total_price'))['sales'] or 0
+            
+            sales_per_two_hour_intervals.append(float(total_sales))
+        
+        return sales_per_two_hour_intervals
+
+    def get_sales_by_time_of_day(self, today):
+        time_periods = {
+            'morning_sales': (6, 12),
+            'afternoon_sales': (12, 18),
+            'evening_sales': (18, 23)
+        }
+        sales_by_time = {}
+        for period, (start_hour, end_hour) in time_periods.items():
+            start_time = timezone.localtime(timezone.now()).replace(hour=start_hour, minute=0, second=0, microsecond=0)
+            if end_hour == 23:
+                end_time = timezone.localtime(timezone.now()).replace(hour=end_hour, minute=59, second=59, microsecond=999999)
+            else:
+                end_time = timezone.localtime(timezone.now()).replace(hour=end_hour, minute=0, second=0, microsecond=0)
+            sales_by_time[period] = Order.objects.filter(
+                created_at__range=[start_time, end_time], 
+                status=Order.StatusOrder.COMPLETED
+            ).aggregate(total=Sum('total_price'))['total'] or 0
+        return sales_by_time
+
+    def get_sales_by_customer(self):
         sales_data = []
+        sessions = Session.objects.all()
         for session in sessions:
             session_data = session.get_decoded()
             if session_data.get('order_id'):
-                data = Order.objects.get(id=session_data.get('order_id'))
-                sales_data.append(data)
+                order = Order.objects.filter(id=session_data.get('order_id')).first()
+                if order:
+                    sales_data.append(order)
+        return sales_data
 
-        context['sales_by_customer'] = sales_data
+    def get_peak_business_hour(self):
+        peak_data = Order.objects.annotate(hour=ExtractHour('created_at')).values('hour').annotate(
+            total_sales=Sum('total_price')
+        ).order_by('-total_sales').first()
+        return {
+            'peak_business_hour': peak_data['hour'] if peak_data else None,
+            'peak_business_hour_sales': peak_data['total_sales'] if peak_data else 0
+        }
 
-        # Sales by Employee Report
-        context['sales_by_employee'] = CustomUser.objects.filter(is_staff=True).annotate(
-            total_orders_handled=Count('order'))
-
-        # Peak Business Hour
-        peak_hour_data = Order.objects.annotate(hour=ExtractHour('created_at')).values('hour').annotate(
-            total_sales=Sum('total_price')).order_by('-total_sales').first()
-        if peak_hour_data:
-            context['peak_business_hour'] = peak_hour_data['hour']
-            context['peak_business_hour_sales'] = peak_hour_data['total_sales']
-        else:
-            context['peak_business_hour'] = None
-            context['peak_business_hour_sales'] = 0
-
-        return context
+    
 
 
 class ExportSalesReportView(LoginRequiredMixin, UserPassesTestMixin, View):
