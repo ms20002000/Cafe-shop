@@ -23,10 +23,13 @@ class OrderCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     def form_valid(self, form):
         order = form.save(commit=False)
         order.modify_by = self.request.user  
-        order.save()
 
         formset = OrderItemFormSet(self.request.POST, instance=order)
         if formset.is_valid():
+            if False not in [item_form.get('DELETE') for item_form in formset.cleaned_data]:
+                form.add_error(None, "You must add at least one order item.")
+                return self.form_invalid(form)
+            order.save()
             formset.save()
             return redirect(self.success_url)
         else:
@@ -37,7 +40,7 @@ class OrderCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
         if self.request.POST:
             context['formset'] = OrderItemFormSet(self.request.POST)
         else:
-            context['formset'] = OrderItemFormSet()
+            context['formset']= OrderItemFormSet() 
         return context
 
 

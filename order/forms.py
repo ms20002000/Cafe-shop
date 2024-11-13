@@ -1,5 +1,5 @@
 from django import forms
-from .models import Order, OrderItem, Table
+from .models import Order, OrderItem, Table, Product
 from django.forms.models import inlineformset_factory
 
 class OrderForm(forms.ModelForm):
@@ -17,11 +17,22 @@ class OrderForm(forms.ModelForm):
         else:
             self.fields['table'].queryset = Table.available_tables()
 
-OrderItemFormSet = inlineformset_factory(Order, OrderItem, fields=('product', 'quantity'),
-                                          extra=3, can_delete=True)
+class OrderItemForm(forms.ModelForm):
+    class Meta:
+        model = OrderItem
+        fields = ['product', 'quantity']
 
-UpdateOrderItemFormSet = inlineformset_factory(Order, OrderItem, fields=('product', 'quantity'),
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['product'].empty_label = "------"
+        if not self.instance.pk:  
+            self.fields['product'].initial = None
+
+OrderItemFormSet = inlineformset_factory(Order, OrderItem, form=OrderItemForm,  
                                           extra=1, can_delete=True)
+
+UpdateOrderItemFormSet = inlineformset_factory(Order, OrderItem, form=OrderItemForm,
+                                          extra=0, can_delete=True)
 
 class TableForm(forms.ModelForm):
     class Meta:

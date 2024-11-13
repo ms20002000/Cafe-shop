@@ -1,10 +1,9 @@
-{% extends 'staff-base.html' %}
+{% comment %} {% extends 'staff-base.html' %}
 {% block title %}به‌روز‌رسانی سفارش{% endblock %}
 {% load static %}
 {% block content %}
 
 <div class="page-content">
-
     <nav class="page-breadcrumb">
       <ol class="breadcrumb">
         <li class="breadcrumb-item">سفارشات</li>
@@ -92,11 +91,10 @@
         </div>
     </div>
 
-    {% endblock %}
+    {% endblock %} {% endcomment %}
 
-  
     <h2>Update Order</h2>
-    
+
     <form method="POST">
         {% csrf_token %}
         
@@ -104,17 +102,35 @@
         
         <h3>Order Items</h3>
         {{ formset.management_form }}
-        {% for form in formset %}
-        <div>
-            {% if form.instance.pk %}
-            <p>Current Product: {{ form.instance.product.name }}</p>
-            {% endif %}
-            {{ form.as_p }}
+        <div id="order-items">
+            {% for form in formset %}
+                <div class="order-item">
+                    {% if form.instance.pk %}
+                    <p>Current Product: {{ form.instance.product.name }}</p>
+                    {% endif %}
+                    {{ form.as_p }}
+                </div>
+            {% endfor %}
         </div>
-        {% endfor %}
         
+        <button type="button" id="add-item">Add Another Product</button>
         <button type="submit">Save Changes</button>
     </form>
     
-    <a href="{% url 'staff_dashboard' %}">Back to Dashboard</a> 
-</div>
+    <a href="{% url 'staff_dashboard' %}">Back to Dashboard</a>
+    
+    <script>
+        document.getElementById('add-item').addEventListener('click', function() {
+            let formIdx = document.querySelectorAll('.order-item').length;
+            let formsetContainer = document.getElementById('order-items');
+            let newForm = document.createElement('div');
+            newForm.classList.add('order-item');
+            newForm.innerHTML = '{{ formset.empty_form.as_p|escapejs }}'.replace(/__prefix__/g, formIdx);
+            formsetContainer.appendChild(newForm);
+            
+            // Update management form count
+            let totalForms = document.getElementById('id_items-TOTAL_FORMS');
+            totalForms.value = formIdx + 1;
+        });
+    </script>
+    
