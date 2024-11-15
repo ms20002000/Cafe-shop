@@ -108,7 +108,7 @@ class TableCreateView(LoginRequiredMixin, UserPassesTestMixin,View):
         return render(request, self.template_name, {'form': form})
 
     def post(self, request):
-        form = TableForm(request.POST)
+        form = TableForm(request.POST, request.FILES)
         print(form.errors)
         if form.is_valid():
             form.save()
@@ -129,7 +129,7 @@ class TableUpdateView(LoginRequiredMixin, UserPassesTestMixin,View):
 
     def post(self, request, pk):
         table = get_object_or_404(Table, pk=pk)
-        form = TableForm(request.POST, instance=table)
+        form = TableForm(request.POST, request.FILES, instance=table)
         if form.is_valid():
             form.save()
             return redirect('table_list')
