@@ -356,13 +356,16 @@ class AddStaffView(LoginRequiredMixin, UserPassesTestMixin, View):
         return render(request, self.template_name, {'form': form})
 
     def post(self, request):
-        form = StaffAddForm(request.POST)
+        form = StaffAddForm(request.POST, request.FILES)
         if form.is_valid():
             user = form.save(commit=False)
             user.is_staff = True  
             user.save()
+            messages.success(request, 'کاربر با موفقیت اضافه شد.')
             return redirect('staff_list')
+        messages.error(request, 'لطفاً خطاهای زیر را بررسی کنید.')
         return render(request, self.template_name, {'form': form})
+
 
 class StaffListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
     model = CustomUser

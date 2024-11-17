@@ -12,6 +12,15 @@
         </ol>
     </nav>
 
+    <!-- نمایش پیام‌ها -->
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}" role="alert">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
     <div class="row">
         <div class="col-md-12 stretch-card">
             <div class="card">
@@ -23,12 +32,22 @@
                                 <div class="mb-3">
                                     <label class="form-label">نام</label>
                                     <input type="text" name="first_name" class="form-control" placeholder="نام خود را وارد کنید">
+                                    {% if form.first_name.errors %}
+                                        {% for error in form.first_name.errors %}
+                                            <div class="alert alert-danger" style="margin-top:10px;" role="alert">{{ error }}</div>
+                                        {% endfor %}
+                                    {% endif %}
                                 </div>
                             </div>
                             <div class="col-sm-6">
                                 <div class="mb-3">
                                     <label class="form-label">نام خانوادگی</label>
                                     <input type="text" name="last_name" class="form-control" placeholder="نام خانوادگی خود را وارد کنید">
+                                    {% if form.last_name.errors %}
+                                        {% for error in form.last_name.errors %}
+                                            <div class="alert alert-danger" style="margin-top:10px;" role="alert">{{ error }}</div>
+                                        {% endfor %}
+                                    {% endif %}
                                 </div>
                             </div>
                         </div>
@@ -38,12 +57,22 @@
                                 <div class="mb-3">
                                     <label class="form-label">شماره تلفن</label>
                                     <input type="text" name="phone_number" class="form-control" placeholder="شماره تلفن خود را وارد کنید">
+                                    {% if form.phone_number.errors %}
+                                        {% for error in form.phone_number.errors %}
+                                            <div class="alert alert-danger" style="margin-top:10px;" role="alert">{{ error }}</div>
+                                        {% endfor %}
+                                    {% endif %}
                                 </div>
                             </div>
                             <div class="col-sm-6">
                                 <div class="mb-3">
                                     <label class="form-label">آدرس ایمیل</label>
                                     <input type="email" name="email" class="form-control" placeholder="ایمیل خود را وارد کنید">
+                                    {% if form.email.errors %}
+                                        {% for error in form.email.errors %}
+                                            <div class="alert alert-danger" style="margin-top:10px;" role="alert">{{ error }}</div>
+                                        {% endfor %}
+                                    {% endif %}
                                 </div>
                             </div>
                         </div>
@@ -57,15 +86,13 @@
                                             <option value="{{ choice.0 }}">{{ choice.1 }}</option>
                                         {% endfor %}
                                     </select>
+                                    {% if form.specialty.errors %}
+                                        {% for error in form.specialty.errors %}
+                                            <div class="alert alert-danger" style="margin-top:10px;" role="alert">{{ error }}</div>
+                                        {% endfor %}
+                                    {% endif %}
                                 </div>
                             </div>
-
-                            {% comment %} <div class="col-sm-3">
-                                <div class="mb-3 form-check">
-                                    <input type="checkbox" name="is_staff" class="form-check-input" id="is_staff">
-                                    <label class="form-check-label" for="is_staff">کارمند</label>
-                                </div>
-                            </div> {% endcomment %}
                         </div>
                         <hr>
                         <div class="row">
@@ -73,12 +100,22 @@
                                 <div class="mb-3">
                                     <label class="form-label">رمز عبور</label>
                                     <input type="password" name="password1" class="form-control" placeholder="رمز عبور" id="password1">
+                                    {% if form.password1.errors %}
+                                        {% for error in form.password1.errors %}
+                                            <div class="alert alert-danger" style="margin-top:10px;" role="alert">{{ error }}</div>
+                                        {% endfor %}
+                                    {% endif %}
                                 </div>
                             </div>
                             <div class="col-sm-6">
                                 <div class="mb-3">
                                     <label class="form-label">تکرار رمز عبور</label>
                                     <input type="password" name="password2" class="form-control" placeholder="تکرار رمز عبور" id="password2">
+                                    {% if form.password2.errors %}
+                                        {% for error in form.password2.errors %}
+                                            <div class="alert alert-danger" style="margin-top:10px;" role="alert">{{ error }}</div>
+                                        {% endfor %}
+                                    {% endif %}
                                 </div>
                             </div>
                         </div>
@@ -95,6 +132,11 @@
                                 <div class="mb-3">
                                     <label class="form-label">تصویر پروفایل</label>
                                     <input type="file" name="profile_picture" class="form-control">
+                                    {% if form.profile_picture.errors %}
+                                        {% for error in form.profile_picture.errors %}
+                                            <div class="alert alert-danger" style="margin-top:10px;" role="alert">{{ error }}</div>
+                                        {% endfor %}
+                                    {% endif %}
                                 </div>
                             </div>
                         </div>

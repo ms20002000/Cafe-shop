@@ -10,7 +10,13 @@
         <li class="breadcrumb-item active" aria-current="page">لیست کارکنان</li>
       </ol>
     </nav>
-
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}" role="alert">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
     <div class="row">
       <div class="col-md-12 grid-margin stretch-card">
         <div class="card">
