@@ -15,6 +15,63 @@
         <div class="col-12">
             <form method="post" action="{% url 'order_create' %}" enctype="multipart/form-data">
                 {% csrf_token %}
+                {{ form.as_p }}
+                <h3>Order Items</h3>
+                {{ formset.management_form }}
+                <div id="order-items">
+                    {% for form in formset %}
+                        <div class="order-item">
+                            {{ form.as_p }}
+                        </div>
+                    {% endfor %}
+                </div>
+                
+                <button type="button" id="add-item" class="btn btn-primary mt-3">افزودن سطر</button>
+                <button type="submit" class="btn btn-primary mt-3">ایجاد سفارش</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('add-item').addEventListener('click', function() {
+        // تعداد فرم‌های فعلی را برای محاسبه شماره فرم جدید دریافت می‌کنیم
+        let formIdx = document.querySelectorAll('.order-item').length;
+        
+        // اضافه کردن فرم جدید به div اصلی
+        let formsetContainer = document.getElementById('order-items');
+        let newForm = document.createElement('div');
+        newForm.classList.add('order-item');
+        
+        // جایگزینی __prefix__ در فرم خالی و افزودن آن به فرم‌ست
+        newForm.innerHTML = '{{ formset.empty_form.as_p|escapejs }}'.replace(/__prefix__/g, formIdx);
+        formsetContainer.appendChild(newForm);
+
+        // به‌روزرسانی تعداد فرم‌ها در فیلد مدیریت فرم‌ست
+        let totalForms = document.getElementById('id_items-TOTAL_FORMS');
+        totalForms.value = formIdx + 1;
+    });
+</script>
+
+{% endblock %}
+
+{% comment %} {% extends 'staff-base.html' %}
+{% block title %}ایجاد سفارش{% endblock %}
+{% load static %}
+{% block content %}
+
+<div class="page-content">
+    <nav class="page-breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'staff_dashboard' %}">سفارشات</a></li>
+            <li class="breadcrumb-item">ایجاد سفارش</li>
+        </ol>
+    </nav>
+
+    <div class="row">
+        <div class="col-12">
+            <form method="post" action="{% url 'order_create' %}" enctype="multipart/form-data">
+                {% csrf_token %}
                 {{ formset.management_form }}
                 <div class="card" style="width: 100%;">
                     <div class="card-body">
@@ -62,13 +119,12 @@
                             <div class="col-12">
                                 <div class="card">
                                     <div class="card-body">
-                                        <h6 class="card-title">آیتم های سفارش</h6>
+                                        <h6 class="card-title">آیتم‌های سفارش</h6>
                                         <div class="table-responsive pt-3">
                                             <table class="table table-bordered">
                                                 <tbody id="tableBody">
-                                                    {{ formset.management_form }}
                                                     {% for form in formset %}
-                                                    <tr>
+                                                    <tr class="order-item">
                                                         <td>
                                                             {{ form.as_p }}
                                                         </td>
@@ -77,44 +133,48 @@
                                                 </tbody>
                                             </table>
                                             <div id="form-template" style="display: none;">
-                                                <tr>
+                                                <tr class="order-item">
                                                     <td>
                                                         {{ formset.empty_form.as_p }}
                                                     </td>
                                                 </tr>
                                             </div>
-                                            {% comment %} <div class="text-center">
-                                                <button type="button" class="btn btn-primary" style="margin-top:15px" onclick="addRow()">افزودن سطر</button>
-                                            </div> {% endcomment %}
+                                            <div class="text-center">
+                                                <button type="button" class="btn btn-primary mt-3" onclick="addRow()">افزودن سطر</button>
+                                            </div> 
                                         </div>
-                                        
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <button type="submit" id="submitBtn" class="btn btn-primary mt-3">ایجاد سفارش</button>
+                        <button type="submit" class="btn btn-primary mt-3">ایجاد سفارش</button>
                     </div>
                 </div>
             </form>
         </div>
     </div>
 </div>
-{% comment %} <script>
+
+<script>
+    // مقدار اولیه برای فرم‌ست
+    var formsetIndex = {{ formset.total_form_count }};
+
     function addRow() {
         var tableBody = document.getElementById("tableBody");
         var formTemplate = document.getElementById("form-template").innerHTML;
+        
+        // جایگزینی '__prefix__' با formsetIndex
         var newRow = document.createElement("tr");
         newRow.innerHTML = formTemplate.replace(/__prefix__/g, formsetIndex);
         tableBody.appendChild(newRow);
+        
+        // به‌روزرسانی formsetIndex بعد از اضافه کردن یک فرم جدید
         formsetIndex++;
     
         // به‌روزرسانی تعداد فرم‌ها
         document.querySelector('#id_orderitem_set-TOTAL_FORMS').value = formsetIndex;
     }
-    
-    // مقدار اولیه برای فرم‌ست
-    var formsetIndex = {{ formset.total_form_count }};    
-</script> {% endcomment %}
+</script>
 
-{% endblock %}
+{% endblock %} {% endcomment %}

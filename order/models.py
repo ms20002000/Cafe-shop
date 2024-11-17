@@ -7,7 +7,7 @@ from django.db.models import Q
 
 class Table(models.Model):
     number = models.PositiveIntegerField(unique=True)
-    qr_code = models.CharField(max_length=200)
+    qr_code = models.ImageField(upload_to='table_qrcode/', default='table_qrcode/default.png')
 
     def __str__(self):
         return str(self.number)

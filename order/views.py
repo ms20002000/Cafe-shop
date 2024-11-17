@@ -23,10 +23,13 @@ class OrderCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     def form_valid(self, form):
         order = form.save(commit=False)
         order.modify_by = self.request.user  
-        order.save()
 
         formset = OrderItemFormSet(self.request.POST, instance=order)
         if formset.is_valid():
+            if False not in [item_form.get('DELETE') for item_form in formset.cleaned_data]:
+                form.add_error(None, "You must add at least one order item.")
+                return self.form_invalid(form)
+            order.save()
             formset.save()
             return redirect(self.success_url)
         else:
@@ -37,7 +40,7 @@ class OrderCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
         if self.request.POST:
             context['formset'] = OrderItemFormSet(self.request.POST)
         else:
-            context['formset'] = OrderItemFormSet()
+            context['formset']= OrderItemFormSet() 
         return context
 
 
@@ -105,7 +108,7 @@ class TableCreateView(LoginRequiredMixin, UserPassesTestMixin,View):
         return render(request, self.template_name, {'form': form})
 
     def post(self, request):
-        form = TableForm(request.POST)
+        form = TableForm(request.POST, request.FILES)
         print(form.errors)
         if form.is_valid():
             form.save()
@@ -126,7 +129,7 @@ class TableUpdateView(LoginRequiredMixin, UserPassesTestMixin,View):
 
     def post(self, request, pk):
         table = get_object_or_404(Table, pk=pk)
-        form = TableForm(request.POST, instance=table)
+        form = TableForm(request.POST, request.FILES, instance=table)
         if form.is_valid():
             form.save()
             return redirect('table_list')
