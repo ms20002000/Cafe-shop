@@ -1,27 +1,27 @@
 {% extends 'base.html' %}
-{% comment %} <form method='post' enctype="multipart/form-data">{% csrf_token %}
-    {% for product in products %}
-        <a href="{% url 'product_detail' product.category.id product.id %}">{{ product.name }}</a>
-        <img src="{{ product.product_photo.url }}" alt="{{ product.name }}" style="width: 150px; height: 150px;">
-    {% endfor %}
-</form> {% endcomment %}
-
-
-
-{% block title %}محصولات دسته بندی{% endblock %}
+{% block title %}
+    {% if request.resolver_match.url_name == "popular_products" %}
+        همه محصولات
+    {% else %}
+         دسته‌بندی {{ category.name }}
+    {% endif %}
+{% endblock %}
 {% load static %}
 
 {% block content %}
-
 <body class="appFavorite2">
 
     <div class="app profile pb-90">
         <div class="title-header-bar fixed-top bg-white">
             <a href="/" class="back-btn"><i class="icon-right"></i></a>
-            {% if products %}
-                <h1>محصولات دسته بندی</h1>
+            {% if request.resolver_match.url_name == "popular_products" %}
+                <h1>همه محصولات</h1>
             {% else %}
-                <h1>محصولی در این دسته بندی وجود ندارد</h1>
+                {% if products %}
+                    <h1>دسته بندی {{ category.name }}</h1>
+                {% else %}
+                    <h1>محصولی در این دسته بندی وجود ندارد</h1>
+                {% endif %}
             {% endif %}
         </div>
 

@@ -42,7 +42,7 @@ def product_list(request, name):
         products = Product.objects.filter(is_available=True)
     else:    
         products = Product.objects.filter(category=category, is_available=True)
-    return render(request, 'product/product_list.html', {'products': products})
+    return render(request, 'product/product_list.html', {'products': products, 'category': category})
     
 def popular_products(request):
     products = Product.objects.annotate(total_sold=Sum('order_items__quantity')
