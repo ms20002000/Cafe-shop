@@ -5,6 +5,8 @@ from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from .forms import OrderForm, OrderItemFormSet, TableForm , UpdateOrderItemFormSet
 from django.views import View
+from django.conf import settings
+from django.contrib import messages
 
 class OrderCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     model = Order
@@ -51,7 +53,8 @@ class OrderDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
     def test_func(self):
         return self.request.user.is_staff
-
+    
+    
 class OrderUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Order
     form_class = OrderForm
@@ -60,7 +63,7 @@ class OrderUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
     def test_func(self):
         return self.request.user.is_staff
-    
+
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs['is_update'] = True  
@@ -72,19 +75,27 @@ class OrderUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
             context['formset'] = UpdateOrderItemFormSet(self.request.POST, instance=self.object)
         else:
             context['formset'] = UpdateOrderItemFormSet(instance=self.object)
+        
+        context['total_price'] = self.object.total_price_amount()
         return context
 
     def form_valid(self, form):
         context = self.get_context_data()
         formset = context['formset']
-        if form.is_valid() and formset.is_valid():
+        if formset.is_valid():
             self.object = form.save()  
             formset.instance = self.object
             formset.save()  
-            return redirect(self.success_url)
+            messages.success(self.request, "سفارش با موفقیت آپدیت شد.")
         else:
-            return self.form_invalid(form)
-        
+            messages.error(self.request, "خطایی در ذخیره سفارش رخ داد.")
+            return self.render_to_response(context)
+        return self.render_to_response(self.get_context_data())
+
+    def form_invalid(self, form):
+        messages.error(self.request, "خطایی در فرم سفارش رخ داد. لطفاً اطلاعات را بررسی کنید.")
+        return self.render_to_response(self.get_context_data())
+
 
 class TableListView(LoginRequiredMixin, UserPassesTestMixin,View):
     template_name = 'order/table_list.html'
@@ -94,10 +105,10 @@ class TableListView(LoginRequiredMixin, UserPassesTestMixin,View):
 
     def get(self, request):
         tables = Table.objects.all()       
-        return render(request, self.template_name, {'tables': tables})
+        return render(request, self.template_name, {'tables': tables, 'MEDIA_URL': settings.MEDIA_URL,})
 
 
-class TableCreateView(LoginRequiredMixin, UserPassesTestMixin,View):
+class TableCreateView(LoginRequiredMixin, UserPassesTestMixin, View):
     template_name = 'order/table_form.html'
 
     def test_func(self):
@@ -109,14 +120,18 @@ class TableCreateView(LoginRequiredMixin, UserPassesTestMixin,View):
 
     def post(self, request):
         form = TableForm(request.POST, request.FILES)
-        print(form.errors)
         if form.is_valid():
             form.save()
-            return redirect('table_list') 
+            messages.success(request, "میز با موفقیت ایجاد شد.")
+            return redirect('table_list')
+        else:
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f"{field}: {error}")
         return render(request, self.template_name, {'form': form})
 
 
-class TableUpdateView(LoginRequiredMixin, UserPassesTestMixin,View):
+class TableUpdateView(LoginRequiredMixin, UserPassesTestMixin, View):
     template_name = 'order/table_form.html'
 
     def test_func(self):
@@ -132,6 +147,10 @@ class TableUpdateView(LoginRequiredMixin, UserPassesTestMixin,View):
         form = TableForm(request.POST, request.FILES, instance=table)
         if form.is_valid():
             form.save()
+            messages.success(request, "میز با موفقیت به‌روزرسانی شد.")
             return redirect('table_list')
+        else:
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f"{field}: {error}")
         return render(request, self.template_name, {'form': form})
-

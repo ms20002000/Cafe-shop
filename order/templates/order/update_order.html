@@ -1,4 +1,4 @@
-{% comment %} {% extends 'staff-base.html' %}
+{% extends 'staff-base.html' %}
 {% block title %}به‌روز‌رسانی سفارش{% endblock %}
 {% load static %}
 {% block content %}
@@ -15,7 +15,18 @@
     <div class="row">
         <div class="col-12">
             
-            
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert 
+                        {% if message.tags %}
+                            alert-{{ message.tags }}
+                        {% endif %}" 
+                        role="alert">
+                    {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+
             <form method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
                 <div class="card" style="width: 100%;">
@@ -67,70 +78,66 @@
                                         <h6 class="card-title">آیتم های سفارش</h6>
                                         <div class="table-responsive pt-3">
                                             <table class="table table-bordered">
+                                                <thead>
+                                                    <tr>
+                                                        <th>#</th>
+                                                        <th>آیتم سفارش</th>
+                                                        <th>قیمت</th>
+                                                    </tr>
+                                                </thead>
                                                 <tbody id="tableBody">
-                                                {{ formset.management_form }}
+                                                    {{ formset.management_form }}
                                                     {% for form in formset %}
                                                     <tr>
                                                         <td>                    
+                                                            {{ forloop.counter }}
+                                                        </td>
+                                                        <td>                    
                                                             {{ form.as_p }}
                                                         </td>
+                                                        <td>                    
+                                                            <p>اینجا قیمت قرار گیرد</p>
+                                                        </td>
                                                     </tr>
-                                                {% endfor %}                                                
+                                                    {% endfor %}    
+                                                    <tr class="bg-light">
+                                                        <td colspan="2" class="text-bold-800">مبلغ قابل پرداخت</td>
+                                                        <td class="text-bold-800 text-end">{{ total_price }} تومان</td>
+                                                    </tr>                                           
                                                 </tbody>
-                                            </table>
+                                            </table>                                            
+                                        </div>
+                                        <div class="text-center my-3">
+                                            <a id="add-item" class="btn btn-primary">افزودن سطر</a>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-
                         <button type="submit" id="submitBtn" class="btn btn-primary mt-3">ویرایش سفارش</button>
                     </div>
                 </div>
             </form>
         </div>
     </div>
-
-    {% endblock %} {% endcomment %}
-
-    <h2>Update Order</h2>
-
-    <form method="POST">
-        {% csrf_token %}
-        
-        {{ form.as_p }}
-        
-        <h3>Order Items</h3>
-        {{ formset.management_form }}
-        <div id="order-items">
-            {% for form in formset %}
-                <div class="order-item">
-                    {% if form.instance.pk %}
-                    <p>Current Product: {{ form.instance.product.name }}</p>
-                    {% endif %}
-                    {{ form.as_p }}
-                </div>
-            {% endfor %}
-        </div>
-        
-        <button type="button" id="add-item">Add Another Product</button>
-        <button type="submit">Save Changes</button>
-    </form>
-    
-    <a href="{% url 'staff_dashboard' %}">Back to Dashboard</a>
-    
     <script>
-        document.getElementById('add-item').addEventListener('click', function() {
-            let formIdx = document.querySelectorAll('.order-item').length;
-            let formsetContainer = document.getElementById('order-items');
-            let newForm = document.createElement('div');
-            newForm.classList.add('order-item');
-            newForm.innerHTML = '{{ formset.empty_form.as_p|escapejs }}'.replace(/__prefix__/g, formIdx);
-            formsetContainer.appendChild(newForm);
-            
-            // Update management form count
-            let totalForms = document.getElementById('id_items-TOTAL_FORMS');
+        document.getElementById('add-item').addEventListener('click', function () {
+            let formIdx = document.querySelectorAll('#tableBody tr').length;
+
+            let tableBody = document.getElementById('tableBody');
+
+            let newRow = document.createElement('tr');
+            newRow.innerHTML = `
+                <td>
+                    {{ formset.empty_form.as_p|escapejs }}
+                </td>
+            `.replace(/__prefix__/g, formIdx);
+
+            tableBody.appendChild(newRow);
+
+            let totalForms = document.getElementById('id_form-TOTAL_FORMS');
             totalForms.value = formIdx + 1;
         });
     </script>
     
+{% endblock %}

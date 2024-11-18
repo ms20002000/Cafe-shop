@@ -361,7 +361,7 @@ class AddStaffView(LoginRequiredMixin, UserPassesTestMixin, View):
             user = form.save(commit=False)
             user.is_staff = True  
             user.save()
-            messages.success(request, 'کاربر با موفقیت اضافه شد.')
+            messages.success(request, 'کاربر با موفقیت افزوده شد.')
             return redirect('staff_list')
         messages.error(request, 'لطفاً خطاهای زیر را بررسی کنید.')
         return render(request, self.template_name, {'form': form})
