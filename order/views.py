@@ -1,0 +1,96 @@
+from django.shortcuts import render, redirect
+from .models import Order, OrderItem
+from django.views.generic.edit import CreateView, DeleteView, UpdateView
+from django.urls import reverse_lazy
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from .forms import OrderForm, OrderItemFormSet, OrderCreateForm
+from cart.cart import Cart
+from django.contrib.auth.decorators import login_required
+
+
+
+
+class OrderCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
+    model = Order
+    form_class = OrderForm
+    template_name = 'order/create_order.html'
+    success_url = reverse_lazy('staff_dashboard')
+
+    def test_func(self):
+        return self.request.user.is_staff
+
+    def form_valid(self, form):
+        order = form.save(commit=False)
+        order.modify_by = self.request.user  
+        order.save()
+
+        formset = OrderItemFormSet(self.request.POST, instance=order)
+        if formset.is_valid():
+            formset.save()
+        return redirect(self.success_url)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if self.request.POST:
+            context['formset'] = OrderItemFormSet(self.request.POST)
+        else:
+            context['formset'] = OrderItemFormSet()
+        return context
+
+
+class OrderDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = Order
+    template_name = 'order/delete_order.html'
+    success_url = reverse_lazy('staff_dashboard')
+
+    def test_func(self):
+        return self.request.user.is_staff
+
+class OrderUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Order
+    form_class = OrderForm
+    template_name = 'order/update_order.html'
+    success_url = reverse_lazy('staff_dashboard')
+
+    def test_func(self):
+        return self.request.user.is_staff
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if self.request.POST:
+            context['formset'] = OrderItemFormSet(self.request.POST, instance=self.object)
+        else:
+            context['formset'] = OrderItemFormSet(instance=self.object)
+        return context
+
+    def form_valid(self, form):
+        context = self.get_context_data()
+        formset = context['formset']
+        if form.is_valid() and formset.is_valid():
+            self.object = form.save()  
+            formset.instance = self.object
+            formset.save()  
+            return redirect(self.success_url)
+        else:
+            return self.form_invalid(form)
+        
+
+def order_create(request):
+    cart = Cart(request)
+    if request.method == 'POST':
+        form = OrderCreateForm(request.POST)
+        if form.is_valid():
+            order = form.save()
+            for item in cart:
+                OrderItem.objects.create(order=order, product=item['product'], price=item['price'], quantity=item['quantity'])
+            cart.clear()
+            return render(request, 'orders/order/created.html', {'order': order})
+    else:
+        form = OrderCreateForm()
+    return render(request, 'orders/order/create.html', {'cart': cart, 'form': form})
+
+
+@login_required
+def order_history(request):
+    orders = Order.objects.filter(user=request.user).order_by('-date_ordered')
+    return render(request, 'order_history.html', {'orders': orders})

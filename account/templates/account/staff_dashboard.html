@@ -1,0 +1,63 @@
+Staff dashboard
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Staff Dashboard</title>
+</head>
+<body>
+    <h1>Welcome, {{ staff_name }}</h1>
+
+    <form method="GET">
+        <label for="status">Filter by Status:</label>
+        <select name="status" id="status">
+            <option value="">All</option>
+            <option value="pending">Pending</option>
+            <option value="completed">Completed</option>
+        </select>
+        <button type="submit">Filter</button>
+    </form>
+
+    <form method="GET">
+        <label for="phone_number">Search by Phone Number:</label>
+        <input type="text" name="phone_number" id="phone_number">
+        <button type="submit">Search</button>
+    </form>
+
+    <h2>Orders</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Order ID</th>
+                <th>Customer Phone</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in orders %}
+            <tr>
+                <td>{{ order.id }}</td>
+                <td>{{ order.customer.phone_number }}</td>
+                <td>{{ order.status }}</td>
+                <td>
+                    <a href="{% url 'order_update' order.id %}">Update</a>
+                    <a href="{% url 'order_delete' order.id %}">Delete</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4">No orders available.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <form method="POST" action="{% url 'logout' %}">
+        {% csrf_token %}
+        <button type="submit">Logout</button>
+    </form>
+</body>
+</html>

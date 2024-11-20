@@ -1,0 +1,7 @@
+<h2>Categories</h2>
+{% for category in categories %}
+    <div>
+        <a href="{% url 'product_list' category.id %}">{{ category.name }}</a>
+        <img src="{{ category.category_photo.url }}" alt="{{ category.name }}" style="width: 150px; height: 150px;">
+    </div>
+{% endfor %}

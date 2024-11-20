@@ -1,0 +1,6 @@
+<form method='post' enctype="multipart/form-data">{% csrf_token %}
+    {% for product in products %}
+        <a href="{% url 'product_detail' product.category.id product.id %}">{{ product.name }}</a>
+        <img src="{{ product.product_photo.url }}" alt="{{ product.name }}" style="width: 150px; height: 150px;">
+    {% endfor %}
+</form>
